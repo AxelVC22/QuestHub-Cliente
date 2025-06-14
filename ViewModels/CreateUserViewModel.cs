@@ -4,6 +4,8 @@ using QuestHubClient.Models;
 using QuestHubClient.Services;
 using QuestHubClient.Views;
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace QuestHubClient.ViewModels
@@ -46,31 +48,42 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        private void CreateUser()
+        private async Task CreateUser()
         {
+            ErrorMessage = string.Empty;
+            var context = new ValidationContext(User);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(User, context, results, true))
+            {
+                ErrorMessage = results.First().ErrorMessage;
+                return;
+            }
+
             try
             {
-                ErrorMessage = string.Empty;
+                var (userModel, message) = await _authService.RegisterAsync(User);
 
-                var context = new ValidationContext(User);
-                var results = new List<ValidationResult>();
-                bool isValid = Validator.TryValidateObject(User, context, results, true);
-                
-                if (!isValid)
+                if (userModel != null)
                 {
-                    ErrorMessage = results.First().ErrorMessage;
-                    return;
+                    new NotificationWindow(message, 3).Show();
+
+                    var loginView = new LoginView();
+                    loginView.DataContext = new LoginViewModel(_authService);
+                    loginView.Show();
+                    Application.Current.Windows.OfType<CreateUserView>().FirstOrDefault()?.Close();
                 }
-
-                //servicio
-
-
-
-
-            }   
+                else
+                {
+                    ErrorMessage = message ?? "Error al registrarse. Por favor, inténtalo de nuevo.";
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
             catch (Exception ex)
             {
-                ErrorMessage = $"Error al crear el usuario: {ex.Message}";
+                ErrorMessage = $"Error inesperado: {ex.Message}";
             }
         }
     }

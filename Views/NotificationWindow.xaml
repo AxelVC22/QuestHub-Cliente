@@ -1,0 +1,28 @@
+﻿<Window x:Class="QuestHubClient.Views.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStyle="None"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Width="300"
+        Height="80"
+        ResizeMode="NoResize">
+    <Border CornerRadius="8"
+        Background="#FF2C394B"
+        Padding="15"
+        Margin="10">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="10"
+                          ShadowDepth="2"
+                          Color="Black"
+                          Opacity="0.5"/>
+        </Border.Effect>
+        <TextBlock x:Name="MessageText"
+               Foreground="White"
+               FontSize="14"
+               TextWrapping="Wrap"/>
+    </Border>
+
+</Window>

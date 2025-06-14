@@ -188,5 +188,37 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Estilo para el avatar circular -->
+        <Style x:Key="AvatarStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="Stroke" Value="{StaticResource PrimaryLightBrush}"/>
+            <Setter Property="StrokeThickness" Value="3"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="15" 
+                                      ShadowDepth="3" 
+                                      Color="#33000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Estilo para labels -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <!-- Estilo para texto de solo lectura -->
+        <Style x:Key="ReadOnlyTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="5,0,5,15"/>
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+        </Style>
     </Application.Resources>
 </Application>

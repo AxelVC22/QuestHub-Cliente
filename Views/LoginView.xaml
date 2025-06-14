@@ -75,22 +75,14 @@
                 <StackPanel Margin="40,30">
 
                     <!-- Campo Usuario -->
-                    <TextBlock Text="Correo Electronico" 
-                             FontSize="14" 
-                             FontWeight="SemiBold"
-                             Foreground="{StaticResource TextSecondaryBrush}"
-                             Margin="5,0,0,5"/>
+                    <TextBlock Text="Correo Electronico *" Style="{StaticResource LabelStyle}"/>
 
                     <TextBox Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
                            Style="{StaticResource ModernTextBoxStyle}"
                            TabIndex="1"/>
 
                     <!-- Campo Contraseña -->
-                    <TextBlock Text="Contraseña" 
-                             FontSize="14" 
-                             FontWeight="SemiBold"
-                             Foreground="{StaticResource TextSecondaryBrush}"
-                             Margin="5,15,0,5"/>
+                    <TextBlock Text="Contraseña *" Style="{StaticResource LabelStyle}"/>
 
                     <PasswordBox x:Name="PasswordBox"
                                Style="{StaticResource ModernPasswordBoxStyle}"

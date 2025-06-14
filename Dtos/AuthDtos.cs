@@ -11,7 +11,7 @@ namespace QuestHubClient.Dtos
         public string Password { get; set; }
     }
 
-    public class LoginResponseDto
+    public class AuthResponseDto
     {
         [JsonPropertyName("message")]
         public string Message { get; set; }
@@ -67,7 +67,6 @@ namespace QuestHubClient.Dtos
         public DateTime? BanEndDate { get; set; }
     }
 
-    // DTO para respuestas de error
     public class ErrorResponseDto
     {
         [JsonPropertyName("message")]

@@ -2,9 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using QuestHubClient.Models;
 using QuestHubClient.ViewModels;
-using System.Collections.ObjectModel;
+using QuestHubClient.Views;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace QuestHubClient.ViewModels
 {
@@ -47,7 +46,9 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void ShowProfile()
         {
-
+            var profileView = new ProfileView();
+            profileView.DataContext = new ProfileViewModel(User);
+            profileView.ShowDialog();
         }
 
         [RelayCommand]

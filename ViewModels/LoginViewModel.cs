@@ -56,7 +56,7 @@ namespace QuestHubClient.ViewModels
                     var mainWindow = new MainWindow();
                     mainWindow.DataContext = new MainWindowViewModel(userModel);
                     mainWindow.Show();
-
+                    new NotificationWindow(message, 3).Show();
                     Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
                 }
                 else

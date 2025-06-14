@@ -11,7 +11,7 @@ namespace QuestHubClient.Services
     {
         Task<(string token, User userModel, string message)> LoginAsync(LoginUser user);
 
-        Task<(string token, User userModel, string message)> RegisterAsync(User user);
+        Task<(User userModel, string message)> RegisterAsync(User user);
     }
 
     public class AuthService : IAuthService
@@ -35,7 +35,7 @@ namespace QuestHubClient.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(responseContent, new JsonSerializerOptions
+                    var loginResponse = JsonSerializer.Deserialize<AuthResponseDto>(responseContent, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -46,7 +46,7 @@ namespace QuestHubClient.Services
                         token = response.Headers.GetValues("x-token").FirstOrDefault() ?? "";
                     }
 
-                    var userModel = LoginResponseToUser(loginResponse);
+                    var userModel = ResponseToUser(loginResponse);
 
                     return (token, userModel, loginResponse.Message);
                 }
@@ -72,12 +72,51 @@ namespace QuestHubClient.Services
             {
                 return ("", null, $"Error inesperado: {ex.Message}");
             }
-
         }
 
-        public Task<(string token, User userModel, string message)> RegisterAsync(User user)
+        public async Task<(User userModel, string message)> RegisterAsync(User user)
         {
+            try
+            {
+                var registerRequest = UserToLoginRequestDto(user);
+                var jsonContent = JsonSerializer.Serialize(registerRequest);
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(BaseUrl, httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
 
+                if (response.IsSuccessStatusCode)
+                {
+                    var registerResponse = JsonSerializer.Deserialize<AuthResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    var userModel = ResponseToUser(registerResponse);
+
+                    return (userModel, registerResponse.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
         }
 
         private LoginRequestDto LoginUserToLoginRequestDto(LoginUser user)
@@ -89,7 +128,17 @@ namespace QuestHubClient.Services
             };
         }
 
-        private User LoginResponseToUser(LoginResponseDto response)
+        private RegisterRequestDto UserToLoginRequestDto(User user)
+        {
+            return new RegisterRequestDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password
+            };
+        }
+
+        private User ResponseToUser(AuthResponseDto response)
         {
             return new User
             {
