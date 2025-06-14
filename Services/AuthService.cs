@@ -11,7 +11,7 @@ namespace QuestHubClient.Services
     {
         Task<(string token, User userModel, string message)> LoginAsync(LoginUser user);
 
-        Task<(string token, User userModel, string message)> RegisterAsync(User user);
+       // Task<(string token, User userModel, string message)> RegisterAsync(User user);
     }
 
     public class AuthService : IAuthService
@@ -75,10 +75,10 @@ namespace QuestHubClient.Services
 
         }
 
-        public Task<(string token, User userModel, string message)> RegisterAsync(User user)
-        {
+        //public Task<(string token, User userModel, string message)> RegisterAsync(User user)
+        //{
 
-        }
+        //}
 
         private LoginRequestDto LoginUserToLoginRequestDto(LoginUser user)
         {

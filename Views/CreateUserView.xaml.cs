@@ -15,11 +15,14 @@ using System.Windows.Shapes;
 
 namespace QuestHubClient.Views
 {
-    public partial class CreateUserView : Window
+    public partial class CreateUserView : Page
     {
-        public CreateUserView()
+        public CreateUserViewModel _createUserViewModel;
+        public CreateUserView(CreateUserViewModel createUserViewModel)
         {
             InitializeComponent();
+            _createUserViewModel = createUserViewModel;
+            this.DataContext = _createUserViewModel;
         }
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
