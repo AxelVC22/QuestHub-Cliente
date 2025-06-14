@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using QuestHubClient.Models;
+using QuestHubClient.Services;
 using QuestHubClient.ViewModels;
 using QuestHubClient.Views;
 using System.Windows;
@@ -9,8 +10,14 @@ namespace QuestHubClient.ViewModels
 {
     public partial class MainWindowViewModel : BaseViewModel
     {
-        
+
+        //services
+
+        private INavigationService _navigationService;
+
         public User User { get; set; }
+
+        public bool _isRegistered;
 
         [ObservableProperty]
         private string _selectedSection = "Dashboard";
@@ -23,7 +30,13 @@ namespace QuestHubClient.ViewModels
 
         public MainWindowViewModel()
         {
+            IsRegistered = false;
+        }
 
+        public MainWindowViewModel(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
+            Title = "QuestHub - Menu Principal";
         }
         public MainWindowViewModel(User user)
         {
@@ -61,8 +74,8 @@ namespace QuestHubClient.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
-                var loginWindow = new Views.LoginView();
-                loginWindow.Show();
+                //var loginWindow = new Views.LoginView();
+                //loginWindow.Show();
 
                 Application.Current.Windows.OfType<Window>()
                     .Where(w => w.GetType().Name == "MainWindow")
@@ -74,6 +87,20 @@ namespace QuestHubClient.ViewModels
         private void CreateNewPost()
         {
 
+        }
+
+
+        public bool IsRegistered
+        {
+            get => _isRegistered;
+            set
+            {
+                if (_isRegistered != value)
+                {
+                    _isRegistered = value;
+                    OnPropertyChanged(nameof(IsRegistered));
+                }
+            }
         }
     }
 }

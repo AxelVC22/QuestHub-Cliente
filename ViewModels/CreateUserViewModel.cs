@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace QuestHubClient.ViewModels
 {
@@ -14,7 +15,13 @@ namespace QuestHubClient.ViewModels
     {
         public User User { get; set; } = new User();
 
+        //services
+
         private readonly IAuthService _authService;
+
+        private readonly INavigationService _navigationService;
+
+        //commands
 
         //[ObservableProperty]
         //private ObservableCollection<string> roles = new()
@@ -31,20 +38,19 @@ namespace QuestHubClient.ViewModels
         {
         }
 
-        public CreateUserViewModel(IAuthService authService)
+        public CreateUserViewModel(INavigationService navigationService, IAuthService authService)
         {
             Title = "QuestHub - Crear Usuario";
             _authService = authService;
-
+            _navigationService = navigationService;
         }
+
+       
 
         [RelayCommand]
         private void Cancel()
         {
-            var loginView = new LoginView();
-            loginView.DataContext = new LoginViewModel(_authService);
-            loginView.Show();
-            Application.Current.Windows.OfType<CreateUserView>().FirstOrDefault()?.Close();
+            _navigationService.GoBack();
         }
 
         [RelayCommand]

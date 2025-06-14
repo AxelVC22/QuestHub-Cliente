@@ -13,7 +13,11 @@ namespace QuestHubClient.ViewModels
     {   
         public LoginUser User { get; set; } = new LoginUser();
 
+        //services
+
         private readonly IAuthService _authService;
+
+        private readonly INavigationService _navigationService;
 
         [ObservableProperty]
         private string _errorMessage = string.Empty;
@@ -23,10 +27,11 @@ namespace QuestHubClient.ViewModels
             Title = "QuestHub - Login";
             _authService = new AuthService(new HttpClient());
         }
-        public LoginViewModel(IAuthService authService)
+        public LoginViewModel(INavigationService navigationService,IAuthService authService)
         {
             Title = "QuestHub - Login";
             _authService = authService;
+            _navigationService = navigationService;
         }
 
         [RelayCommand]
@@ -77,11 +82,7 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Register()
         {
-            var createUserView = new CreateUserView();
-            createUserView.DataContext = new CreateUserViewModel(_authService);
-            createUserView.Show();
-
-            Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
+            _navigationService.NavigateTo<CreateUserViewModel>();
         }
     }
 }
