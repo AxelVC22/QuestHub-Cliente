@@ -1,5 +1,6 @@
 ﻿using QuestHubClient.Services;
 using QuestHubClient.ViewModels;
+using QuestHubClient.Views;
 using System.Net.Http;
 using System.Text;
 using System.Windows;
@@ -76,6 +77,8 @@ namespace QuestHubClient
             App.MainViewModel = mainWindowViewModel;
 
             NavigationService.NavigateTo<LoginViewModel>();
+
+           
         }
     }
 }

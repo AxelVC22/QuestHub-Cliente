@@ -38,6 +38,7 @@ namespace QuestHubClient.ViewModels
         {
             _navigationService = navigationService;
             Title = "QuestHub - Menu Principal";
+            IsRegistered = true;
         }
         public MainWindowViewModel(User user)
         {

@@ -225,18 +225,9 @@
             </Border>
 
             <!-- Contenido aca -->
-            <ScrollViewer Grid.Row="1"
-                          HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto">
-                <Grid HorizontalAlignment="Center"
-                      VerticalAlignment="Top"
-                      Margin="0,40"
-                      MaxWidth="1000">
-                    <!-- Ajusta el ancho deseado -->
-                    <Frame x:Name="PageFrame"
-                           NavigationUIVisibility="Hidden" />
-                </Grid>
-            </ScrollViewer>
+            <Frame x:Name="PageFrame"
+                   Grid.Row="1"
+                   NavigationUIVisibility="Hidden" />
 
 
         </Grid>

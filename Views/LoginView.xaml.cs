@@ -1,6 +1,7 @@
 ﻿using QuestHubClient.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,10 +32,13 @@ namespace QuestHubClient.Views
             InitializeComponent();
             _loginViewModel = loginViewModel;
             this.DataContext = _loginViewModel;
+
+
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
+            
             if (DataContext is LoginViewModel viewModel)
             {
                 viewModel.User.Password = ((PasswordBox)sender).Password;
