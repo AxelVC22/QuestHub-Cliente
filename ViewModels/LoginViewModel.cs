@@ -47,8 +47,6 @@ namespace QuestHubClient.ViewModels
                 if (!isValid)
                 {
                     ErrorMessage = results.First().ErrorMessage;
-                    Console.WriteLine($"Error: {ErrorMessage}");
-
                     return;
                 }
 
@@ -62,7 +60,9 @@ namespace QuestHubClient.ViewModels
                     //var mainWindow = new MainWindow();
                     //mainWindow.DataContext = new MainWindowViewModel(userModel);
                     //mainWindow.Show();
-                    _navigationService.NavigateTo<MainWindowViewModel>(userModel);
+                    App.MainViewModel.IsRegistered = true;
+
+                    _navigationService.NavigateTo<HomeViewModel>();
                     new NotificationWindow(message, 3).Show();
                     //Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
                 }
