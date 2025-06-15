@@ -4,29 +4,32 @@ using QuestHubClient.Models;
 using QuestHubClient.Services;
 using QuestHubClient.Views;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
 
 namespace QuestHubClient.ViewModels
 {
     public partial class LoginViewModel : BaseViewModel
-    {   
+    {
         public LoginUser User { get; set; } = new LoginUser();
+
+        //services
 
         private readonly IAuthService _authService;
 
-        [ObservableProperty]
-        private string _errorMessage = string.Empty;
+        private readonly INavigationService _navigationService;
 
         public LoginViewModel()
         {
             Title = "QuestHub - Login";
             _authService = new AuthService(new HttpClient());
         }
-        public LoginViewModel(IAuthService authService)
+        public LoginViewModel(INavigationService navigationService,IAuthService authService)
         {
             Title = "QuestHub - Login";
             _authService = authService;
+            _navigationService = navigationService;
         }
 
         [RelayCommand]
@@ -36,6 +39,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
+
                 var context = new ValidationContext(User);
                 var results = new List<ValidationResult>();
                 bool isValid = Validator.TryValidateObject(User, context, results, true);
@@ -43,6 +47,8 @@ namespace QuestHubClient.ViewModels
                 if (!isValid)
                 {
                     ErrorMessage = results.First().ErrorMessage;
+                    Console.WriteLine($"Error: {ErrorMessage}");
+
                     return;
                 }
 
@@ -57,12 +63,14 @@ namespace QuestHubClient.ViewModels
                     mainWindow.DataContext = new MainWindowViewModel(userModel);
                     mainWindow.Show();
 
-                    Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
+                  //  Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
                 }
                 else
                 {
                     ErrorMessage = message ?? "Credenciales incorrectas. Por favor, inténtalo de nuevo.";
                 }
+
+
             }
             catch (HttpRequestException ex)
             {
@@ -77,11 +85,7 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Register()
         {
-            var createUserView = new CreateUserView();
-            createUserView.DataContext = new CreateUserViewModel(_authService);
-            createUserView.Show();
-
-            Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
+            _navigationService.NavigateTo<CreateUserViewModel>();
         }
     }
 }

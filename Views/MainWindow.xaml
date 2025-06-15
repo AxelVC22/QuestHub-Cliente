@@ -4,205 +4,218 @@
         xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
         xmlns:local="clr-namespace:QuestHubClient"
         xmlns:conv="clr-namespace:QuestHubClient.Converters"
-        Title="{Binding Title}" 
+        Title="{Binding Title}"
         Icon="/Assets/Logo.jpg"
-        Height="800" 
+        Height="800"
         Width="1200"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
 
     <Window.DataContext>
-        <vm:MainWindowViewModel/>
+        <Binding Source="{x:Static local:App.MainViewModel}" />
     </Window.DataContext>
 
     <Window.Resources>
-        <conv:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter"/>
-        <conv:InverseStringToVisibilityConverter x:Key="InverseStringToVisibilityConverter"/>
-        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <conv:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+        <conv:InverseStringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" />
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
 
     <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <!-- Menu lateral -->
-        <Border Grid.Column="0" 
+        <Border Grid.Column="0"
                 Background="{StaticResource PrimaryDarkBrush}"
                 BorderBrush="{StaticResource PrimaryLightBrush}"
-                BorderThickness="0,0,1,0">
+                BorderThickness="0,0,1,0"
+                Visibility="{Binding IsRegistered, Converter={StaticResource BoolToVisibilityConverter}}"
+                Width="250">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+
                 </Grid.RowDefinitions>
 
                 <!-- Logo y título -->
-                <StackPanel Grid.Row="0" 
-                          Orientation="Horizontal" 
-                          Margin="20,25,20,30"
-                          HorizontalAlignment="Center">
-                    <Ellipse Width="40" Height="40" Margin="0,0,10,0">
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal"
+                            Margin="20,25,20,30"
+                            HorizontalAlignment="Center"
+                            >
+                    <Ellipse Width="40"
+                             Height="40"
+                             Margin="0,0,10,0">
                         <Ellipse.Fill>
-                            <ImageBrush ImageSource="/Assets/Logo.jpg" Stretch="UniformToFill"/>
+                            <ImageBrush ImageSource="/Assets/Logo.jpg"
+                                        Stretch="UniformToFill" />
                         </Ellipse.Fill>
                         <Ellipse.Effect>
-                            <DropShadowEffect BlurRadius="10" 
-                                              ShadowDepth="2" 
-                                              Color="#33000000"/>
+                            <DropShadowEffect BlurRadius="10"
+                                              ShadowDepth="2"
+                                              Color="#33000000" />
                         </Ellipse.Effect>
                     </Ellipse>
-                    <TextBlock Text="QuestHub" 
-                             FontSize="20" 
-                             FontWeight="Bold" 
-                             Foreground="{StaticResource TextPrimaryBrush}"
-                             VerticalAlignment="Center"/>
+                    <TextBlock Text="QuestHub"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               VerticalAlignment="Center" />
                 </StackPanel>
 
 
                 <!-- Usuario y logout -->
-                <StackPanel Grid.Row="2" 
-                          Margin="20,10,20,25">
-                    <Separator Background="{StaticResource PrimaryLightBrush}" 
-                             Margin="0,0,0,15"/>
+                <StackPanel Grid.Row="2"
+                            Margin="20,10,20,25">
+                    <Separator Background="{StaticResource PrimaryLightBrush}"
+                               Margin="0,0,0,15" />
 
                     <Button Command="{Binding ShowProfileCommand}"
-                          Background="Transparent"
-                          BorderThickness="0"
-                          Padding="0,8"
-                          HorizontalContentAlignment="Left"
-                          Cursor="Hand">
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0,8"
+                            HorizontalContentAlignment="Left"
+                            Cursor="Hand">
                         <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="32" Height="32" Margin="0,0,10,0">
+                            <Ellipse Width="32"
+                                     Height="32"
+                                     Margin="0,0,10,0">
                                 <Ellipse.Fill>
-                                    <ImageBrush ImageSource="/Assets/DefaultProfilePicture.png"/>
+                                    <ImageBrush ImageSource="/Assets/DefaultProfilePicture.png" />
                                 </Ellipse.Fill>
                             </Ellipse>
 
                             <StackPanel>
-                                <TextBlock Text="{Binding User.Name}" 
-                                         FontSize="12" 
-                                         FontWeight="SemiBold"
-                                         Foreground="{StaticResource TextPrimaryBrush}"/>
-                                <TextBlock Text="Ver perfil" 
-                                         FontSize="10" 
-                                         Foreground="{StaticResource PrimaryLightBrush}"/>
+                                <TextBlock Text="{Binding User.Name}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}" />
+                                <TextBlock Text="Ver perfil"
+                                           FontSize="10"
+                                           Foreground="{StaticResource PrimaryLightBrush}" />
                             </StackPanel>
                         </StackPanel>
                     </Button>
 
                     <Button Command="{Binding LogoutCommand}"
-                          Content="Cerrar Sesión"
-                          Background="{StaticResource AccentBrush}"
-                          Foreground="{StaticResource TextPrimaryBrush}"
-                          BorderThickness="0"
-                          Padding="0,8"
-                          Style="{StaticResource LogoutButtonStyle}"
-                          Margin="0,10,0,0"
-                          FontSize="12"
-                          Cursor="Hand">
+                            Content="Cerrar Sesión"
+                            Background="{StaticResource AccentBrush}"
+                            Foreground="{StaticResource TextPrimaryBrush}"
+                            BorderThickness="0"
+                            Padding="0,8"
+                            Style="{StaticResource LogoutButtonStyle}"
+                            Margin="0,10,0,0"
+                            FontSize="12"
+                            Cursor="Hand">
                     </Button>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Contenido principal -->
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border Grid.Row="0" 
+            <Border Grid.Row="0"
                     Background="White"
                     BorderBrush="{StaticResource PrimaryLightBrush}"
                     BorderThickness="0,0,0,1"
-                    Padding="30,20">
+                    Padding="30,20"
+                    Visibility="{Binding IsRegistered, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Height="80"
+                    VerticalAlignment="Top">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <!-- barra de busqueda y titulo -->
-                    <StackPanel Grid.Column="0" 
-                              Orientation="Horizontal">
-                        <TextBlock Text="{Binding SelectedSection}" 
-                                 FontSize="24" 
-                                 FontWeight="Bold" 
-                                 Foreground="{StaticResource TextSecondaryBrush}"
-                                 VerticalAlignment="Center"
-                                 Margin="0,0,30,0"/>
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal">
+                        <TextBlock Text="{Binding SelectedSection}"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,30,0" />
 
                         <Border Background="{StaticResource BackgroundBrush}"
-                              BorderBrush="{StaticResource PrimaryLightBrush}"
-                              BorderThickness="1"
-                              CornerRadius="20"
-                              Padding="15,8"
-                              Width="300">
+                                BorderBrush="{StaticResource PrimaryLightBrush}"
+                                BorderThickness="1"
+                                CornerRadius="20"
+                                Padding="15,8"
+                                Width="300">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <TextBox Grid.Column="0"
-                                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                       BorderThickness="0"
-                                       Style="{StaticResource SearchBoxWithPlaceholderStyle}"
-                                       Background="Transparent"
-                                       FontSize="14"
-                                       VerticalAlignment="Center">
+                                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                         BorderThickness="0"
+                                         Style="{StaticResource SearchBoxWithPlaceholderStyle}"
+                                         Background="Transparent"
+                                         FontSize="14"
+                                         VerticalAlignment="Center">
                                 </TextBox>
 
                                 <Button Grid.Column="1"
-                                      Command="{Binding SearchCommand}"
-                                      Background="Transparent"
-                                      BorderThickness="0"
-                                      Content="🔍"
-                                      FontSize="14"
-                                      Cursor="Hand"/>
+                                        Command="{Binding SearchCommand}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Content="🔍"
+                                        FontSize="14"
+                                        Cursor="Hand" />
                             </Grid>
                         </Border>
                     </StackPanel>
 
                     <!-- Botones header -->
-                    <StackPanel Grid.Column="1" 
-                              Orientation="Horizontal">
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal">
                         <Button Command="{Binding CreateNewPostCommand}"
-                              Style="{StaticResource PrimaryButtonStyle}"
-                              Content="+ Nuevo"
-                              FontSize="14"
-                              Width="100"
-                              Margin="0,0,15,0"/>
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Content="+ Nuevo"
+                                FontSize="14"
+                                Width="100"
+                                Margin="0,0,15,0" />
 
                         <Button Command="{Binding ShowNotificationsCommand}"
-                              Background="Transparent"
-                              BorderThickness="0"
-                              Cursor="Hand"
-                              Margin="20,0,0,0">
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Margin="20,0,0,0">
                             <Button.Content>
                                 <Grid>
-                                    <TextBlock Text="🔔" 
-                                             FontSize="20" 
-                                             Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="🔔"
+                                               FontSize="20"
+                                               Foreground="{StaticResource TextSecondaryBrush}" />
                                     <Border Background="#E74C3C"
-                                          CornerRadius="8"
-                                          Width="16"
-                                          Height="16"
-                                          HorizontalAlignment="Right"
-                                          VerticalAlignment="Top"
-                                          Margin="0,-5,-5,0"
-                                          Visibility="{Binding NotificationCount, Converter={StaticResource ZeroToVisibilityConverter}}">
+                                            CornerRadius="8"
+                                            Width="16"
+                                            Height="16"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Margin="0,-5,-5,0"
+                                            Visibility="{Binding NotificationCount, Converter={StaticResource ZeroToVisibilityConverter}}">
                                         <TextBlock Text="{Binding NotificationCount}"
-                                                 FontSize="9"
-                                                 FontWeight="Bold"
-                                                 Foreground="White"
-                                                 HorizontalAlignment="Center"
-                                                 VerticalAlignment="Center"/>
+                                                   FontSize="9"
+                                                   FontWeight="Bold"
+                                                   Foreground="White"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
                                     </Border>
                                 </Grid>
                             </Button.Content>
@@ -212,12 +225,11 @@
             </Border>
 
             <!-- Contenido aca -->
-            <ScrollViewer Grid.Row="1" 
-                        VerticalScrollBarVisibility="Auto"
-                        Padding="30">
+            <Frame x:Name="PageFrame"
+                   Grid.Row="1"
+                   NavigationUIVisibility="Hidden" />
 
-            </ScrollViewer>
-            
+
         </Grid>
     </Grid>
 </Window>
