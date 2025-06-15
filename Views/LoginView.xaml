@@ -7,24 +7,20 @@
       xmlns:conv="clr-namespace:QuestHubClient.Converters"
       xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
       mc:Ignorable="d"
-      d:DesignHeight="450"
-      d:DesignWidth="800"
-        Title="{Binding Title}" 
-       
-        Height="600" 
-        Width="400"
-       
-        Background="Transparent">
-
+      Title="{Binding Title}"           
+      Background="Transparent">
    
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </Page.Resources>
 
     <Border Background="{StaticResource BackgroundBrush}"
-            CornerRadius="12"
-            BorderBrush="{StaticResource PrimaryLightBrush}"
-            BorderThickness="1">
+        CornerRadius="12"
+        BorderBrush="{StaticResource PrimaryLightBrush}"
+        BorderThickness="1"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+
         <Border.Effect>
             <DropShadowEffect BlurRadius="20" 
                             ShadowDepth="0" 

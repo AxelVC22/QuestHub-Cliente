@@ -37,6 +37,7 @@ namespace QuestHubClient.ViewModels
         {
             _navigationService = navigationService;
             Title = "QuestHub - Menu Principal";
+            IsRegistered = false;
         }
         public MainWindowViewModel(User user)
         {
@@ -74,9 +75,6 @@ namespace QuestHubClient.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
-                //var loginWindow = new Views.LoginView();
-                //loginWindow.Show();
-
                 Application.Current.Windows.OfType<Window>()
                     .Where(w => w.GetType().Name == "MainWindow")
                     .FirstOrDefault()?.Close();

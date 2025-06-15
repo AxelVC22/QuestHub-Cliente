@@ -73,10 +73,10 @@ namespace QuestHubClient.ViewModels
                 {
                     new NotificationWindow(message, 3).Show();
 
-                    var loginView = new LoginView();
-                    loginView.DataContext = new LoginViewModel(_authService);
-                    loginView.Show();
-                    Application.Current.Windows.OfType<CreateUserView>().FirstOrDefault()?.Close();
+                    //var loginView = new LoginView();
+                    //loginView.DataContext = new LoginViewModel(_authService);
+                    //loginView.Show();
+                    //Application.Current.Windows.OfType<CreateUserView>().FirstOrDefault()?.Close();
                 }
                 else
                 {

@@ -47,6 +47,7 @@ namespace QuestHubClient
                          NavigationService, AuthService);
                      return new Views.CreateUserView(viewModel);
                  }
+
                  //else if (viewModelType == typeof(HomeViewModel))
                  //{
 

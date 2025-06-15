@@ -40,15 +40,13 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
-
                 </Grid.RowDefinitions>
 
                 <!-- Logo y título -->
                 <StackPanel Grid.Row="0"
                             Orientation="Horizontal"
                             Margin="20,25,20,30"
-                            HorizontalAlignment="Center"
-                            >
+                            HorizontalAlignment="Center">
                     <Ellipse Width="40"
                              Height="40"
                              Margin="0,0,10,0">
@@ -68,7 +66,6 @@
                                Foreground="{StaticResource TextPrimaryBrush}"
                                VerticalAlignment="Center" />
                 </StackPanel>
-
 
                 <!-- Usuario y logout -->
                 <StackPanel Grid.Row="2"
@@ -119,7 +116,7 @@
         </Border>
 
         <!-- Contenido principal -->
-        <Grid Grid.Column="1" >
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -224,20 +221,12 @@
                 </Grid>
             </Border>
 
-            <!-- Contenido aca -->
-            <ScrollViewer Grid.Row="1"
-                          HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto">
-                <Grid HorizontalAlignment="Center"
-                      VerticalAlignment="Top"
-                      Margin="0,40"
-                      MaxWidth="1000">
-                    <!-- Ajusta el ancho deseado -->
-                    <Frame x:Name="PageFrame"
-                           NavigationUIVisibility="Hidden" />
-                </Grid>
-            </ScrollViewer>
-
+            <!-- Contenido - FRAME OCUPA TODO EL ESPACIO -->
+            <Frame x:Name="PageFrame"
+                   Grid.Row="1"
+                   NavigationUIVisibility="Hidden"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch" />
 
         </Grid>
     </Grid>

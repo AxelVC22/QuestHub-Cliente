@@ -58,11 +58,12 @@ namespace QuestHubClient.ViewModels
                     Properties.Settings.Default.JwtToken = token;
                     Properties.Settings.Default.Save();
 
-                    var mainWindow = new MainWindow();
-                    mainWindow.DataContext = new MainWindowViewModel(userModel);
-                    mainWindow.Show();
+                    //var mainWindow = new MainWindow();
+                    //mainWindow.DataContext = new MainWindowViewModel(userModel);
+                    //mainWindow.Show();
+                    _navigationService.NavigateTo<MainWindowViewModel>(userModel);
                     new NotificationWindow(message, 3).Show();
-                    Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
+                    //Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
                 }
                 else
                 {
