@@ -221,13 +221,10 @@
                 </Grid>
             </Border>
 
-            <!-- Contenido - FRAME OCUPA TODO EL ESPACIO -->
+            <!-- Contenido aca -->
             <Frame x:Name="PageFrame"
                    Grid.Row="1"
-                   NavigationUIVisibility="Hidden"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch" />
-
+                   NavigationUIVisibility="Hidden" />
         </Grid>
     </Grid>
 </Window>

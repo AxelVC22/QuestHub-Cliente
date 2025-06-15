@@ -6,6 +6,7 @@
       xmlns:local="clr-namespace:QuestHubClient.Views"
       xmlns:conv="clr-namespace:QuestHubClient.Converters"
       xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
+      d:DataContext="{d:DesignInstance Type=vm:LoginViewModel}"
       mc:Ignorable="d"
       Title="{Binding Title}"           
       Background="Transparent">
@@ -15,12 +16,10 @@
     </Page.Resources>
 
     <Border Background="{StaticResource BackgroundBrush}"
-        CornerRadius="12"
-        BorderBrush="{StaticResource PrimaryLightBrush}"
-        BorderThickness="1"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
-
+            CornerRadius="12"
+            BorderBrush="{StaticResource PrimaryLightBrush}"
+            BorderThickness="1"
+            Margin="20">
         <Border.Effect>
             <DropShadowEffect BlurRadius="20" 
                             ShadowDepth="0" 

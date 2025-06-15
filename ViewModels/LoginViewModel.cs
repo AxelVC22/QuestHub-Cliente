@@ -4,13 +4,14 @@ using QuestHubClient.Models;
 using QuestHubClient.Services;
 using QuestHubClient.Views;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
 
 namespace QuestHubClient.ViewModels
 {
     public partial class LoginViewModel : BaseViewModel
-    {   
+    {
         public LoginUser User { get; set; } = new LoginUser();
 
         //services
@@ -18,9 +19,6 @@ namespace QuestHubClient.ViewModels
         private readonly IAuthService _authService;
 
         private readonly INavigationService _navigationService;
-
-        [ObservableProperty]
-        private string _errorMessage = string.Empty;
 
         public LoginViewModel()
         {
@@ -41,6 +39,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
+
                 var context = new ValidationContext(User);
                 var results = new List<ValidationResult>();
                 bool isValid = Validator.TryValidateObject(User, context, results, true);
@@ -48,6 +47,8 @@ namespace QuestHubClient.ViewModels
                 if (!isValid)
                 {
                     ErrorMessage = results.First().ErrorMessage;
+                    Console.WriteLine($"Error: {ErrorMessage}");
+
                     return;
                 }
 
@@ -69,6 +70,8 @@ namespace QuestHubClient.ViewModels
                 {
                     ErrorMessage = message ?? "Credenciales incorrectas. Por favor, inténtalo de nuevo.";
                 }
+
+
             }
             catch (HttpRequestException ex)
             {
