@@ -37,7 +37,6 @@ namespace QuestHubClient.ViewModels
         {
             _navigationService = navigationService;
             Title = "QuestHub - Menu Principal";
-            IsRegistered = false;
         }
         public MainWindowViewModel(User user)
         {
@@ -49,6 +48,27 @@ namespace QuestHubClient.ViewModels
         private void Search()
         {
 
+        }
+
+
+        [RelayCommand]
+        private void SignIn()
+        {
+            _navigationService.NavigateTo<CreateUserViewModel>();
+        }
+
+
+        [RelayCommand]
+        private void Login()
+        {
+            _navigationService.NavigateTo<LoginViewModel>();
+
+        }
+
+        [RelayCommand]
+        private void GoHome()
+        {
+            _navigationService.NavigateTo<HomeViewModel>();
         }
 
         [RelayCommand]

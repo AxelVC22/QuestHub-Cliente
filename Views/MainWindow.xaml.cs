@@ -48,6 +48,27 @@ namespace QuestHubClient
                          NavigationService, AuthService);
                      return new Views.CreateUserView(viewModel);
                  }
+                 else if (viewModelType == typeof(HomeViewModel))
+                 {
+
+                     var viewModel = new HomeViewModel(
+                         NavigationService);
+                     return new Views.HomeView(viewModel);
+                 }
+                 else if (viewModelType == typeof(PostViewModel))
+                 {
+
+                     var viewModel = new PostViewModel(
+                         NavigationService);
+                     return new Views.PostView(viewModel);
+                 }
+                 else if (viewModelType == typeof(NewPostViewModel))
+                 {
+
+                     var viewModel = new NewPostViewModel(
+                         NavigationService);
+                     return new Views.NewPostView(viewModel);
+                 }
 
                  //else if (viewModelType == typeof(HomeViewModel))
                  //{
@@ -77,7 +98,7 @@ namespace QuestHubClient
             this.DataContext = mainWindowViewModel;
             App.MainViewModel = mainWindowViewModel;
 
-            NavigationService.NavigateTo<LoginViewModel>();
+            NavigationService.NavigateTo<HomeViewModel>();
 
            
         }

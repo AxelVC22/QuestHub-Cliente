@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="QuestHubClient.Views.Controls.PostCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:QuestHubClient.Views.Controls"
+             xmlns:viewmodels="clr-namespace:QuestHubClient.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Border Margin="10"
+            Padding="15"
+            Background="White"
+            BorderBrush="LightGray"
+            BorderThickness="1"
+            CornerRadius="10">
+        <StackPanel>
+            <TextBlock Text="{Binding Title}"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#333" />
+
+            <TextBlock Text="{Binding Author.Name}"
+                       FontSize="12"
+                       Foreground="Gray"
+                       Margin="0,2,0,10" />
+
+            <TextBlock Text="{Binding Content}"
+                       TextWrapping="Wrap"
+                       MaxHeight="100"
+                       Margin="0,0,0,10" />
+
+
+            <Border Background="LightGray"
+                    Padding="2"
+                    HorizontalAlignment="Left">
+                <TextBlock Text="{Binding Category.Name}"
+                           FontSize="11"
+                           Padding="2" />
+            </Border>
+
+            <DockPanel Margin="0,10,0,0">
+                <TextBlock Text="{Binding AnswersCount, StringFormat='Respuestas: {0}'}"
+                           FontSize="12"
+                           Foreground="DarkSlateGray"
+                           DockPanel.Dock="Left" />
+
+                <TextBlock Text="{Binding AverageRating}"
+                           FontSize="12"
+                           Foreground="Green"
+                           DockPanel.Dock="Right" />
+            </DockPanel>
+            <Button Content="Ver Detalles"
+                    Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SeeDetailsCommand}"
+                    CommandParameter="{Binding Id}" 
+                    HorizontalAlignment="Right"
+                    Width="200"
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    Cursor="" />
+        </StackPanel>
+    </Border>
+</UserControl>
