@@ -3,14 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
         xmlns:conv="clr-namespace:QuestHubClient.Converters"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      Title="{Binding Title}" 
-        Height="700" 
-        Width="900"
-      
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        Title="{Binding Title}" 
         Background="{StaticResource BackgroundBrush}">
-
-
 
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
@@ -18,11 +13,11 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- panel izquierdo -->
+        <!-- Panel izquierdo -->
         <Border Grid.Column="0" 
                 Background="{StaticResource PrimaryDarkBrush}">
             <Grid>
@@ -34,9 +29,9 @@
 
                 <!-- Logo -->
                 <StackPanel Grid.Row="0" 
-                          Margin="30,40,30,30"
+                          Margin="30,60,30,30"
                           HorizontalAlignment="Center">
-                    <Ellipse Width="60" Height="60" Margin="0,0,0,15">
+                    <Ellipse Width="80" Height="80" Margin="0,0,0,20">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="/Assets/Logo.jpg" Stretch="UniformToFill"/>
                         </Ellipse.Fill>
@@ -47,7 +42,7 @@
                         </Ellipse.Effect>
                     </Ellipse>
                     <TextBlock Text="QuestHub" 
-                             FontSize="24" 
+                             FontSize="32" 
                              FontWeight="Bold" 
                              Foreground="{StaticResource TextPrimaryBrush}"
                              HorizontalAlignment="Center"/>
@@ -55,89 +50,122 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Column="1" Margin="0,50,0,0">
-            <StackPanel MaxWidth="400">
+        <!-- Panel derecho - Formulario -->
+        <ScrollViewer Grid.Column="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="60,40,60,40">
+
+            <StackPanel HorizontalAlignment="Center" 
+                        MaxWidth="600"
+                        MinWidth="400">
+
                 <!-- Encabezado -->
-                <StackPanel Margin="0,0,0,40">
+                <StackPanel Margin="0,20,0,50">
                     <TextBlock Text="Crear Nueva Cuenta" 
-                             FontSize="28" 
+                             FontSize="36" 
                              FontWeight="Bold" 
                              Foreground="{StaticResource TextSecondaryBrush}"
-                             Margin="0,0,0,10"/>
+                             Margin="0,0,0,15"/>
                     <TextBlock Text="Complete los siguientes campos para crear su cuenta" 
-                             FontSize="14" 
+                             FontSize="16" 
                              Foreground="Gray"/>
                 </StackPanel>
 
-                <!-- Nombre -->
-                <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Nombre de Usuario *" Style="{StaticResource LabelStyle}"/>
-                    <TextBox Text="{Binding User.Name, UpdateSourceTrigger=PropertyChanged}"
-                               Style="{StaticResource ModernTextBoxStyle}"
-                               Height="45"/>
-                </StackPanel>
+                <!-- Formulario -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Email -->
-                <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Correo Electrónico *" Style="{StaticResource LabelStyle}"/>
-                    <TextBox Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
-                               Style="{StaticResource ModernTextBoxStyle}"
-                               Height="45"/>
-                </StackPanel>
-
-                <!-- Contraseña -->
-                <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Contraseña *" Style="{StaticResource LabelStyle}"/>
-                    <PasswordBox x:Name="PasswordBox"
-                                   Style="{StaticResource ModernPasswordBoxStyle}"
-                                   Height="45"
-                                   PasswordChanged="PasswordBox_PasswordChanged"/>
-                </StackPanel>
-
-                <!-- Rol -->
-                <StackPanel Margin="0,0,0,20" IsEnabled="False" Visibility="Collapsed">
-                    <TextBlock Text="Rol *" 
+                    <!-- Nombre -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                        <TextBlock Text="Nombre de Usuario *" 
                                  Style="{StaticResource LabelStyle}"
-                                 Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <ComboBox ItemsSource="{Binding Roles}"
-                                SelectedItem="{Binding SelectedRole}"
-                                Height="45"
-                                Margin="5"
-                                FontSize="14"
-                                Padding="12,8"
-                                Style="{DynamicResource {x:Type ComboBox}}"/>
-                </StackPanel>
+                                 Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding User.Name, UpdateSourceTrigger=PropertyChanged}"
+                               Style="{StaticResource ModernTextBoxStyle}"
+                               Height="50"
+                               FontSize="16"
+                               Padding="15,12"/>
+                    </StackPanel>
 
-                <!-- Mensaje de error -->
-                <TextBlock Text="{Binding ErrorMessage}" 
+                    <!-- Email -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,25">
+                        <TextBlock Text="Correo Electrónico *" 
+                                 Style="{StaticResource LabelStyle}"
+                                 Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
+                               Style="{StaticResource ModernTextBoxStyle}"
+                               Height="50"
+                               FontSize="16"
+                               Padding="15,12"/>
+                    </StackPanel>
+
+                    <!-- Contraseña -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,25">
+                        <TextBlock Text="Contraseña *" 
+                                 Style="{StaticResource LabelStyle}"
+                                 Margin="0,0,0,8"/>
+                        <PasswordBox x:Name="PasswordBox"
+                                   Style="{StaticResource ModernPasswordBoxStyle}"
+                                   Height="50"
+                                   FontSize="16"
+                                   Padding="15,12"
+                                   PasswordChanged="PasswordBox_PasswordChanged"/>
+                    </StackPanel>
+
+                    <!-- Rol (oculto) -->
+                    <StackPanel Grid.Row="3" Margin="0,0,0,25" IsEnabled="False" Visibility="Collapsed">
+                        <TextBlock Text="Rol *" 
+                                 Style="{StaticResource LabelStyle}"
+                                 Foreground="{StaticResource TextSecondaryBrush}"
+                                 Margin="0,0,0,8"/>
+                        <ComboBox ItemsSource="{Binding Roles}"
+                                SelectedItem="{Binding SelectedRole}"
+                                Height="50"
+                                FontSize="16"
+                                Padding="15,12"
+                                Style="{DynamicResource {x:Type ComboBox}}"/>
+                    </StackPanel>
+
+                    <!-- Mensaje de error -->
+                    <TextBlock Grid.Row="4"
+                             Text="{Binding ErrorMessage}" 
                              Foreground="Red"
-                             FontSize="12"
+                             FontSize="14"
                              TextWrapping="Wrap"
-                             Margin="5,10,0,0"
+                             Margin="0,0,0,20"
                              Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
 
-                <!-- Botones -->
-                <StackPanel Orientation="Horizontal" 
+                    <!-- Botones -->
+                    <StackPanel Grid.Row="5" 
+                              Orientation="Horizontal" 
                               HorizontalAlignment="Right"
-                              Margin="0,20,0,0" Width="237">
-                    <Button Command="{Binding CancelCommand}"
+                              Margin="0,30,0,0">
+                        <Button Command="{Binding CancelCommand}"
                               Style="{StaticResource SecondaryButtonStyle}"
                               Content="Cancelar"
                               FontSize="16"
-                              Margin="20,0,0,0"
-                              Width="100"
-                              Height="40"/>
+                              Width="120"
+                              Height="50"
+                              Margin="0,0,20,0"/>
 
-                    <Button Content="Crear Usuario"
+                        <Button Content="Crear Usuario"
                               Command="{Binding CreateUserCommand}"
                               Style="{StaticResource PrimaryButtonStyle}"
-                              FontSize="14"
-                              Height="40"
-                              Width="100"
-                              Margin="15,0,0,0"
-                              Padding="25,12"/>
-                </StackPanel>
+                              FontSize="16"
+                              Height="50"
+                              Width="150"
+                              Padding="20,12"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

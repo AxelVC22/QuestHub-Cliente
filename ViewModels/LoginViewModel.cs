@@ -12,7 +12,7 @@ namespace QuestHubClient.ViewModels
 {
     public partial class LoginViewModel : BaseViewModel
     {
-        public LoginUser User { get; set; } = new LoginUser();
+        public LoginUser User { get; set; }
 
         //services
 
@@ -25,11 +25,12 @@ namespace QuestHubClient.ViewModels
             Title = "QuestHub - Login";
             _authService = new AuthService(new HttpClient());
         }
-        public LoginViewModel(INavigationService navigationService,IAuthService authService)
+        public LoginViewModel(INavigationService navigationService,IAuthService authService, LoginUser user)
         {
             Title = "QuestHub - Login";
             _authService = authService;
             _navigationService = navigationService;
+            User = user;
         }
 
         [RelayCommand]
@@ -61,10 +62,11 @@ namespace QuestHubClient.ViewModels
                     //mainWindow.DataContext = new MainWindowViewModel(userModel);
                     //mainWindow.Show();
                     App.MainViewModel.IsRegistered = true;
-
+                    App.MainViewModel.User = userModel;
                     _navigationService.NavigateTo<HomeViewModel>();
                     new NotificationWindow(message, 3).Show();
                     //Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
+                    
                 }
                 else
                 {
@@ -86,7 +88,15 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Register()
         {
+            App.MainViewModel.LoginCheck = false;
             _navigationService.NavigateTo<CreateUserViewModel>();
+        }
+
+        [RelayCommand]
+        private void Back()
+        {
+            App.MainViewModel.IsRegistered = false;
+            _navigationService.GoBack();
         }
     }
 }

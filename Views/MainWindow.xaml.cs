@@ -1,4 +1,5 @@
-﻿using QuestHubClient.Services;
+﻿using QuestHubClient.Models;
+using QuestHubClient.Services;
 using QuestHubClient.ViewModels;
 using QuestHubClient.Views;
 using System.Net.Http;
@@ -22,9 +23,13 @@ namespace QuestHubClient
 
         public IAuthService AuthService { get; set; }
 
+        public User User { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+
+            User = new User();
 
             AuthService = new AuthService(new HttpClient());
 
@@ -33,10 +38,9 @@ namespace QuestHubClient
              (viewModelType, parameter) =>
              {
                  if (viewModelType == typeof(LoginViewModel))
-                 {
-
+                 {                     
                      var viewModel = new LoginViewModel(
-                        NavigationService, AuthService
+                        NavigationService, AuthService, new LoginUser()
                      );
 
                      return new Views.LoginView(viewModel);
@@ -69,29 +73,35 @@ namespace QuestHubClient
                          NavigationService);
                      return new Views.NewPostView(viewModel);
                  }
+                 else if (viewModelType == typeof(ProfileViewModel))
+                 {
+                     var viewModel = new ProfileViewModel(
+                         NavigationService);
+                     return new Views.ProfileView(viewModel);
+                 }
 
-                 //else if (viewModelType == typeof(HomeViewModel))
-                 //{
+                     //else if (viewModelType == typeof(HomeViewModel))
+                     //{
 
-                 //    var viewModel = new HomeViewModel(
-                 //        NavigationService);
-                 //    return new View.Pages.Home(viewModel);
-                 //}
-                 //else if (viewModelType == typeof(ProfileViewModel))
-                 //{
+                     //    var viewModel = new HomeViewModel(
+                     //        NavigationService);
+                     //    return new View.Pages.Home(viewModel);
+                     //}
+                     //else if (viewModelType == typeof(ProfileViewModel))
+                     //{
 
-                 //    var viewModel = new ProfileViewModel(
-                 //        NavigationService);
-                 //    return new View.Pages.Profile(viewModel);
-                 //}
-                 //else if (viewModelType == typeof(NewPostViewModel))
-                 //{
+                     //    var viewModel = new ProfileViewModel(
+                     //        NavigationService);
+                     //    return new View.Pages.Profile(viewModel);
+                     //}
+                     //else if (viewModelType == typeof(NewPostViewModel))
+                     //{
 
-                 //    var viewModel = new NewPostViewModel(
-                 //        NavigationService);
-                 //    return new View.Pages.NewPost(viewModel);
-                 //}
-                 throw new ArgumentException("ViewModel desconocido");
+                     //    var viewModel = new NewPostViewModel(
+                     //        NavigationService);
+                     //    return new View.Pages.NewPost(viewModel);
+                     //}
+                     throw new ArgumentException("ViewModel desconocido");
              });
 
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(NavigationService);
