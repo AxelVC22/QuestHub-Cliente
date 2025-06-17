@@ -19,6 +19,6 @@ namespace QuestHubClient.Models
 
         // Navigation properties para UI
         public User Author { get; set; }
-        public Category Category { get; set; }
+        public List<Category> Categories { get; set; }
     }
 }

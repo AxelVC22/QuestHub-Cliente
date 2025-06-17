@@ -1,141 +1,150 @@
 ﻿<Page x:Class="QuestHubClient.Views.CreateUserView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
-        xmlns:conv="clr-namespace:QuestHubClient.Converters"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
+      xmlns:conv="clr-namespace:QuestHubClient.Converters"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      Title="{Binding Title}" 
-        Height="700" 
-        Width="900"
-      
-        Background="{StaticResource BackgroundBrush}">
+      Title="{Binding Title}"
+      Height="700"
+      Width="900"
+      Background="{StaticResource BackgroundBrush}">
 
 
 
     <Page.Resources>
-        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
 
         <!-- panel izquierdo -->
-        <Border Grid.Column="0" 
+        <Border Grid.Column="0"
                 Background="{StaticResource PrimaryDarkBrush}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Logo -->
-                <StackPanel Grid.Row="0" 
-                          Margin="30,40,30,30"
-                          HorizontalAlignment="Center">
-                    <Ellipse Width="60" Height="60" Margin="0,0,0,15">
+                <StackPanel Grid.Row="0"
+                            Margin="30,40,30,30"
+                            HorizontalAlignment="Center">
+                    <Ellipse Width="60"
+                             Height="60"
+                             Margin="0,0,0,15">
                         <Ellipse.Fill>
-                            <ImageBrush ImageSource="/Assets/Logo.jpg" Stretch="UniformToFill"/>
+                            <ImageBrush ImageSource="/Assets/Logo.jpg"
+                                        Stretch="UniformToFill" />
                         </Ellipse.Fill>
                         <Ellipse.Effect>
-                            <DropShadowEffect BlurRadius="15" 
-                                              ShadowDepth="3" 
-                                              Color="#33000000"/>
+                            <DropShadowEffect BlurRadius="15"
+                                              ShadowDepth="3"
+                                              Color="#33000000" />
                         </Ellipse.Effect>
                     </Ellipse>
-                    <TextBlock Text="QuestHub" 
-                             FontSize="24" 
-                             FontWeight="Bold" 
-                             Foreground="{StaticResource TextPrimaryBrush}"
-                             HorizontalAlignment="Center"/>
+                    <TextBlock Text="QuestHub"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <StackPanel Grid.Column="1" Margin="0,50,0,0">
+        <StackPanel Grid.Column="1"
+                    Margin="0,50,0,0">
             <StackPanel MaxWidth="400">
                 <!-- Encabezado -->
                 <StackPanel Margin="0,0,0,40">
-                    <TextBlock Text="Crear Nueva Cuenta" 
-                             FontSize="28" 
-                             FontWeight="Bold" 
-                             Foreground="{StaticResource TextSecondaryBrush}"
-                             Margin="0,0,0,10"/>
-                    <TextBlock Text="Complete los siguientes campos para crear su cuenta" 
-                             FontSize="14" 
-                             Foreground="Gray"/>
+                    <TextBlock Text="Crear Nueva Cuenta"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,10" />
+                    <TextBlock Text="Complete los siguientes campos para crear su cuenta"
+                               FontSize="14"
+                               Foreground="Gray" />
                 </StackPanel>
 
                 <!-- Nombre -->
                 <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Nombre de Usuario *" Style="{StaticResource LabelStyle}"/>
+                    <TextBlock Text="Nombre de Usuario *"
+                               Style="{StaticResource LabelStyle}" />
                     <TextBox Text="{Binding User.Name, UpdateSourceTrigger=PropertyChanged}"
-                               Style="{StaticResource ModernTextBoxStyle}"
-                               Height="45"/>
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Height="45" />
                 </StackPanel>
 
                 <!-- Email -->
                 <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Correo Electrónico *" Style="{StaticResource LabelStyle}"/>
+                    <TextBlock Text="Correo Electrónico *"
+                               Style="{StaticResource LabelStyle}" />
                     <TextBox Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
-                               Style="{StaticResource ModernTextBoxStyle}"
-                               Height="45"/>
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Height="45" />
                 </StackPanel>
 
                 <!-- Contraseña -->
                 <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Contraseña *" Style="{StaticResource LabelStyle}"/>
+                    <TextBlock Text="Contraseña *"
+                               Style="{StaticResource LabelStyle}" />
                     <PasswordBox x:Name="PasswordBox"
-                                   Style="{StaticResource ModernPasswordBoxStyle}"
-                                   Height="45"
-                                   PasswordChanged="PasswordBox_PasswordChanged"/>
+                                 Style="{StaticResource ModernPasswordBoxStyle}"
+                                 Height="45"
+                                 PasswordChanged="PasswordBox_PasswordChanged" />
                 </StackPanel>
 
                 <!-- Rol -->
-                <StackPanel Margin="0,0,0,20" IsEnabled="False" Visibility="Collapsed">
-                    <TextBlock Text="Rol *" 
-                                 Style="{StaticResource LabelStyle}"
-                                 Foreground="{StaticResource TextSecondaryBrush}"/>
+                <StackPanel Margin="0,0,0,20"
+                            IsEnabled="False"
+                            Visibility="Collapsed">
+                    <TextBlock Text="Rol *"
+                               Style="{StaticResource LabelStyle}"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
                     <ComboBox ItemsSource="{Binding Roles}"
-                                SelectedItem="{Binding SelectedRole}"
-                                Height="45"
-                                Margin="5"
-                                FontSize="14"
-                                Padding="12,8"
-                                Style="{DynamicResource {x:Type ComboBox}}"/>
+                              SelectedItem="{Binding SelectedRole}"
+                              Height="45"
+                              Margin="5"
+                              FontSize="14"
+                              Padding="12,8"
+                              Style="{DynamicResource {x:Type ComboBox}}" />
                 </StackPanel>
 
                 <!-- Mensaje de error -->
-                <TextBlock Text="{Binding ErrorMessage}" 
-                             Foreground="Red"
-                             FontSize="12"
-                             TextWrapping="Wrap"
-                             Margin="5,10,0,0"
-                             Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="Red"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Margin="5,10,0,0"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
 
                 <!-- Botones -->
-                <StackPanel Orientation="Horizontal" 
-                              HorizontalAlignment="Right"
-                              Margin="0,20,0,0" Width="237">
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,20,0,0"
+                            Width="237">
                     <Button Command="{Binding CancelCommand}"
-                              Style="{StaticResource SecondaryButtonStyle}"
-                              Content="Cancelar"
-                              FontSize="16"
-                              Margin="20,0,0,0"
-                              Width="100"
-                              Height="40"/>
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Content="Cancelar"
+                            FontSize="16"
+                            Margin="20,0,0,0"
+                            Width="100"
+                            Height="40" />
 
                     <Button Content="Crear Usuario"
-                              Command="{Binding CreateUserCommand}"
-                              Style="{StaticResource PrimaryButtonStyle}"
-                              FontSize="14"
-                              Height="40"
-                              Width="100"
-                              Margin="15,0,0,0"
-                              Padding="25,12"/>
+                            Command="{Binding CreateUserCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            FontSize="14"
+                            Height="40"
+                            Width="100"
+                            Margin="15,0,0,0"
+                            Padding="25,12" />
                 </StackPanel>
             </StackPanel>
         </StackPanel>

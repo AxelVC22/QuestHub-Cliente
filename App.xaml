@@ -220,5 +220,7 @@
             <Setter Property="Background" Value="#F8F9FA"/>
             <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
         </Style>
+
+      
     </Application.Resources>
 </Application>

@@ -22,11 +22,15 @@ namespace QuestHubClient
 
         public IAuthService AuthService { get; set; }
 
+        public IPostsService PostsService { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
 
             AuthService = new AuthService(new HttpClient());
+
+            PostsService = new PostsService(new HttpClient());
 
             NavigationService = new FrameNavigationService(
              PageFrame,
@@ -52,7 +56,7 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService);
+                         NavigationService, PostsService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))
