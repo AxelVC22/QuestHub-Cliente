@@ -40,11 +40,10 @@ namespace QuestHubClient.ViewModels
 
             _postsService = postsService;
 
-
-            LoadPosts(Page,Limit);
+            LoadPostsAsync(Page,Limit);
         }
 
-        private async Task LoadPosts(int pageNumber, int limit)
+        private async Task LoadPostsAsync(int pageNumber, int limit)
         {
             try
             {
@@ -112,7 +111,7 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         public async Task SeeMoreAsync()
         {
-            await LoadPosts(Page, Limit);
+            await LoadPostsAsync(Page, Limit);
         }
     }
 }

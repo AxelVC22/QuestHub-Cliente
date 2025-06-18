@@ -13,7 +13,7 @@ namespace QuestHubClient.Services
     {
         Task<(List<Category>, Page page, string message)> GetCategoriesAsync(int page, int limit);
     }
-    public class CategoriesService
+    public class CategoriesService : ICategoriesService
     {
         private readonly HttpClient _httpClient;
 

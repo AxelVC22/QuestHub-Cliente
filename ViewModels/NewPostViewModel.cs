@@ -6,19 +6,28 @@ using QuestHubClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace QuestHubClient.ViewModels
 {
     public partial class NewPostViewModel : BaseViewModel
     {
 
+        public int Page { get; set; } = 1;
+
+        public int Limit { get; set; } = 2;
         public Post Post { get; set; } = new Post();
 
         private INavigationService _navigationService;
 
+        private ICategoriesService _categoriesService;
+
+        private IPostsService _postsService;
         [ObservableProperty]
         private ObservableCollection<Category> categories = new();
 
@@ -29,18 +38,53 @@ namespace QuestHubClient.ViewModels
         }
 
 
-        public NewPostViewModel(INavigationService navigationService)
+        public NewPostViewModel(INavigationService navigationService, ICategoriesService categoriesService, IPostsService postsService)
         {
             _navigationService = navigationService;
 
-            Categories = new ObservableCollection<Category>
-        {
-            new Category { Id = "1", Name = "Programación" },
-            new Category { Id = "2", Name = "Redes" },
-            new Category { Id = "3", Name = "Seguridad" },
-            new Category { Id = "4", Name = "Base de Datos" }
-        };
+            _categoriesService = categoriesService;
 
+            LoadCategoriesAsync(1, 1);
+            _postsService = postsService;
+        }
+
+
+        private async Task LoadCategoriesAsync(int pageNumber, int limit)
+        {
+            try
+            {
+                ErrorMessage = string.Empty;
+
+                var (categories, page, message) = await _categoriesService.GetCategoriesAsync(pageNumber, limit);
+
+                if (!string.IsNullOrEmpty(message))
+                {
+                    new NotificationWindow(message, 3).Show();
+                }
+
+                if (categories != null && categories.Any())
+                {
+                    Page = Page + 1;
+
+                    foreach (var category in categories)
+                    {
+                        Categories.Add(category);
+                    }
+                }
+                else
+                {
+                    new NotificationWindow("No se encontraron más categorias", 3).Show();
+                }
+            }
+
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
         }
 
         [RelayCommand]
@@ -52,6 +96,52 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Submit()
         {
+            Post.Categories = SelectedCategories.ToList();
+            Post.Author = App.MainViewModel.User;
+
+            if (Post.Categories.Count == 0)
+            {
+                new NotificationWindow("Debe seleccionar al menos una categoría", 3).Show();
+                return;
+            }
+
+            try
+            {
+                ErrorMessage = string.Empty;
+
+                var context = new ValidationContext(Post);
+
+                var results = new List<ValidationResult>();
+                bool isValid = Validator.TryValidateObject(Post, context, results, true);
+                if (!isValid)
+                {
+                    ErrorMessage = results.First().ErrorMessage;
+                    return;
+                }
+
+                var (createdPost, message) = _postsService.CreatePostAsync(Post).Result;
+
+                if (createdPost != null)
+                {
+                    new NotificationWindow("Publicación creada con éxito", 3).Show();
+                    _navigationService.GoBack();
+                }
+                else
+                {
+                    new NotificationWindow(message ?? "Error al crear la publicación", 3).Show();
+
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+
+
 
         }
         [RelayCommand]
@@ -69,8 +159,6 @@ namespace QuestHubClient.ViewModels
 
             if (category != null)
                 category.IsSelected = !category.IsSelected;
-
-            new NotificationWindow($"Categoría {category.Name} {(category.IsSelected ? "seleccionada" : "deseleccionada")}", 2).Show();
         }
 
     }

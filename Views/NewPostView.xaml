@@ -31,61 +31,7 @@
                            FontSize="14"
                            Foreground="Gray" />
             </StackPanel>
-            <!--categorias seleccionadas-->
-            <ItemsControl ItemsSource="{Binding SelectedCategories}"
-                          Margin="2">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Content="{Binding Name}"
-                                Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                CommandParameter="{Binding}"
-                                Margin="5"
-                                Padding="4"
-                                Background="{Binding IsSelected, Converter={StaticResource CategoryToBrushConverter}}"
-                                BorderBrush="Gray"
-                                BorderThickness="1"
-                                FontSize="12"
-                                Cursor="Hand"
-                                Height="24"
-                                MinWidth="90"
-                                Style="{StaticResource SecondaryButtonStyle}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!--Categorias general -->
-            <ItemsControl ItemsSource="{Binding Categories}"
-                          Margin="2">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Content="{Binding Name}"
-                                Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                CommandParameter="{Binding}"
-                                Margin="5"
-                                Background="{Binding IsSelected, Converter={StaticResource CategoryToBrushConverter}}"
-                                BorderBrush="Gray"
-                                BorderThickness="1"
-                                FontSize="12"
-                                Cursor="Hand"
-                                Padding="25,12"
-                                Height="24"
-                                MinWidth="90"
-                                Style="{StaticResource SecondaryButtonStyle}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
 
 
             <!-- Título -->
@@ -104,6 +50,72 @@
                 <TextBox Text="{Binding Post.Content, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource ModernTextBoxStyle}"
                          Height="80" />
+            </StackPanel>
+
+
+            <!--Categorias-->
+            <StackPanel>
+                <TextBlock Text="Categorías *"
+                           Style="{StaticResource LabelStyle}" />
+
+                <!-- Categorias seleccionadas-->
+                <ItemsControl ItemsSource="{Binding SelectedCategories}"
+                              Margin="2">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Name}"
+                                    Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="2, 0"
+                                    Padding="4"
+                                    FontSize="14"
+                                    Height="24"
+                                    MinWidth="90"
+                                    Style="{StaticResource CategoryButtonStyle}" 
+                                    ToolTip="{Binding Id}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Text="Selecciona algunas categorías para que sea fácil de consultar"
+                           FontSize="13"
+                           Margin="0, 10"
+                           Foreground="Gray" />
+
+                <!--Categorias general -->
+                <ItemsControl ItemsSource="{Binding Categories}"
+                              Margin="2">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Name}"
+                                    Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="2,0"
+                                    BorderThickness="1"
+                                    FontSize="14"
+                                    Height="24"
+                                    MinWidth="90"
+                                    Style="{StaticResource CategoryButtonStyle}"
+                                    ToolTip="{Binding Id}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+
+
+
             </StackPanel>
 
 

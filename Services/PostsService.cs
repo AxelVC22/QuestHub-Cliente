@@ -12,7 +12,9 @@ namespace QuestHubClient.Services
 {
     public interface IPostsService
     {
-        Task<(List<Post>, Page page, string message )> GetPostsByCategoryAsync(int page, int limit);
+        Task<(List<Post>, Page page, string message)> GetPostsByCategoryAsync(int page, int limit);
+
+        Task<(Post post, string message)> CreatePostAsync(Post post);
     }
 
     public class PostsService : IPostsService
@@ -71,18 +73,103 @@ namespace QuestHubClient.Services
                 AverageRating = postDto.AverageRating,
                 Author = new User
                 {
-                    Id = postDto.UserId,
+                    Id = postDto.Author?.Id,
+                   Name = postDto.Author?.Name
                 },
                 Categories = postDto.Categories.Select(category => new Category
                 {
-                    Id = category.Id,
-                    Name = category.Name
+                    Id = category?.Id,
+                    Name = category?.Name
                 }).ToList(),
             }).ToList();
         }
 
+        private Post ResponseToPost(PostsResponseDto postResponse)
+        {
+            return new Post
+            {
+                Id = postResponse.Id,
+                Title = postResponse.Title,
+                Content = postResponse.Content,
+                CategoryId = postResponse.CategoryId,
+                UserId = postResponse.UserId,
+                CreatedAt = postResponse.CreatedAt,
+                AnswersCount = postResponse.AnswersCount,
+                AverageRating = postResponse.AverageRating,
+                Categories = postResponse.Categories.Select(c => new Category
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                }).ToList(),
+            };
+        }
+
+        public async Task<(Post post, string message)> CreatePostAsync(Post post)
+        {
+            try
+            {
+                var registerRequest = PostToPostRequestDto(post);
+
+                var jsonContent = JsonSerializer.Serialize(registerRequest);
+
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                var response = _httpClient.PostAsync(_baseUrl, httpContent).Result;
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var postResponse = JsonSerializer.Deserialize<PostsResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    var createdPost = ResponseToPost(postResponse);
+
+                    return (createdPost, postResponse.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
+        }
 
 
+        private PostRequestDto PostToPostRequestDto(Post post)
+        {
+            return new PostRequestDto
+            {
+                Title = post.Title,
+                Content = post.Content,
+                CategoryId = post.CategoryId,
+                UserId = post.UserId,
+                Categories = post.Categories.Select(c =>
 
+                      c.Id
+                ).ToList(),
+                Author
+                    = post.Author.Id,
+
+            };
+        }
     }
 }
