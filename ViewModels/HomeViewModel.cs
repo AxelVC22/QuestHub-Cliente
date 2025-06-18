@@ -106,10 +106,7 @@ namespace QuestHubClient.ViewModels
             {
                 _navigationService.NavigateTo<PostViewModel>();
             }
-            else
-            {
-                _navigationService.NavigateTo<LoginViewModel>();
-            }
+           
         }
 
         [RelayCommand]

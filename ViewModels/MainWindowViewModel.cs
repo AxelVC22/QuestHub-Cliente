@@ -19,6 +19,8 @@ namespace QuestHubClient.ViewModels
 
         public bool _isRegistered;
 
+        public bool _loginCheck = true;
+
         [ObservableProperty]
         private string _selectedSection = "Dashboard";
 
@@ -54,6 +56,7 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void SignIn()
         {
+            App.MainViewModel.LoginCheck = false;
             _navigationService.NavigateTo<CreateUserViewModel>();
         }
 
@@ -61,8 +64,8 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Login()
         {
+            App.MainViewModel.LoginCheck = false;
             _navigationService.NavigateTo<LoginViewModel>();
-
         }
 
         [RelayCommand]
@@ -80,9 +83,7 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void ShowProfile()
         {
-            var profileView = new ProfileView();
-            profileView.DataContext = new ProfileViewModel(User);
-            profileView.ShowDialog();
+            _navigationService.NavigateTo<ProfileViewModel>();
         }
 
         [RelayCommand]
@@ -117,6 +118,18 @@ namespace QuestHubClient.ViewModels
                 {
                     _isRegistered = value;
                     OnPropertyChanged(nameof(IsRegistered));
+                }
+            }
+        }
+        public bool LoginCheck
+        {
+            get => _loginCheck;
+            set
+            {
+                if (_loginCheck != value)
+                {
+                    _loginCheck = value;
+                    OnPropertyChanged(nameof(LoginCheck));
                 }
             }
         }

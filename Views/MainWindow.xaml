@@ -132,7 +132,7 @@
                     BorderBrush="{StaticResource PrimaryLightBrush}"
                     BorderThickness="0,0,0,1"
                     Padding="30,20"
-                 
+                    Visibility="{Binding LoginCheck, Converter={StaticResource BoolToVisibilityConverter}}"
                     Height="80"
                     VerticalAlignment="Top">
                 <Grid>

@@ -1,6 +1,7 @@
-﻿using QuestHubClient.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using QuestHubClient.Models;
+using QuestHubClient.Services;
 
 namespace QuestHubClient.ViewModels
 {
@@ -11,11 +12,17 @@ namespace QuestHubClient.ViewModels
         [ObservableProperty]
         private bool isEditing = false;
 
+        private readonly INavigationService _navigationService;
+
         public bool IsNotEditing => !IsEditing;
 
         public ProfileViewModel()
         {
 
+        }
+        public ProfileViewModel(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
         }
 
         public ProfileViewModel(User user)

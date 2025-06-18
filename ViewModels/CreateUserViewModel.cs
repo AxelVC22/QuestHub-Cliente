@@ -40,7 +40,6 @@ namespace QuestHubClient.ViewModels
 
         public CreateUserViewModel(INavigationService navigationService, IAuthService authService)
         {
-            Title = "QuestHub - Crear Usuario";
             _authService = authService;
             _navigationService = navigationService;
         }
@@ -50,6 +49,7 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Cancel()
         {
+            App.MainViewModel.IsRegistered = false;
             _navigationService.GoBack();
         }
 
