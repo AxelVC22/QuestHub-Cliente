@@ -84,7 +84,7 @@ namespace QuestHubClient.Services
             }).ToList();
         }
 
-        private Post ResponseToPost(PostsResponseDto postResponse)
+        private Post ResponseToPost(PostResponseDto postResponse)
         {
             return new Post
             {
@@ -98,8 +98,7 @@ namespace QuestHubClient.Services
                 AverageRating = postResponse.AverageRating,
                 Categories = postResponse.Categories.Select(c => new Category
                 {
-                    Id = c.Id,
-                    Name = c.Name
+                    Id = c,
                 }).ToList(),
             };
         }
@@ -120,7 +119,7 @@ namespace QuestHubClient.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var postResponse = JsonSerializer.Deserialize<PostsResponseDto>(responseContent, new JsonSerializerOptions
+                    var postResponse = JsonSerializer.Deserialize<PostResponseDto>(responseContent, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
