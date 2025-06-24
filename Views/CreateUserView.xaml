@@ -8,7 +8,7 @@
         Background="{StaticResource BackgroundBrush}">
 
     <Page.Resources>
-        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
     </Page.Resources>
 
     <Grid>
@@ -22,9 +22,9 @@
                 Background="{StaticResource PrimaryDarkBrush}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Logo -->
@@ -33,12 +33,13 @@
                           HorizontalAlignment="Center">
                     <Ellipse Width="80" Height="80" Margin="0,0,0,20">
                         <Ellipse.Fill>
-                            <ImageBrush ImageSource="/Assets/Logo.jpg" Stretch="UniformToFill"/>
+                            <ImageBrush ImageSource="/Assets/Logo.jpg"
+                                        Stretch="UniformToFill" />
                         </Ellipse.Fill>
                         <Ellipse.Effect>
-                            <DropShadowEffect BlurRadius="15" 
-                                              ShadowDepth="3" 
-                                              Color="#33000000"/>
+                            <DropShadowEffect BlurRadius="15"
+                                              ShadowDepth="3"
+                                              Color="#33000000" />
                         </Ellipse.Effect>
                     </Ellipse>
                     <TextBlock Text="QuestHub" 

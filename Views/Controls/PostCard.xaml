@@ -9,13 +9,14 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <Border Margin="10"
+    <Border Margin="10,4"
             Padding="15"
             Background="White"
             BorderBrush="LightGray"
             BorderThickness="1"
             CornerRadius="10">
         <StackPanel>
+            
             <TextBlock Text="{Binding Title}"
                        FontSize="20"
                        FontWeight="Bold"
@@ -32,13 +33,21 @@
                        Margin="0,0,0,10" />
 
 
-            <Border Background="LightGray"
-                    Padding="2"
-                    HorizontalAlignment="Left">
-                <TextBlock Text="{Binding Category.Name}"
-                           FontSize="11"
-                           Padding="2" />
-            </Border>
+            <WrapPanel>
+                <ItemsControl ItemsSource="{Binding Categories}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#DDD"
+                                    Margin="2"
+                                    Padding="4"
+                                    CornerRadius="4">
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="11" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </WrapPanel>
 
             <DockPanel Margin="0,10,0,0">
                 <TextBlock Text="{Binding AnswersCount, StringFormat='Respuestas: {0}'}"
@@ -51,11 +60,11 @@
                            Foreground="Green"
                            DockPanel.Dock="Right" />
             </DockPanel>
-            <Button Content="Ver Detalles"
+            <Button Content="Ver más"
                     Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SeeDetailsCommand}"
                     CommandParameter="{Binding Id}" 
                     HorizontalAlignment="Right"
-                    Width="200"
+                    Width="100"
                     Style="{StaticResource SecondaryButtonStyle}"
                     Cursor="" />
         </StackPanel>

@@ -26,6 +26,10 @@ namespace QuestHubClient
         HttpClient HttpClient { get; set; }
         public User User { get; set; }
 
+        public IPostsService PostsService { get; set; }
+
+        public ICategoriesService CategoriesService { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -35,6 +39,10 @@ namespace QuestHubClient
 
             AuthService = new AuthService(HttpClient);
             UserService = new UserService(HttpClient);
+
+            PostsService = new PostsService(new HttpClient());
+
+            CategoriesService = new CategoriesService(new HttpClient());
 
             NavigationService = new FrameNavigationService(
              PageFrame,
@@ -59,7 +67,7 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService);
+                         NavigationService, PostsService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))
@@ -73,7 +81,7 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new NewPostViewModel(
-                         NavigationService);
+                         NavigationService, CategoriesService, PostsService);
                      return new Views.NewPostView(viewModel);
                  }
                  else if (viewModelType == typeof(ProfileViewModel))
