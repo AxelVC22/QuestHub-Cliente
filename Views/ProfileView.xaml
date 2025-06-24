@@ -30,20 +30,49 @@
                 <StackPanel HorizontalAlignment="Center" Margin="0,0,0,30">
                     <Ellipse Style="{StaticResource AvatarStyle}">
                         <Ellipse.Fill>
-                            <ImageBrush ImageSource="{Binding User.ProfilePicture, FallbackValue='/Assets/DefaultAvatar.png'}" 
+                            <ImageBrush ImageSource="{Binding ProfileImageSource}" 
                                         Stretch="UniformToFill"/>
                         </Ellipse.Fill>
                     </Ellipse>
 
-                    <Button Content="Cambiar Foto"
-                            Command="{Binding ChangeAvatarCommand}"
-                            Style="{StaticResource SecondaryButtonStyle}"
-                            Foreground="{StaticResource TextPrimaryBrush}"
-                            BorderBrush="{StaticResource PrimaryLightBrush}"
-                            FontSize="12"
-                            Margin="0,15,0,0"
-                            Height="35"
-                            Width="120"/>
+                    <!-- Botones para cambiar avatar -->
+                    <StackPanel>
+                        <!-- Botón Cambiar Foto (cuando no está cambiando avatar) -->
+                        <Button Content="Cambiar Foto"
+                                Command="{Binding ChangeAvatarCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Foreground="{StaticResource TextPrimaryBrush}"
+                                BorderBrush="{StaticResource PrimaryLightBrush}"
+                                FontSize="12"
+                                Margin="0,15,0,0"
+                                Height="35"
+                                Width="120"
+                                Visibility="{Binding IsNotChangingAvatar, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- Botones cuando está cambiando avatar -->
+                        <StackPanel Orientation="Horizontal" 
+                                    HorizontalAlignment="Center"
+                                    Margin="0,15,0,0"
+                                    Visibility="{Binding IsChangingAvatar, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Button Content="Guardar"
+                                    Command="{Binding SaveAvatarCommand}"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    FontSize="11"
+                                    Height="35"
+                                    Width="55"
+                                    Margin="0,0,5,0"/>
+
+                            <Button Content="Cancelar"
+                                    Command="{Binding CancelAvatarChangeCommand}"
+                                    Style="{StaticResource SecondaryButtonStyle}"
+                                    Foreground="{StaticResource TextPrimaryBrush}"
+                                    BorderBrush="{StaticResource PrimaryLightBrush}"
+                                    FontSize="11"
+                                    Height="35"
+                                    Width="60"
+                                    Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel>
@@ -125,12 +154,13 @@
                 </StackPanel>
 
                 <!-- Mensaje de error -->
-                <TextBlock Text="{Binding StatusMessage}" 
-                           Foreground="{Binding StatusMessageColor}"
-                           FontSize="12"
-                           TextWrapping="Wrap"
-                           Margin="5,10,0,0"
-                           Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+                <TextBlock Grid.Row="2"
+                             Text="{Binding ErrorMessage}" 
+                             Foreground="Red"
+                             FontSize="14"
+                             TextWrapping="Wrap"
+                             Margin="0,0,0,20"
+                             Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
 
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Right"

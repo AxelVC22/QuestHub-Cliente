@@ -22,7 +22,8 @@ namespace QuestHubClient
         public INavigationService NavigationService { get; set; }
 
         public IAuthService AuthService { get; set; }
-
+        public IUserService UserService { get; set; }
+        HttpClient HttpClient { get; set; }
         public User User { get; set; }
 
         public MainWindow()
@@ -30,8 +31,10 @@ namespace QuestHubClient
             InitializeComponent();
 
             User = new User();
+            HttpClient = new HttpClient();
 
-            AuthService = new AuthService(new HttpClient());
+            AuthService = new AuthService(HttpClient);
+            UserService = new UserService(HttpClient);
 
             NavigationService = new FrameNavigationService(
              PageFrame,
@@ -75,8 +78,7 @@ namespace QuestHubClient
                  }
                  else if (viewModelType == typeof(ProfileViewModel))
                  {
-                     var viewModel = new ProfileViewModel(
-                         NavigationService);
+                     var viewModel = new ProfileViewModel(NavigationService, UserService);
                      return new Views.ProfileView(viewModel);
                  }
 

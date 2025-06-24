@@ -14,8 +14,6 @@ namespace QuestHubClient.ViewModels
     {
         public LoginUser User { get; set; }
 
-        //services
-
         private readonly IAuthService _authService;
 
         private readonly INavigationService _navigationService;
@@ -57,16 +55,10 @@ namespace QuestHubClient.ViewModels
                 {
                     Properties.Settings.Default.JwtToken = token;
                     Properties.Settings.Default.Save();
-
-                    //var mainWindow = new MainWindow();
-                    //mainWindow.DataContext = new MainWindowViewModel(userModel);
-                    //mainWindow.Show();
                     App.MainViewModel.IsRegistered = true;
                     App.MainViewModel.User = userModel;
                     _navigationService.NavigateTo<HomeViewModel>();
                     new NotificationWindow(message, 3).Show();
-                    //Application.Current.Windows.OfType<LoginView>().FirstOrDefault()?.Close();
-                    
                 }
                 else
                 {

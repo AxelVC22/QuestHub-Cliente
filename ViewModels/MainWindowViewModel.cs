@@ -10,9 +10,6 @@ namespace QuestHubClient.ViewModels
 {
     public partial class MainWindowViewModel : BaseViewModel
     {
-
-        //services
-
         private INavigationService _navigationService;
 
         public User User { get; set; }
@@ -38,11 +35,6 @@ namespace QuestHubClient.ViewModels
         public MainWindowViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            Title = "QuestHub - Menu Principal";
-        }
-        public MainWindowViewModel(User user)
-        {
-            User = user;
             Title = "QuestHub - Menu Principal";
         }
 
@@ -96,9 +88,14 @@ namespace QuestHubClient.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
-                Application.Current.Windows.OfType<Window>()
-                    .Where(w => w.GetType().Name == "MainWindow")
-                    .FirstOrDefault()?.Close();
+                User = new User();
+                IsRegistered = false;
+                LoginCheck = true;
+
+                Properties.Settings.Default.JwtToken = string.Empty;
+                Properties.Settings.Default.Save();
+
+                _navigationService.NavigateTo<HomeViewModel>();
             }
         }
 
@@ -132,6 +129,13 @@ namespace QuestHubClient.ViewModels
                     OnPropertyChanged(nameof(LoginCheck));
                 }
             }
+        }
+
+        public void UpdateUserInfo(User loggedInUser)
+        {
+            User = loggedInUser;
+            IsRegistered = true;
+            LoginCheck = true;
         }
     }
 }
