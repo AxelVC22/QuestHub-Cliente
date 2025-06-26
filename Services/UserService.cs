@@ -1,12 +1,14 @@
 ﻿using QuestHubClient.Dtos;
 using QuestHubClient.Models;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace QuestHubClient.Services
@@ -14,6 +16,7 @@ namespace QuestHubClient.Services
     public interface IUserService
     {
         Task<(User user, string message)> GetUserByIdAsync(string userId);
+        Task<(List<User> users, string message)> GetUsersAsync();
         Task<(User user, string message)> UpdateUserAsync(string userId, User user);
         Task<(User user, string message)> DisableUserAsync(string userId, DateTime? banEndDate);
         Task<(string profilePicture, string message)> UpdateUserProfilePictureAsync(string userId, byte[] imageData, string fileName);
@@ -22,6 +25,7 @@ namespace QuestHubClient.Services
         Task<(bool success, string message)> UnfollowUserAsync(string userIdToUnfollow, string currentUserId);
         Task<(string[] followers, string message)> GetFollowersByUserIdAsync(string userId);
         Task<(byte[] imageData, string contentType, string message)> GetProfilePictureAsync(string userId);
+        Task<(User user, string message)> RegisterUserAsync(User user);
     }
 
     public class UserService : IUserService
@@ -54,21 +58,49 @@ namespace QuestHubClient.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, GetJsonSerializerOptions());
 
                     var user = MapUserDetailDtoToUser(userDto);
                     return (user, "Usuario obtenido exitosamente");
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, GetJsonSerializerOptions());
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
+        }
 
+        public async Task<(List<User> users, string message)> GetUsersAsync()
+        {
+            try
+            {
+                AddAuthHeader();
+                var response = await _httpClient.GetAsync(BaseUrl);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var usersDto = JsonSerializer.Deserialize<List<UserDetailDto>>(responseContent, GetJsonSerializerOptions());
+
+                    var users = usersDto?.Select(MapUserDetailDtoToUser).ToList() ?? new List<User>();
+                    return (users, "Usuarios obtenidos exitosamente");
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, GetJsonSerializerOptions());
                     return (null, errorResponse?.Message ?? "Error desconocido");
                 }
             }
@@ -98,28 +130,21 @@ namespace QuestHubClient.Services
                     Role = user.Role
                 };
 
-                var jsonContent = JsonSerializer.Serialize(updateRequest);
+                var jsonContent = JsonSerializer.Serialize(updateRequest, GetJsonSerializerOptionsForSerialization());
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{BaseUrl}/{userId}", httpContent);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, GetJsonSerializerOptions());
 
                     var updatedUser = MapUserDetailDtoToUser(userDto);
                     return (updatedUser, "Usuario actualizado exitosamente");
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, GetJsonSerializerOptions());
                     return (null, errorResponse?.Message ?? "Error desconocido");
                 }
             }
@@ -147,30 +172,22 @@ namespace QuestHubClient.Services
                     BanEndDate = banEndDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
                 };
 
-                var jsonContent = JsonSerializer.Serialize(disableRequest);
+                var jsonContent = JsonSerializer.Serialize(disableRequest, GetJsonSerializerOptionsForSerialization());
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                // Note: The API route shows PUT method for disable, but the URL suggests it should be:
                 var response = await _httpClient.PutAsync($"{BaseUrl}/{userId}", httpContent);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, GetJsonSerializerOptions());
 
                     var disabledUser = MapUserDetailDtoToUser(userDto);
                     return (disabledUser, "Usuario deshabilitado exitosamente");
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, GetJsonSerializerOptions());
                     return (null, errorResponse?.Message ?? "Error desconocido");
                 }
             }
@@ -198,7 +215,7 @@ namespace QuestHubClient.Services
                 if (imageData.Length > 20 * 1024 * 1024) // 20MB
                     return (null, "El archivo es demasiado grande (máximo 20MB)");
 
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png"};
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
                 var extension = Path.GetExtension(fileName).ToLower();
                 if (!allowedExtensions.Contains(extension))
                     return (null, "Formato no permitido. Solo imágenes JPG, PNG o JPEG");
@@ -257,17 +274,14 @@ namespace QuestHubClient.Services
                     Password = newPassword
                 };
 
-                var jsonContent = JsonSerializer.Serialize(passwordRequest);
+                var jsonContent = JsonSerializer.Serialize(passwordRequest, GetJsonSerializerOptionsForSerialization());
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"{BaseUrl}/{userId}/password", httpContent);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var passwordResponse = JsonSerializer.Deserialize<UpdatePasswordResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var passwordResponse = JsonSerializer.Deserialize<UpdatePasswordResponseDto>(responseContent, GetJsonSerializerOptions());
 
                     var user = new User
                     {
@@ -282,11 +296,7 @@ namespace QuestHubClient.Services
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, GetJsonSerializerOptions());
                     return (null, errorResponse?.Message ?? "Error desconocido");
                 }
             }
@@ -404,7 +414,6 @@ namespace QuestHubClient.Services
         {
             try
             {
-                // Note: This endpoint doesn't seem to require authentication based on the router
                 var response = await _httpClient.GetAsync($"{BaseUrl}/{userId}/followers");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -480,7 +489,69 @@ namespace QuestHubClient.Services
             }
         }
 
+        public async Task<(User user, string message)> RegisterUserAsync(User user)
+        {
+            try
+            {
+                AddAuthHeader();
+                var registerRequest = new RegisterUserRequestDto
+                {
+                    Name = user.Name,
+                    Email = user.Email,
+                    Password = user.Password,
+                    Role = user.Role
+                };
 
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    Converters = { new JsonStringEnumConverter() },
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var jsonContent = JsonSerializer.Serialize(registerRequest, jsonOptions);
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(BaseUrl, httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var registerResponse = JsonSerializer.Deserialize<RegisterUserResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new JsonStringEnumConverter() }
+                    });
+                    var responseUser = new User
+                    {
+                        Id = registerResponse.Id,
+                        Name = registerResponse.Name,
+                        Email = registerResponse.Email,
+                        Role = registerResponse.Role,
+                        Status = registerResponse.Status
+                    };
+                    return (responseUser, registerResponse.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
+        }
 
         private User MapUserDetailDtoToUser(UserDetailDto dto)
         {
@@ -497,7 +568,6 @@ namespace QuestHubClient.Services
             };
         }
 
-
         private string GetContentType(string fileName)
         {
             var extension = Path.GetExtension(fileName).ToLower();
@@ -506,6 +576,24 @@ namespace QuestHubClient.Services
                 ".jpg" or ".jpeg" => "image/jpeg",
                 ".png" => "image/png",
                 _ => "application/octet-stream"
+            };
+        }
+
+        private static JsonSerializerOptions GetJsonSerializerOptions()
+        {
+            return new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() },
+                PropertyNameCaseInsensitive = true
+            };
+        }
+
+        private static JsonSerializerOptions GetJsonSerializerOptionsForSerialization()
+        {
+            return new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() },
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
         }
     }

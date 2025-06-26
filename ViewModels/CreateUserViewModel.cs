@@ -15,21 +15,9 @@ namespace QuestHubClient.ViewModels
     {
         public User User { get; set; } = new User();
 
-        //services
-
         private readonly IAuthService _authService;
 
         private readonly INavigationService _navigationService;
-
-        //commands
-
-        //[ObservableProperty]
-        //private ObservableCollection<string> roles = new()
-        //{
-        //    "Administrador",
-        //    "Moderador",
-        //    "Usuario"
-        //};
 
         [ObservableProperty]
         private string _errorMessage = string.Empty;
@@ -73,10 +61,6 @@ namespace QuestHubClient.ViewModels
                 {
                     new NotificationWindow(message, 3).Show();
 
-                    //var loginView = new LoginView();
-                    //loginView.DataContext = new LoginViewModel(_authService);
-                    //loginView.Show();
-                    //Application.Current.Windows.OfType<CreateUserView>().FirstOrDefault()?.Close();
                 }
                 else
                 {

@@ -113,7 +113,7 @@ namespace QuestHubClient.ViewModels
                 Name = App.MainViewModel?.User?.Name,
                 Email = App.MainViewModel?.User?.Email,
                 ProfilePicture = App.MainViewModel?.User?.ProfilePicture,
-                Role = App.MainViewModel?.User?.Role,
+                Role = (UserRole)(App.MainViewModel?.User?.Role),
                 Status = App.MainViewModel?.User?.Status,
                 BanEndDate = App.MainViewModel?.User?.BanEndDate,
                 FollowersCount = (int)App.MainViewModel?.User?.FollowersCount
@@ -162,6 +162,7 @@ namespace QuestHubClient.ViewModels
                 {
                     App.MainViewModel.User = updatedUser;
                     User = updatedUser;
+                    User.Password = string.Empty;
                     IsEditing = false;
                     new NotificationWindow(message, 3).Show();
                     ErrorMessage = string.Empty;
@@ -212,7 +213,6 @@ namespace QuestHubClient.ViewModels
                     IsChangingAvatar = true;
                     ErrorMessage = string.Empty;
 
-                    // Actualizar la imagen para vista previa
                     ProfileImageSource = LoadImage(_selectedImageData);
                 }
                 catch (Exception ex)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QuestHubClient.Models;
+using System;
 using System.Text.Json.Serialization;
 
 namespace QuestHubClient.Dtos
@@ -12,7 +13,36 @@ namespace QuestHubClient.Dtos
         public string Email { get; set; }
 
         [JsonPropertyName("role")]
-        public string Role { get; set; }
+        public UserRole Role { get; set; }
+    }
+
+    public class RegisterUserRequestDto
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+        [JsonPropertyName("role")]
+        public UserRole Role { get; set; }
+    }
+
+    public class RegisterUserResponseDto
+    {
+        [JsonPropertyName("_id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+        [JsonPropertyName("role")]
+        public UserRole Role { get; set; }
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
     }
 
     public class DisableUserRequestDto
@@ -63,7 +93,7 @@ namespace QuestHubClient.Dtos
         public string Email { get; set; }
 
         [JsonPropertyName("role")]
-        public string Role { get; set; }
+        public UserRole Role { get; set; }
 
         [JsonPropertyName("profilePicture")]
         public string ProfilePicture { get; set; }
@@ -96,7 +126,7 @@ namespace QuestHubClient.Dtos
         public string ProfilePicture { get; set; }
 
         [JsonPropertyName("role")]
-        public string Role { get; set; }
+        public UserRole Role { get; set; }
 
         [JsonPropertyName("status")]
         public string Status { get; set; }
