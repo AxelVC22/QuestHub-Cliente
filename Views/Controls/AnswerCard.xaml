@@ -1,0 +1,209 @@
+﻿<UserControl x:Class="QuestHubClient.Views.Controls.AnswerCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:QuestHubClient.Views.Controls"
+             xmlns:ctrl="clr-namespace:QuestHubClient.Views.Controls"
+             xmlns:conv="clr-namespace:QuestHubClient.Converters"
+             xmlns:viewmodels="clr-namespace:QuestHubClient.ViewModels"
+             d:DataContext="{d:DesignInstance Type=viewmodels:AnswerCardViewModel}"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <conv:StarMultiConverter x:Key="StarMultiConverter" />
+        <conv:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <ctrl:AnswerCard x:Key="AnswerCard" />
+
+
+    </UserControl.Resources>
+ 
+
+
+
+    <Border Margin="10,4"
+            Padding="15"
+            Background="White"
+            BorderBrush="LightGray"
+            BorderThickness="1"
+            CornerRadius="2">
+
+        <StackPanel>
+            <StackPanel>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding Answer.Author.Name}"
+                               FontSize="12"
+                               Margin="0,0,0,5"
+                               FontWeight="Bold" />
+
+                    <TextBlock Grid.Column="1">
+                        <Run Text="{Binding Answer.Qualification, Mode=TwoWay}"
+                             FontSize="16"
+                             Foreground="DarkSlateGray"
+                             FontWeight="Bold" />
+                        <Run Text="Ptos." />
+                        <LineBreak />
+                        <Run Text="{Binding Answer.TotalRatings, Mode=TwoWay}"
+                             Foreground="Gray" />
+                        <Run Text="Calificaciones"
+                             Foreground="Gray" />
+                    </TextBlock>
+
+                </Grid>
+
+
+                <TextBlock Text="{Binding Answer.Content}"
+                           TextWrapping="Wrap"
+                           MaxHeight="100"
+                           Margin="0,0,0,10" />
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Calificar"
+                            Command="{Binding StartRatingCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Width="80"
+                            Height="24"
+                            Margin="-2,0"
+                            HorizontalAlignment="Left" />
+                    <Button Content="Respuestas"
+                            Command="{Binding SeeAnswersCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Width="80"
+                            Height="24"
+                            Margin="4,0"
+                            HorizontalAlignment="Left" />
+                    <Button Content="Responder"
+                            Command="{Binding StartChildAnswerCommand}"
+                            CommandParameter="{Binding}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Width="80"
+                            Height="24"
+                            Margin="-2,0"
+                            HorizontalAlignment="Left" />
+
+                </StackPanel>
+
+
+
+
+
+            </StackPanel>
+
+
+            <Grid Visibility="{Binding IsRatingVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Margin="0,8,0,0"
+                           Text="Califique esta respuesta"
+                           Foreground="Gray"
+                           Grid.Column="0" />
+
+                <ItemsControl ItemsSource="{Binding Stars}"
+                              Grid.Column="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Tag="{Binding}"
+                                    Command="{Binding DataContext.RateAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Padding="0"
+                                    Cursor="Hand"
+                                    Style="{StaticResource StarButtonStyle}">
+                                <TextBlock FontSize="24"
+                                           Foreground="Gold">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource StarMultiConverter}">
+                                            <Binding />
+                                            <Binding Path="DataContext.EditableRating"
+                                                     RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+
+
+
+
+            </Grid>
+
+            <Border Margin="0,5"
+                    BorderThickness="1"
+                    BorderBrush="LightGray"
+                    CornerRadius="2"
+                    Visibility="{Binding IsChildAnswerVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Margin="4">
+                    <TextBox Height="80"
+                             Margin="4"
+                             VerticalAlignment="Top"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Text="{Binding ChildAnswer.Content}" />
+
+                    <!-- Mensaje de error -->
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="Red"
+                               FontSize="14"
+                               TextWrapping="Wrap"
+                               Margin="0"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
+
+                    <Button Height="24"
+                            Width="100"
+                            Margin="0"
+                            Content="Enviar"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding SendChildAnswerCommand}" />
+
+                </StackPanel>
+            </Border>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Margin="10,10,0,0">
+                <ItemsControl ItemsSource="{Binding AnswerCards}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ctrl:AnswerCard DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </ScrollViewer>
+
+
+
+
+
+
+
+
+
+
+        </StackPanel>
+    </Border>
+</UserControl>

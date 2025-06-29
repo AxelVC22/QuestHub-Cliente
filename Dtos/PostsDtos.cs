@@ -19,17 +19,14 @@ namespace QuestHubClient.Dtos
         [JsonPropertyName("content")]
         public string Content { get; set; }
 
-        [JsonPropertyName("categoryId")]
-        public string CategoryId { get; set; }
+      
 
-        [JsonPropertyName("userId")]
-        public string UserId { get; set; }
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
 
-        [JsonPropertyName("answersCount")]
-        public int AnswersCount { get; set; }
+        [JsonPropertyName("totalAnswers")]
+        public int TotalAnswers { get; set; }
 
         [JsonPropertyName("averageRating")]
         public double AverageRating { get; set; }
@@ -46,38 +43,7 @@ namespace QuestHubClient.Dtos
     public class PostsResponseDto
     {
 
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("title")]
-        public string Title { get; set; }
-
-        [JsonPropertyName("content")]
-        public string Content { get; set; }
-
-        [JsonPropertyName("categoryId")]
-        public string CategoryId { get; set; }
-
-        [JsonPropertyName("userId")]
-        public string UserId { get; set; }
-
-        [JsonPropertyName("createdAt")]
-        public DateTime CreatedAt { get; set; }
-
-        [JsonPropertyName("answersCount")]
-        public int AnswersCount { get; set; }
-
-        [JsonPropertyName("averageRating")]
-        public double AverageRating { get; set; }
-        [JsonPropertyName("multimedia")]
-        public List<string> Multimedia { get; set; }
-        [JsonPropertyName("author")]
-        public UserDto Author { get; set; }
-        [JsonPropertyName("categories")]
-        public List<CategoryDto> Categories { get; set; }
-        [JsonPropertyName("isResolved")]
-        public bool IsResolved { get; set; }
-        [JsonPropertyName("message")]
+      
         public string Message { get; set; }
         [JsonPropertyName("currentPage")]
 
@@ -88,14 +54,14 @@ namespace QuestHubClient.Dtos
         [JsonPropertyName("totalPosts")]
 
         public int TotalPosts { get; set; }
-        public List<Post> Posts { get; set; }
+        public List<PostDto> Posts { get; set; }
 
     }
 
     public class PostResponseDto
     {
 
-        [JsonPropertyName("id")]
+        [JsonPropertyName("_id")]
         public string Id { get; set; }
 
         [JsonPropertyName("title")]
@@ -104,17 +70,14 @@ namespace QuestHubClient.Dtos
         [JsonPropertyName("content")]
         public string Content { get; set; }
 
-        [JsonPropertyName("categoryId")]
-        public string CategoryId { get; set; }
-
-        [JsonPropertyName("userId")]
-        public string UserId { get; set; }
+      
+       
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
 
-        [JsonPropertyName("answersCount")]
-        public int AnswersCount { get; set; }
+        [JsonPropertyName("totalAnswers")]
+        public int TotalAnswers { get; set; }
 
         [JsonPropertyName("averageRating")]
         public double AverageRating { get; set; }
@@ -144,17 +107,15 @@ namespace QuestHubClient.Dtos
         [JsonPropertyName("content")]
         public string Content { get; set; }
 
-        [JsonPropertyName("categoryId")]
-        public string CategoryId { get; set; }
+       
 
-        [JsonPropertyName("userId")]
-        public string UserId { get; set; }
+      
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
 
-        [JsonPropertyName("answersCount")]
-        public int AnswersCount { get; set; }
+        [JsonPropertyName("totalAnswers")]
+        public int TotalAnswers { get; set; }
 
         [JsonPropertyName("averageRating")]
         public double AverageRating { get; set; }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace QuestHubClient.Models
         public string CategoryId { get; set; }
         public string UserId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int AnswersCount { get; set; }
+        public int TotalAnswers { get; set; }
         public double AverageRating { get; set; }
 
         // Navigation properties para UI

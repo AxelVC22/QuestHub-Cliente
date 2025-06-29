@@ -27,6 +27,10 @@ namespace QuestHubClient
 
         public IPostsService PostsService { get; set; }
 
+        public IAnswersService AnswersService { get; set; }
+
+        public IRatingsService RatingsService { get; set; }
+
         public ICategoriesService CategoriesService { get; set; }
 
         public MainWindow()
@@ -38,6 +42,10 @@ namespace QuestHubClient
             AuthService = new AuthService(new HttpClient());
 
             PostsService = new PostsService(new HttpClient());
+
+            AnswersService = new AnswersService(new HttpClient());
+
+            RatingsService = new RatingsService(new HttpClient());
 
             CategoriesService = new CategoriesService(new HttpClient());
 
@@ -69,9 +77,9 @@ namespace QuestHubClient
                  }
                  else if (viewModelType == typeof(PostViewModel))
                  {
-
+                     var post = parameter as Post;
                      var viewModel = new PostViewModel(
-                         NavigationService);
+                         NavigationService, post, AnswersService, RatingsService);
                      return new Views.PostView(viewModel);
                  }
                  else if (viewModelType == typeof(NewPostViewModel))

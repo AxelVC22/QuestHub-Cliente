@@ -27,7 +27,7 @@ namespace QuestHubClient.ViewModels
         private IPostsService _postsService;
 
 
-        
+
 
         public HomeViewModel()
         {
@@ -40,7 +40,7 @@ namespace QuestHubClient.ViewModels
 
             _postsService = postsService;
 
-            LoadPostsAsync(Page,Limit);
+            LoadPostsAsync(Page, Limit);
         }
 
         private async Task LoadPostsAsync(int pageNumber, int limit)
@@ -49,7 +49,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (posts, page, message) = await _postsService.GetPostsByCategoryAsync(pageNumber, limit);
+                var (posts, page, message) = await _postsService.GetPostsAsync(pageNumber, limit);
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -99,13 +99,12 @@ namespace QuestHubClient.ViewModels
 
         [RelayCommand]
 
-        public void SeeDetails()
+        public void SeeDetails(Post post)
         {
-            if (App.MainViewModel.IsRegistered)
-            {
-                _navigationService.NavigateTo<PostViewModel>();
-            }
-           
+
+
+            _navigationService.NavigateTo<PostViewModel>(post);
+
         }
 
         [RelayCommand]

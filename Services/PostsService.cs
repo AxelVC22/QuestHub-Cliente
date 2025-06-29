@@ -12,7 +12,7 @@ namespace QuestHubClient.Services
 {
     public interface IPostsService
     {
-        Task<(List<Post>, Page page, string message)> GetPostsByCategoryAsync(int page, int limit);
+        Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit);
 
         Task<(Post post, string message)> CreatePostAsync(Post post);
     }
@@ -28,7 +28,7 @@ namespace QuestHubClient.Services
             _httpClient = httpClient;
         }
 
-        public async Task<(List<Post>, Page page, string message)> GetPostsByCategoryAsync(int page, int limit)
+        public async Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit)
         {
             var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}");
 
@@ -66,10 +66,9 @@ namespace QuestHubClient.Services
                 Id = postDto.Id,
                 Title = postDto.Title,
                 Content = postDto.Content,
-                CategoryId = postDto.CategoryId,
-                UserId = postDto.UserId,
+               
                 CreatedAt = postDto.CreatedAt,
-                AnswersCount = postDto.AnswersCount,
+                TotalAnswers = postDto.TotalAnswers,
                 AverageRating = postDto.AverageRating,
                 Author = new User
                 {
@@ -91,14 +90,13 @@ namespace QuestHubClient.Services
                 Id = postResponse.Id,
                 Title = postResponse.Title,
                 Content = postResponse.Content,
-                CategoryId = postResponse.CategoryId,
-                UserId = postResponse.UserId,
+              
                 CreatedAt = postResponse.CreatedAt,
-                AnswersCount = postResponse.AnswersCount,
+                TotalAnswers = postResponse.TotalAnswers,
                 AverageRating = postResponse.AverageRating,
                 Categories = postResponse.Categories.Select(c => new Category
                 {
-                    Id = c,
+                    Id = c.ToString(),
                 }).ToList(),
             };
         }
@@ -157,10 +155,10 @@ namespace QuestHubClient.Services
         {
             return new PostRequestDto
             {
+                
                 Title = post.Title,
                 Content = post.Content,
-                CategoryId = post.CategoryId,
-                UserId = post.UserId,
+               
                 Categories = post.Categories.Select(c =>
 
                       c.Id
