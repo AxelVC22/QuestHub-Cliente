@@ -18,8 +18,20 @@ namespace QuestHubClient.ViewModels
     {
 
 
-        [ObservableProperty]
-        private Post _post;
+        private PostCardViewModel _postCard;
+
+        public PostCardViewModel PostCard
+        {
+            get => _postCard;
+            set
+            {
+                if (_postCard != value)
+                {
+                    _postCard = value;
+                    OnPropertyChanged(nameof(PostCard));
+                }
+            }
+        }
 
         private Answer _answer = new Answer();
 
@@ -36,6 +48,23 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+
+        private bool _isAnswerVisible;
+
+        public bool IsAnswerVisible
+        {
+            get => _isAnswerVisible;
+            set
+            {
+                if (_isAnswerVisible != value)
+                {
+                    _isAnswerVisible = value;
+                    OnPropertyChanged(nameof(IsAnswerVisible));
+                }
+            }
+        }
+
+
         public int Page { get; set; } = 1;
 
         public int Limit { get; set; } = 2;
@@ -48,26 +77,26 @@ namespace QuestHubClient.ViewModels
         private IAnswersService _answersService;
 
         private IRatingsService _ratingService;
+
+        private IFollowingService _followingService;
         public PostViewModel()
         {
 
         }
 
 
-        public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService)
+        public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService, IPostsService postsService, IFollowingService followingService)
         {
             _navigationService = navigationService;
-            _post = post;
+            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService);
             _answersService = answersService;
             _ratingService = ratingsService;
+            _followingService = followingService;
             LoadAnswersAsync(Page, Limit);
 
         }
 
-        private bool CanSendAnswer()
-        {
-            return App.MainViewModel.IsRegistered;
-        }
+      
 
         [RelayCommand]
         public void SeeUserDetails()
@@ -81,7 +110,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (answers, page, message) = await _answersService.GetAnswersByPostAsync(Post.Id, pageNumber, limit);
+                var (answers, page, message) = await _answersService.GetAnswersByPostAsync(PostCard.Post.Id, pageNumber, limit);
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -137,50 +166,7 @@ namespace QuestHubClient.ViewModels
         }
 
 
-        [RelayCommand(CanExecute = nameof(CanSendAnswer))]
-        public async void SendAnswer()
-        {
-            this.Answer.Author = App.MainViewModel.User;
-            Answer.Post = new Post { Id = Post.Id };
-
-
-            try
-            {
-                ErrorMessage = string.Empty;
-
-                var context = new ValidationContext(Answer);
-                var results = new List<ValidationResult>();
-                bool isValid = Validator.TryValidateObject(Answer, context, results, true);
-
-                if (!isValid)
-                {
-                    ErrorMessage = results.First().ErrorMessage;
-                    return;
-                }
-
-                var (answer, message) = _answersService.CreateAnswerAsync(Answer).Result;
-
-                if (answer != null)
-                {
-                    new NotificationWindow("Respuesta enviado con éxito", 3).Show();
-                    await LoadAnswersAsync(1, Page * Limit, refreshVisible: true);
-                    Answer.Content = "enviado jaja"; 
-
-                }
-                else
-                {
-                    new NotificationWindow(message ?? "Error al enviar la respuesta", 3).Show();
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                ErrorMessage = $"Error de conexión: {ex.Message}";
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = $"Error inesperado: {ex.Message}";
-            }
-        }
+      
 
 
 
@@ -199,9 +185,6 @@ namespace QuestHubClient.ViewModels
         }
 
 
-
-
-
         private async void OnAnswerRated(AnswerCardViewModel updatedCard)
         {
            
@@ -215,6 +198,8 @@ namespace QuestHubClient.ViewModels
         {
             await LoadAnswersAsync(1, Page * Limit, refreshVisible: true);
         }
+
+    
 
     }
 }

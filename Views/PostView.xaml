@@ -22,83 +22,49 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
 
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
 
-
-
-
-            <StackPanel>
-
-                <ctrl:Post DataContext="{Binding}"
-                           SeeUserDetailsCommand="{Binding SeeUserDetailsCommand}"
+                <ctrl:PostCard DataContext="{Binding PostCard}"
                            VerticalAlignment="Top" />
 
-                <Border Margin="10,2"
-                        BorderThickness="1"
-                        BorderBrush="LightGray"
-                        CornerRadius="2">
-                    <StackPanel Margin="8">
-                        <TextBox Height="80"
-                                 Margin="4"
-                                 VerticalAlignment="Top"
-                                 Style="{StaticResource ModernTextBoxStyle}"
-                                 Text="{Binding Answer.Content}" />
+                <TextBlock Text="Respuestas"
+                           FontSize="16"
+                           Margin="10,2"
+                           FontWeight="Bold"
+                           Foreground="#333" />
 
-                        <!-- Mensaje de error -->
-                        <TextBlock Grid.Row="2"
-                                   Text="{Binding ErrorMessage}"
-                                   Foreground="Red"
-                                   FontSize="14"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,20"
-                                   Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
+                <StackPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  Margin="10,10,0,0">
+                        <ItemsControl ItemsSource="{Binding AnswerCards}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ctrl:AnswerCard DataContext="{Binding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
-                        <Button Height="24"
-                                Width="100"
-                                Content="Responder"
-                                HorizontalAlignment="Right"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                Command="{Binding SendAnswerCommand}" />
-
-                    </StackPanel>
-
-
-                </Border>
-
-                <Button Content="Respuestas"
-                        FontSize="16"
-                        Margin="10,2"
-                        FontWeight="Bold"
-                        Foreground="#333"
-                        Style="{StaticResource HyperlinkButtonStyle}"
-                        CommandParameter="{Binding }" />
-                
-                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                              Margin="10,10,0,0">
-                    <ItemsControl ItemsSource="{Binding AnswerCards}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <ctrl:AnswerCard DataContext="{Binding}" />
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-
-                </ScrollViewer>
-
+                    </ScrollViewer>
+                </StackPanel>
             </StackPanel>
 
-            <Button Content="🡫"
-                    Height="20"
-                    Width="50"
+            <Button Grid.Row="1"
+                    Content="🡫"
+                    Height="18"
+                    Width="40"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Bottom"
                     Margin="20"
                     Style="{StaticResource PrimaryButtonStyle}"
-                    Command="{Binding SeeMoreCommand}" />
-
-
+                    Command="{Binding SeeMoreCommand}"
+                    VerticalAlignment="Bottom" />
 
 
         </Grid>
+
     </ScrollViewer>
 
 

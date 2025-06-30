@@ -49,7 +49,7 @@
             <ItemsControl ItemsSource="{Binding Posts}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ctrl:PostCard SeeDetailsCommand="{Binding DataContext.SeeDetailsCommand, RelativeSource={RelativeSource AncestorType=Page}}" />
+                        <ctrl:PostCard DataContext="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

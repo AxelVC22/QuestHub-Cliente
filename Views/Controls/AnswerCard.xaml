@@ -20,7 +20,7 @@
 
 
     </UserControl.Resources>
- 
+
 
 
 
@@ -39,11 +39,44 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               Text="{Binding Answer.Author.Name}"
-                               FontSize="12"
-                               Margin="0,0,0,5"
-                               FontWeight="Bold" />
+
+
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal">
+                        <!--imagen de perfil-->
+                        <Grid Width="20"
+                              Height="20"
+                              Background="LightBlue">
+                            <Image Stretch="Fill"
+                                   Source="{x:Null}" />
+                            <Grid.Clip>
+                                <EllipseGeometry Center="10,10"
+                                                 RadiusX="10"
+                                                 RadiusY="10" />
+                            </Grid.Clip>
+
+                        </Grid>
+
+                        <TextBlock VerticalAlignment="Center"
+                                   Margin="4,0">
+                              <Run Text="{Binding Answer.Author.Name}"
+                                   FontSize="12"
+                                   FontWeight="Bold" />
+                              <Run Text="●"
+                                   Foreground="Gray" />
+                              <Run Text="{Binding Answer.CreatedAt}"
+                                   FontSize="10"
+                                   Foreground="Gray" />
+                        </TextBlock>
+
+                        <Button Content="Seguir"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                FontSize="12"
+                                VerticalAlignment="Center" />
+                    </StackPanel>
+
+
+
 
                     <TextBlock Grid.Column="1">
                         <Run Text="{Binding Answer.Qualification, Mode=TwoWay}"
@@ -183,17 +216,31 @@
                 </StackPanel>
             </Border>
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          Margin="10,10,0,0">
-                <ItemsControl ItemsSource="{Binding AnswerCards}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <ctrl:AnswerCard DataContext="{Binding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+            <StackPanel  Visibility="{Binding AreAnswersVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              Margin="10,10,0,0">
+                    <ItemsControl ItemsSource="{Binding AnswerCards}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ctrl:AnswerCard DataContext="{Binding}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-            </ScrollViewer>
+                </ScrollViewer>
+
+                <Button Content="🡫"
+                        Height="18"
+                        Width="40"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Margin="20"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Command="{Binding SeeMoreCommand}" />
+
+
+            </StackPanel>
+
 
 
 

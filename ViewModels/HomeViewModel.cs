@@ -19,13 +19,16 @@ namespace QuestHubClient.ViewModels
         public int Page { get; set; } = 1;
 
         public int Limit { get; set; } = 2;
-        public ObservableCollection<Post> Posts { get; set; } = new ObservableCollection<Post>();
+        public ObservableCollection<PostCardViewModel> Posts { get; set; } = new ObservableCollection<PostCardViewModel>();
 
         //services
         private INavigationService _navigationService;
 
         private IPostsService _postsService;
 
+        private IAnswersService _answersService;
+
+        private IFollowingService _followingService;
 
 
 
@@ -34,11 +37,15 @@ namespace QuestHubClient.ViewModels
 
         }
 
-        public HomeViewModel(INavigationService navigationService, IPostsService postsService)
+        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService)
         {
             _navigationService = navigationService;
 
             _postsService = postsService;
+
+            _answersService = answersService;
+
+            _followingService = followingService;
 
             LoadPostsAsync(Page, Limit);
         }
@@ -62,7 +69,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var post in posts)
                     {
-                        Posts.Add(post);
+                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService));
                     }
                 }
                 else
@@ -112,5 +119,7 @@ namespace QuestHubClient.ViewModels
         {
             await LoadPostsAsync(Page, Limit);
         }
+
+       
     }
 }

@@ -89,6 +89,20 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        private bool _areAnswersVisible;
+
+        public bool AreAnswersVisible
+        {
+            get => _areAnswersVisible;
+            set
+            {
+                if (_areAnswersVisible != value)
+                {
+                    _areAnswersVisible = value;
+                    OnPropertyChanged(nameof(AreAnswersVisible));
+                }
+            }
+        }
 
 
         public ObservableCollection<int> Stars { get; } = new(Enumerable.Range(1, 5));
@@ -114,6 +128,7 @@ namespace QuestHubClient.ViewModels
             _answer = answer;
             _isRatingVisible = false;
             _isChildAnswerVisible = false;
+            _areAnswersVisible = false;
             _navigationService = navigationService;
             _answersService = answersService;
             _ratingService = ratingsService;
@@ -126,7 +141,15 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        public void SeeAnswers()
+        public async void SeeAnswers()
+        {
+            LoadAnswersAsync(Page, Limit);
+
+            AreAnswersVisible = !AreAnswersVisible;
+        }
+
+        [RelayCommand]
+        public async void SeeMore()
         {
             LoadAnswersAsync(Page, Limit);
         }
@@ -254,7 +277,6 @@ namespace QuestHubClient.ViewModels
                 {
                     if (refreshVisible)
                     {
-
 
                         foreach (var ans in answers)
                         {

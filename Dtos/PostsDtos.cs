@@ -98,18 +98,14 @@ namespace QuestHubClient.Dtos
 
     public class PostDto
     {
-        [JsonPropertyName("_id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         [JsonPropertyName("title")]
         public string Title { get; set; }
 
         [JsonPropertyName("content")]
-        public string Content { get; set; }
-
-       
-
-      
+        public string Content { get; set; }      
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }

@@ -26,20 +26,5 @@ namespace QuestHubClient.Views.Controls
         }
 
 
-        public static readonly DependencyProperty SeeDetailsCommandProperty =
-            DependencyProperty.Register(
-                nameof(SeeDetailsCommand),
-                typeof(ICommand),
-                typeof(PostCard),
-                new PropertyMetadata(null)
-            );
-
-        public ICommand SeeDetailsCommand
-        {
-            get => (ICommand)GetValue(SeeDetailsCommandProperty);
-            set => SetValue(SeeDetailsCommandProperty, value);
-        }
-
-
     }
 }

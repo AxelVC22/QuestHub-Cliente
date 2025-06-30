@@ -43,7 +43,7 @@ namespace QuestHubClient.Dtos
 
     public class UserDto
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("_id")]
         public string Id { get; set; }
 
         [JsonPropertyName("name")]

@@ -115,7 +115,7 @@ namespace QuestHubClient.Services
                 var registerRequest = AnswerToAnswerRequestDto(answer);
                 var jsonContent = JsonSerializer.Serialize(registerRequest);
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = _httpClient.PostAsync(_baseUrl, httpContent).Result;
+                var response =  _httpClient.PostAsync(_baseUrl, httpContent).Result;
                 var responseContent = response.Content.ReadAsStringAsync().Result;
 
                 if (response.IsSuccessStatusCode)
