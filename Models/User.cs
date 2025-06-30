@@ -15,18 +15,23 @@ namespace QuestHubClient.Models
         [EmailAddress(ErrorMessage = "El correo no tiene un formato válido")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es obligatoria")]
+        //[Required(ErrorMessage = "La contraseña es obligatoria")]
         [StringLength(32, MinimumLength = 8, ErrorMessage = "La contraseña debe tener al menos 8 caracteres")]
         public string Password { get; set; }
 
-        public string ProfilePicture { get; set; }
+        public UserRole Role { get; set; }
 
-        public string Role { get; set; }
+        public string ProfilePicture { get; set; }
 
         public string Status { get; set; }
 
         public DateTime? BanEndDate { get; set; }
 
         public int FollowersCount { get; set; }
+
+        public User()
+        {
+            Role = UserRole.Guest;
+        }
     }
 }

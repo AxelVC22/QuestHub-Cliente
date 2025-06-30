@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using QuestHubClient.Models;
 using QuestHubClient.Services;
+using QuestHubClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -14,37 +16,69 @@ namespace QuestHubClient.ViewModels
     public partial class HomeViewModel : BaseViewModel
     {
 
-        public ObservableCollection<Post> Posts { get; set; }
+        public int Page { get; set; } = 1;
+
+        public int Limit { get; set; } = 2;
+        public ObservableCollection<Post> Posts { get; set; } = new ObservableCollection<Post>();
 
         //services
         private INavigationService _navigationService;
 
+        private IPostsService _postsService;
 
-        //commands
+
+        
 
         public HomeViewModel()
         {
 
         }
 
-        public HomeViewModel(INavigationService navigationService)
+        public HomeViewModel(INavigationService navigationService, IPostsService postsService)
         {
             _navigationService = navigationService;
 
+            _postsService = postsService;
 
-            Posts = new ObservableCollection<Post>
+            LoadPostsAsync(Page,Limit);
+        }
+
+        private async Task LoadPostsAsync(int pageNumber, int limit)
+        {
+            try
             {
-                new Post
-                {
-                    Title = "¿Cómo funciona el binding en WPF?",
-                    Author = new User {Name= "roguez"},
-                    Content = "Estoy aprendiendo MVVM y no entiendo bien cómo se enlazan los datos...",
-                    Category =  new Category{Name = "Diseño"} ,
-                    AnswersCount = 4,
-                    AverageRating = 5.4
-                },
+                ErrorMessage = string.Empty;
 
-            };
+                var (posts, page, message) = await _postsService.GetPostsByCategoryAsync(pageNumber, limit);
+
+                if (!string.IsNullOrEmpty(message))
+                {
+                    new NotificationWindow(message, 3).Show();
+                }
+
+                if (posts != null && posts.Any())
+                {
+                    Page = Page + 1;
+
+                    foreach (var post in posts)
+                    {
+                        Posts.Add(post);
+                    }
+                }
+                else
+                {
+                    new NotificationWindow("No se encontraron más publicaciones", 3).Show();
+                }
+            }
+
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
         }
 
 
@@ -71,10 +105,13 @@ namespace QuestHubClient.ViewModels
             {
                 _navigationService.NavigateTo<PostViewModel>();
             }
-            else
-            {
-                _navigationService.NavigateTo<LoginViewModel>();
-            }
+           
+        }
+
+        [RelayCommand]
+        public async Task SeeMoreAsync()
+        {
+            await LoadPostsAsync(Page, Limit);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using QuestHubClient.Services;
+﻿using QuestHubClient.Models;
+using QuestHubClient.Services;
 using QuestHubClient.ViewModels;
 using QuestHubClient.Views;
 using System.Net.Http;
@@ -21,22 +22,36 @@ namespace QuestHubClient
         public INavigationService NavigationService { get; set; }
 
         public IAuthService AuthService { get; set; }
+        public IUserService UserService { get; set; }
+        HttpClient HttpClient { get; set; }
+        public User User { get; set; }
+
+        public IPostsService PostsService { get; set; }
+
+        public ICategoriesService CategoriesService { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            AuthService = new AuthService(new HttpClient());
+            User = new User();
+            HttpClient = new HttpClient();
+
+            AuthService = new AuthService(HttpClient);
+            UserService = new UserService(HttpClient);
+
+            PostsService = new PostsService(new HttpClient());
+
+            CategoriesService = new CategoriesService(new HttpClient());
 
             NavigationService = new FrameNavigationService(
              PageFrame,
              (viewModelType, parameter) =>
              {
                  if (viewModelType == typeof(LoginViewModel))
-                 {
-
+                 {                     
                      var viewModel = new LoginViewModel(
-                        NavigationService, AuthService
+                        NavigationService, AuthService, new LoginUser()
                      );
 
                      return new Views.LoginView(viewModel);
@@ -52,7 +67,7 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService);
+                         NavigationService, PostsService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))
@@ -66,8 +81,27 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new NewPostViewModel(
-                         NavigationService);
+                         NavigationService, CategoriesService, PostsService);
                      return new Views.NewPostView(viewModel);
+                 }
+                 else if (viewModelType == typeof(ProfileViewModel))
+                 {
+                     var viewModel = new ProfileViewModel(NavigationService, UserService);
+                     return new Views.ProfileView(viewModel);
+                 }
+                 else if (viewModelType == typeof(CategoriesViewModel))
+                 {
+                     var viewModel = new CategoriesViewModel(
+                         NavigationService, CategoriesService);
+                     return new Views.CategoriesView(viewModel);
+
+                 }
+                 else if (viewModelType == typeof(UsersViewModel))
+                 {
+                     var viewModel = new UsersViewModel(
+                         NavigationService, UserService);
+                     return new Views.UsersView(viewModel);
+
                  }
 
                  //else if (viewModelType == typeof(HomeViewModel))

@@ -1,5 +1,4 @@
-﻿using QuestHubClient.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,28 +10,29 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace QuestHubClient.Views
 {
-    public partial class ProfileView : Page
+    public partial class UsersView : Page
     {
-        public ProfileViewModel ProfileViewModel { get; set; }
-        public ProfileView()
+        public UsersView()
         {
             InitializeComponent();
         }
-        public ProfileView(ProfileViewModel profileViewModel)
+
+        public UsersView(ViewModels.UsersViewModel usersViewModel)
         {
             InitializeComponent();
-            this.DataContext = profileViewModel;
-            ProfileViewModel = profileViewModel;
+            this.DataContext = usersViewModel;
         }
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ViewModels.ProfileViewModel viewModel)
+            if (DataContext is ViewModels.UsersViewModel viewModel)
             {
-                viewModel.User.Password = ((PasswordBox)sender).Password;
+                viewModel.EditingUser.Password = ((PasswordBox)sender).Password;
             }
         }
     }

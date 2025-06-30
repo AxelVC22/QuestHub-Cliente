@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using QuestHubClient.Models;
+using System.Text.Json.Serialization;
 
 namespace QuestHubClient.Dtos
 {
@@ -55,7 +56,7 @@ namespace QuestHubClient.Dtos
         public string ProfilePicture { get; set; }
 
         [JsonPropertyName("role")]
-        public string Role { get; set; }
+        public UserRole Role { get; set; }
 
         [JsonPropertyName("status")]
         public string Status { get; set; }

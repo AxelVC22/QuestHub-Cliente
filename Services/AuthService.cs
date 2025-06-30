@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using QuestHubClient.Dtos;
 using System.Threading.Tasks;
 using QuestHubClient.Models;
@@ -10,7 +11,6 @@ namespace QuestHubClient.Services
     public interface IAuthService
     {
         Task<(string token, User userModel, string message)> LoginAsync(LoginUser user);
-
         Task<(User userModel, string message)> RegisterAsync(User user);
     }
 
@@ -19,10 +19,17 @@ namespace QuestHubClient.Services
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "http://localhost:3033/api/auth";
 
+        private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+        };
+
         public AuthService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+
         public async Task<(string token, User userModel, string message)> LoginAsync(LoginUser user)
         {
             try
@@ -35,10 +42,7 @@ namespace QuestHubClient.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var loginResponse = JsonSerializer.Deserialize<AuthResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+                    var loginResponse = JsonSerializer.Deserialize<AuthResponseDto>(responseContent, _jsonOptions);
 
                     string token = "";
                     if (response.Headers.Contains("x-token"))
@@ -52,11 +56,7 @@ namespace QuestHubClient.Services
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, _jsonOptions);
                     return ("", null, errorResponse?.Message ?? "Error desconocido");
                 }
             }
@@ -86,22 +86,14 @@ namespace QuestHubClient.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var registerResponse = JsonSerializer.Deserialize<AuthResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
+                    var registerResponse = JsonSerializer.Deserialize<AuthResponseDto>(responseContent, _jsonOptions);
                     var userModel = ResponseToUser(registerResponse);
 
                     return (userModel, registerResponse.Message);
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, _jsonOptions);
                     return (null, errorResponse?.Message ?? "Error desconocido");
                 }
             }

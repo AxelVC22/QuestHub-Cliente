@@ -21,12 +21,14 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Label x:Name="posts"
-                       Content="Publicaciones"
+                <TextBlock x:Name="posts"
+                       Text="Publicaciones"
                        FontSize="26"
                        Height="50"
                        VerticalAlignment="Center"
-                       Grid.Column="0" />
+                       Grid.Column="0"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource TextSecondaryBrush}" />
 
                 <Button HorizontalAlignment="Right"
                         VerticalAlignment="Top"
@@ -43,9 +45,8 @@
 
         </Border>
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      Margin="0,70">
-            <ItemsControl ItemsSource="{Binding Posts}"
-                         >
+                      Margin="0,60">
+            <ItemsControl ItemsSource="{Binding Posts}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <ctrl:PostCard SeeDetailsCommand="{Binding DataContext.SeeDetailsCommand, RelativeSource={RelativeSource AncestorType=Page}}" />
@@ -53,5 +54,14 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer >
+
+        <Button Content="🡫"
+                Height="20"
+                Width="50" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="20"
+                Style="{StaticResource PrimaryButtonStyle}"
+                Command="{Binding SeeMoreCommand}"/>
     </Grid>
 </Page>

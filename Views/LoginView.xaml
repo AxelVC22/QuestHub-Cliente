@@ -8,113 +8,156 @@
       xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
       d:DataContext="{d:DesignInstance Type=vm:LoginViewModel}"
       mc:Ignorable="d"
-      Title="{Binding Title}"           
-      Background="Transparent">
-   
+      Title="{Binding Title}"
+      Background="{StaticResource BackgroundBrush}">
+
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
     </Page.Resources>
 
-    <Border Background="{StaticResource BackgroundBrush}"
-            CornerRadius="12"
-            BorderBrush="{StaticResource PrimaryLightBrush}"
-            BorderThickness="1"
-            Margin="20">
-        <Border.Effect>
-            <DropShadowEffect BlurRadius="20" 
-                            ShadowDepth="0" 
-                            Color="#33000000"/>
-        </Border.Effect>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <!-- Panel izquierdo -->
+        <Border Grid.Column="0" 
+                Background="{StaticResource PrimaryDarkBrush}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Header -->
-            <Border Grid.Row="0" 
-                    Background="{StaticResource PrimaryDarkBrush}"
-                    CornerRadius="12,12,0,0"
-                    Padding="20">
-                <StackPanel HorizontalAlignment="Center">
-                    <Ellipse Width="80" Height="80" Margin="0,0,0,10">
+                <!-- Logo -->
+                <StackPanel Grid.Row="0" 
+                          Margin="30,60,30,30"
+                          HorizontalAlignment="Center">
+                    <Ellipse Width="80" Height="80" Margin="0,0,0,20">
                         <Ellipse.Fill>
                             <ImageBrush ImageSource="/Assets/Logo.jpg" Stretch="UniformToFill"/>
                         </Ellipse.Fill>
                         <Ellipse.Effect>
-                            <DropShadowEffect BlurRadius="10"
-                          ShadowDepth="2"
-                          Color="#33000000"/>
+                            <DropShadowEffect BlurRadius="15" 
+                                              ShadowDepth="3" 
+                                              Color="#33000000"/>
                         </Ellipse.Effect>
                     </Ellipse>
-
-
                     <TextBlock Text="QuestHub" 
-                             FontSize="28" 
+                             FontSize="32" 
                              FontWeight="Bold" 
                              Foreground="{StaticResource TextPrimaryBrush}"
                              HorizontalAlignment="Center"/>
-
-                    <TextBlock Text="Bienvenido de vuelta" 
-                             FontSize="14" 
-                             Foreground="{StaticResource PrimaryLightBrush}"
-                             HorizontalAlignment="Center"
-                             Margin="0,5,0,0"/>
                 </StackPanel>
-            </Border>
+            </Grid>
+        </Border>
 
-            <!-- Contenido del formulario -->
-            <ScrollViewer Grid.Row="1" 
-                        VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="40,30">
+        <!-- Panel derecho - Formulario -->
+        <ScrollViewer Grid.Column="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="60,40,60,40">
+
+            <StackPanel HorizontalAlignment="Center" 
+                        MaxWidth="500"
+                        MinWidth="400">
+
+                <!-- Encabezado -->
+                <StackPanel Margin="0,50,0,50">
+                    <TextBlock Text="Iniciar Sesión" 
+                             FontSize="36" 
+                             FontWeight="Bold" 
+                             Foreground="{StaticResource TextSecondaryBrush}"
+                             Margin="0,0,0,15"/>
+                    <TextBlock Text="Ingresa tus credenciales para acceder a tu cuenta" 
+                             FontSize="16" 
+                             Foreground="Gray"/>
+                </StackPanel>
+
+                <!-- Formulario -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
                     <!-- Campo Usuario -->
-                    <TextBlock Text="Correo Electronico *" Style="{StaticResource LabelStyle}"/>
-
-                    <TextBox Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
-                           Style="{StaticResource ModernTextBoxStyle}"
-                           TabIndex="1"/>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                        <TextBlock Text="Correo Electrónico *" 
+                                 Style="{StaticResource LabelStyle}"
+                                 Margin="0,0,0,8"/>
+                        <TextBox Text="{Binding User.Email, UpdateSourceTrigger=PropertyChanged}"
+                               Style="{StaticResource ModernTextBoxStyle}"
+                               TabIndex="1"
+                               Height="50"
+                               FontSize="16"
+                               Padding="15,12"/>
+                    </StackPanel>
 
                     <!-- Campo Contraseña -->
-                    <TextBlock Text="Contraseña *" Style="{StaticResource LabelStyle}"/>
-
-                    <PasswordBox x:Name="PasswordBox"
-                               Style="{StaticResource ModernPasswordBoxStyle}"
-                               TabIndex="2"
-                               PasswordChanged="PasswordBox_PasswordChanged"/>
+                    <StackPanel Grid.Row="1" Margin="0,0,0,25">
+                        <TextBlock Text="Contraseña *" 
+                                 Style="{StaticResource LabelStyle}"
+                                 Margin="0,0,0,8"/>
+                        <PasswordBox x:Name="PasswordBox"
+                                   Style="{StaticResource ModernPasswordBoxStyle}"
+                                   TabIndex="2"
+                                   PasswordChanged="PasswordBox_PasswordChanged"
+                                   Height="50"
+                                   FontSize="16"
+                                   Padding="15,12"/>
+                    </StackPanel>
 
                     <!-- Mensaje de error -->
-                    <TextBlock Text="{Binding ErrorMessage}" 
+                    <TextBlock Grid.Row="2"
+                             Text="{Binding ErrorMessage}" 
                              Foreground="Red"
-                             FontSize="12"
+                             FontSize="14"
                              TextWrapping="Wrap"
-                             Margin="5,10,0,0"
+                             Margin="0,0,0,20"
                              Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
 
                     <!-- Botón de login -->
-                    <Button Command="{Binding LoginCommand}"
+                    <Button Grid.Row="3"
+                          Command="{Binding LoginCommand}"
                           Style="{StaticResource PrimaryButtonStyle}"
                           Content="Iniciar Sesión"
+                          FontSize="18"
+                          FontWeight="SemiBold"
+                          Margin="0,10,0,15"
+                          Height="55"
+                          Padding="20,12"/>
+
+                    <!-- Botón de regresar -->
+                    <Button Grid.Row="4"
+                          Command="{Binding BackCommand}"
+                          Style="{StaticResource SecondaryButtonStyle}"
+                          Content="Regresar"
                           FontSize="16"
-                          Margin="0,20,0,0"
-                          Height="45"/>
+                          Margin="0,0,0,25"
+                          Height="45"
+                          Padding="20,10"/>
 
                     <!-- Enlaces adicionales -->
-                    <StackPanel Orientation="Horizontal" 
-                              HorizontalAlignment="Center"
-                              Margin="0,20,0,0">
+                    <StackPanel Grid.Row="5"
+                              HorizontalAlignment="Center">
                         <Button Command="{Binding RegisterCommand}"
-                              Content="Registrarse"
+                              Content="¿No tienes cuenta? Registrarse"
                               Background="Transparent"
                               BorderThickness="0"
                               Foreground="{StaticResource AccentBrush}"
-                              FontSize="12"
+                              FontSize="15"
                               Cursor="Hand"
-                              Margin="10,0,0,0"/>
+                              Padding="10,8"/>
                     </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
-    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Page>
