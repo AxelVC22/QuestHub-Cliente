@@ -22,7 +22,8 @@ namespace QuestHubClient
         public INavigationService NavigationService { get; set; }
 
         public IAuthService AuthService { get; set; }
-
+        public IUserService UserService { get; set; }
+        HttpClient HttpClient { get; set; }
         public User User { get; set; }
 
         public IPostsService PostsService { get; set; }
@@ -38,8 +39,10 @@ namespace QuestHubClient
             InitializeComponent();
 
             User = new User();
+            HttpClient = new HttpClient();
 
-            AuthService = new AuthService(new HttpClient());
+            AuthService = new AuthService(HttpClient);
+            UserService = new UserService(HttpClient);
 
             PostsService = new PostsService(new HttpClient());
 
@@ -91,33 +94,46 @@ namespace QuestHubClient
                  }
                  else if (viewModelType == typeof(ProfileViewModel))
                  {
-                     var viewModel = new ProfileViewModel(
-                         NavigationService);
+                     var viewModel = new ProfileViewModel(NavigationService, UserService);
                      return new Views.ProfileView(viewModel);
                  }
+                 else if (viewModelType == typeof(CategoriesViewModel))
+                 {
+                     var viewModel = new CategoriesViewModel(
+                         NavigationService, CategoriesService);
+                     return new Views.CategoriesView(viewModel);
 
-                     //else if (viewModelType == typeof(HomeViewModel))
-                     //{
+                 }
+                 else if (viewModelType == typeof(UsersViewModel))
+                 {
+                     var viewModel = new UsersViewModel(
+                         NavigationService, UserService);
+                     return new Views.UsersView(viewModel);
 
-                     //    var viewModel = new HomeViewModel(
-                     //        NavigationService);
-                     //    return new View.Pages.Home(viewModel);
-                     //}
-                     //else if (viewModelType == typeof(ProfileViewModel))
-                     //{
+                 }
 
-                     //    var viewModel = new ProfileViewModel(
-                     //        NavigationService);
-                     //    return new View.Pages.Profile(viewModel);
-                     //}
-                     //else if (viewModelType == typeof(NewPostViewModel))
-                     //{
+                 //else if (viewModelType == typeof(HomeViewModel))
+                 //{
 
-                     //    var viewModel = new NewPostViewModel(
-                     //        NavigationService);
-                     //    return new View.Pages.NewPost(viewModel);
-                     //}
-                     throw new ArgumentException("ViewModel desconocido");
+                 //    var viewModel = new HomeViewModel(
+                 //        NavigationService);
+                 //    return new View.Pages.Home(viewModel);
+                 //}
+                 //else if (viewModelType == typeof(ProfileViewModel))
+                 //{
+
+                 //    var viewModel = new ProfileViewModel(
+                 //        NavigationService);
+                 //    return new View.Pages.Profile(viewModel);
+                 //}
+                 //else if (viewModelType == typeof(NewPostViewModel))
+                 //{
+
+                 //    var viewModel = new NewPostViewModel(
+                 //        NavigationService);
+                 //    return new View.Pages.NewPost(viewModel);
+                 //}
+                 throw new ArgumentException("ViewModel desconocido");
              });
 
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(NavigationService);

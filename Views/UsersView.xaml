@@ -1,0 +1,376 @@
+﻿<Page x:Class="QuestHubClient.Views.UsersView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
+      xmlns:conv="clr-namespace:QuestHubClient.Converters"
+      Title="Gestión de Usuarios" 
+      Background="{StaticResource BackgroundBrush}">
+
+    <Page.DataContext>
+        <vm:UsersViewModel/>
+    </Page.DataContext>
+
+    <Page.Resources>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <conv:ActiveUsersCountConverter x:Key="ActiveUsersCountConverter"/>
+        <conv:InactiveUsersCountConverter x:Key="InactiveUsersCountConverter"/>
+        <conv:AdminUsersCountConverter x:Key="AdminUsersCountConverter"/>
+        <conv:ModeratorUsersCountConverter x:Key="ModeratorUsersCountConverter"/>
+
+        <!-- Convertidor para el estado del usuario -->
+        <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="Active">
+                    <Setter Property="Text" Value="Activo"/>
+                    <Setter Property="Foreground" Value="Green"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="Inactive">
+                    <Setter Property="Text" Value="Inactivo"/>
+                    <Setter Property="Foreground" Value="Red"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Convertidor para el rol del usuario -->
+        <Style x:Key="RoleTextStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Role}" Value="Admin">
+                    <Setter Property="Text" Value="Administrador"/>
+                    <Setter Property="Foreground" Value="Purple"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Role}" Value="Moderator">
+                    <Setter Property="Text" Value="Moderador"/>
+                    <Setter Property="Foreground" Value="Orange"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Role}" Value="User">
+                    <Setter Property="Text" Value="Usuario"/>
+                    <Setter Property="Foreground" Value="Blue"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="450"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Panel izquierdo - Lista de usuarios -->
+        <Border Grid.Column="0" 
+                Background="White"
+                Margin="20"
+                CornerRadius="12"
+                Padding="25">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Título -->
+                <StackPanel Grid.Row="0" 
+                            Orientation="Horizontal" 
+                            Margin="0,0,0,25">
+                    <TextBlock Text="Usuarios" 
+                               FontSize="28" 
+                               FontWeight="Bold" 
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center"/>
+
+                    <Button Content="Actualizar"
+                            Command="{Binding RefreshUsersCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Width="100"
+                            Height="35"
+                            FontSize="12"
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Barra de búsqueda -->
+                <Border Grid.Row="1" 
+                        Background="White"
+                        BorderBrush="{StaticResource PrimaryLightBrush}"
+                        BorderThickness="2"
+                        CornerRadius="8"
+                        Height="45"
+                        Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource SearchBoxWithPlaceholderStyle}"
+                                 Margin="15,0"/>
+
+                        <Button Grid.Column="1"
+                                Content="✕"
+                                Command="{Binding ClearSearchCommand}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontSize="16"
+                                Width="30"
+                                Height="30"
+                                Margin="0,0,10,0"
+                                Cursor="Hand"
+                                Visibility="{Binding SearchText, Converter={StaticResource StringToVisibilityConverter}}"/>
+                    </Grid>
+                </Border>
+
+                <!-- Filtros -->
+                <StackPanel Grid.Row="2" 
+                            Orientation="Horizontal" 
+                            Margin="0,0,0,20">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                        <TextBlock Text="Rol:" 
+                                   VerticalAlignment="Center" 
+                                   Margin="0,0,10,0"
+                                   FontWeight="SemiBold"/>
+                        <ComboBox ItemsSource="{Binding RoleFilters}"
+                                  SelectedItem="{Binding SelectedRole}"
+                                  Width="120"
+                                  Height="35"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,20,0">
+                        <TextBlock Text="Estado:" 
+                                   VerticalAlignment="Center" 
+                                   Margin="0,0,10,0"
+                                   FontWeight="SemiBold"/>
+                        <ComboBox ItemsSource="{Binding StatusFilters}"
+                                  SelectedItem="{Binding SelectedStatus}"
+                                  Width="120"
+                                  Height="35"/>
+                    </StackPanel>
+
+                    <Button Content="Limpiar"
+                            Command="{Binding ClearFiltersCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Width="80"
+                            Height="35"/>
+                </StackPanel>
+
+                <!-- Botones de acción -->
+                <StackPanel Grid.Row="3" 
+                            Orientation="Horizontal" 
+                            Margin="0,0,0,20">
+                    <Button Content="Nuevo Usuario"
+                            Command="{Binding CreateUserCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Width="140"
+                            Height="40"
+                            IsEnabled="{Binding CanCreate}"/>
+
+                    <Button Content="Editar"
+                            Command="{Binding EditUserCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Width="80"
+                            Height="40"
+                            IsEnabled="{Binding CanEdit}"/>
+
+                    <Button Content="Habilitar"
+                            Command="{Binding EnableUserCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Width="80"
+                            Height="40"
+                            IsEnabled="{Binding CanEnable}"
+                            BorderBrush="Green"
+                            Foreground="Green"/>
+                </StackPanel>
+
+                <!-- Lista de usuarios -->
+                <Border Grid.Row="4"
+                        BorderBrush="{StaticResource PrimaryLightBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                    <DataGrid ItemsSource="{Binding FilteredUsers}"
+                              SelectedItem="{Binding SelectedUser}"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="None"
+                              SelectionMode="Single"
+                              IsReadOnly="True"
+                              Background="White"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F8F9FA"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Nombre" 
+                                                Binding="{Binding Name}" 
+                                                Width="1.5*"
+                                                FontWeight="SemiBold"/>
+
+                            <DataGridTextColumn Header="Email" 
+                                                Binding="{Binding Email}" 
+                                                Width="2*"/>
+
+                            <DataGridTemplateColumn Header="Rol" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource RoleTextStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="Estado" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource StatusTextStyle}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource PrimaryLightBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Formulario -->
+        <Border Grid.Column="1" 
+                Background="White"
+                Margin="0,20,20,20"
+                CornerRadius="12"
+                Padding="30"
+                Visibility="{Binding ShowForm, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!-- Título del formulario -->
+                    <TextBlock Text="{Binding FormTitle}" 
+                               FontSize="24" 
+                               FontWeight="Bold" 
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,30"/>
+
+                    <!-- Nombre -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Nombre *" Style="{StaticResource LabelStyle}"/>
+                        <TextBox Text="{Binding EditingUser.Name, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 Height="45"/>
+                    </StackPanel>
+
+                    <!-- Email -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Email *" Style="{StaticResource LabelStyle}"/>
+                        <TextBox Text="{Binding EditingUser.Email, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource ModernTextBoxStyle}"
+                                 Height="45"/>
+                    </StackPanel>
+
+                    <!-- Rol -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Rol *" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox SelectedItem="{Binding EditingUserRoleString}"
+                              ItemsSource="{Binding Roles}"
+                              Height="45"
+                              Style="{StaticResource ModernComboBoxStyle}"/>
+                    </StackPanel>
+
+                    <!-- Contrasenia -->
+                    <StackPanel Margin="0,0,0,20"
+                                >
+                        <TextBlock Text="Contraseña *" Style="{StaticResource LabelStyle}"/>
+                        <PasswordBox Name="PasswordBox"
+                                     Height="45"
+                                     PasswordChanged="PasswordBox_PasswordChanged"
+                                     Style="{StaticResource ModernPasswordBoxStyle}"/>
+                    </StackPanel>
+
+                    <!-- Mensaje de error -->
+                    <TextBlock Text="{Binding ErrorMessage}" 
+                               Foreground="Red"
+                               FontSize="14"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,20"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+                    <!-- Botones del formulario -->
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right"
+                                Margin="0,20,0,0">
+
+                        <Button Content="Cancelar"
+                                Command="{Binding CancelEditCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Width="100"
+                                Height="40"
+                                Margin="0,0,15,0"/>
+
+                        <Button Content="Guardar"
+                                Command="{Binding SaveUserCommand}"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Width="100"
+                                Height="40"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Mensaje cuando no hay formulario visible -->
+        <Border Grid.Column="1" 
+                Background="White"
+                Margin="0,20,20,20"
+                CornerRadius="12"
+                Padding="30"
+                Visibility="{Binding HideForm, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <StackPanel HorizontalAlignment="Center" 
+                        VerticalAlignment="Center">
+                <TextBlock Text="👥"
+                           FontSize="48"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                <TextBlock Text="Gestión de Usuarios"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                <TextBlock Text="Selecciona un usuario para editarlo o"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,5"
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
+
+                <TextBlock Text="haz clic en 'Nuevo Usuario' para crear uno."
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,30"
+                           Foreground="{StaticResource TextSecondaryBrush}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
