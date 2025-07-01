@@ -32,6 +32,33 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        private string _commandActionReason;
+
+        public string CommandActionReason
+        {
+            get => _commandActionReason;
+            set
+            {
+                if (_commandActionReason != value)
+                {
+                    _commandActionReason = value;
+                    OnPropertyChanged(nameof(CommandActionReason));
+                }
+            }
+        }
+
+        public bool CanDoOnlyLoggedAction()
+        {
+            if (!App.MainViewModel.IsRegistered)
+            {
+                CommandActionReason = "Necesitas iniciar sesión";
+                return false;
+            }
+
+            CommandActionReason = null;
+            return true;
+        }
+
         public ICommand GoBackCommand { get; set; }
 
      

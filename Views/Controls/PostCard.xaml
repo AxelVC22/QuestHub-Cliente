@@ -5,36 +5,98 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:QuestHubClient.Views.Controls"
              xmlns:viewmodels="clr-namespace:QuestHubClient.ViewModels"
-             d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
+             xmlns:conv="clr-namespace:QuestHubClient.Converters"
+             d:DataContext="{d:DesignInstance Type=viewmodels:PostCardViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+
+    </UserControl.Resources>
+
     <Border Margin="10,4"
             Padding="15"
             Background="White"
             BorderBrush="LightGray"
             BorderThickness="1"
-            CornerRadius="10">
+            CornerRadius="2">
         <StackPanel>
-            
-            <TextBlock Text="{Binding Title}"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Foreground="#333" />
 
-            <TextBlock Text="{Binding Author.Name}"
-                       FontSize="12"
-                       Foreground="Gray"
-                       Margin="0,2,0,10" />
+            <StackPanel Orientation="Horizontal">
+                <!--imagen de perfil-->
+                <Grid Width="20"
+                      Height="20"
+                      Background="LightBlue">
+                    <Image Stretch="Fill"
+                           Source="{x:Null}" />
+                    <Grid.Clip>
+                        <EllipseGeometry Center="10,10"
+                                         RadiusX="10"
+                                         RadiusY="10" />
+                    </Grid.Clip>
 
-            <TextBlock Text="{Binding Content}"
+                </Grid>
+                <Button Content="{Binding Post.Author.Name}"
+                        FontSize="12"
+                        Foreground="Gray"
+                        FontWeight="Bold"
+                        Style="{StaticResource HyperlinkButtonStyle}"
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        ToolTip="{Binding CommandActionReason}" />
+
+                <TextBlock Margin="4,0"
+                           VerticalAlignment="Center">
+                     <Run Text="●"
+                          Foreground="Gray" />
+                     <Run Text="{Binding Post.CreatedAt}"
+                          FontSize="10"
+                          Foreground="Gray" />
+                </TextBlock>
+
+                <Button Content="Seguir"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding FollowCommand}"
+                        FontSize="12"
+                        Width="50"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding Post.Author.IsFollowed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"
+                        ToolTip="{Binding CommandActionReason}" />
+                <Button Content="Dejar de seguir"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding UnfollowCommand}"
+                        Width="90"
+                        FontSize="12"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding Post.Author.IsFollowed, Converter={StaticResource BoolToVisibilityConverter}}"
+                        ToolTip="{Binding CommandActionReason}" />
+
+            </StackPanel>
+
+
+            <Button Content="{Binding Post.Title}"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="#333"
+                    Style="{StaticResource HyperlinkButtonStyle}"
+                    Command="{Binding SeeDetailsCommand}"
+                    CommandParameter="{Binding }" />
+
+
+
+
+
+            <TextBlock Text="{Binding Post.Content}"
                        TextWrapping="Wrap"
                        MaxHeight="100"
                        Margin="0,0,0,10" />
 
 
             <WrapPanel>
-                <ItemsControl ItemsSource="{Binding Categories}">
+                <ItemsControl ItemsSource="{Binding Post.Categories}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="#DDD"
@@ -49,24 +111,58 @@
                 </ItemsControl>
             </WrapPanel>
 
-            <DockPanel Margin="0,10,0,0">
-                <TextBlock Text="{Binding AnswersCount, StringFormat='Respuestas: {0}'}"
-                           FontSize="12"
-                           Foreground="DarkSlateGray"
-                           DockPanel.Dock="Left" />
+            <DockPanel>
+                <TextBlock Foreground="Gray"
+                           FontSize="12">
+                    <Run Text="{Binding Post.TotalAnswers}" />
+                    <Run Text="Respuestas" />
+                </TextBlock>
 
-                <TextBlock Text="{Binding AverageRating}"
-                           FontSize="12"
-                           Foreground="Green"
-                           DockPanel.Dock="Right" />
+
             </DockPanel>
-            <Button Content="Ver más"
-                    Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=SeeDetailsCommand}"
-                    CommandParameter="{Binding Id}" 
-                    HorizontalAlignment="Right"
-                    Width="100"
-                    Style="{StaticResource SecondaryButtonStyle}"
-                    Cursor="" />
+
+            <Button Content="Responder"
+                    Command="{Binding StartAnswerCommand}"
+                    CommandParameter="{Binding}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Width="80"
+                    Height="24"
+                    Margin="-2,6"
+                    HorizontalAlignment="Left"
+                    ToolTip="{Binding CommandActionReason}" />
+
+
+            <Border Margin="0,5"
+                    BorderThickness="1"
+                    BorderBrush="LightGray"
+                    CornerRadius="2"
+                    Visibility="{Binding IsAnswerVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                <StackPanel Margin="4">
+                    <TextBox Height="80"
+                             Margin="4"
+                             VerticalAlignment="Top"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Text="{Binding Answer.Content}" />
+
+                    <!-- Mensaje de error -->
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="Red"
+                               FontSize="14"
+                               TextWrapping="Wrap"
+                               Margin="0"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
+
+                    <Button Height="24"
+                            Width="100"
+                            Margin="0"
+                            Content="Enviar"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding SendAnswerCommand}" />
+
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </Border>
 </UserControl>

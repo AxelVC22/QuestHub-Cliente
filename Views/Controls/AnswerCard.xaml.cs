@@ -1,5 +1,7 @@
-﻿using System;
+﻿using QuestHubClient.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,15 +18,14 @@ using System.Windows.Shapes;
 namespace QuestHubClient.Views.Controls
 {
     /// <summary>
-    /// Lógica de interacción para PostCard.xaml
+    /// Lógica de interacción para AnswerCard.xaml
     /// </summary>
-    public partial class PostCard : UserControl
+    public partial class AnswerCard : UserControl
     {
-        public PostCard()
+        public AnswerCard()
         {
             InitializeComponent();
         }
-
-
+     
     }
 }

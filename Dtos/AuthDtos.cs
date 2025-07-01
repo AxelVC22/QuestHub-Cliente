@@ -43,7 +43,7 @@ namespace QuestHubClient.Dtos
 
     public class UserDto
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("_id")]
         public string Id { get; set; }
 
         [JsonPropertyName("name")]
@@ -66,6 +66,9 @@ namespace QuestHubClient.Dtos
 
         [JsonPropertyName("banEndDate")]
         public DateTime? BanEndDate { get; set; }
+
+        [JsonPropertyName("isFollowed")]
+        public bool IsFollowed { get; set; }
     }
 
     public class ErrorResponseDto

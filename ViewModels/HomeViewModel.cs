@@ -19,28 +19,35 @@ namespace QuestHubClient.ViewModels
         public int Page { get; set; } = 1;
 
         public int Limit { get; set; } = 2;
-        public ObservableCollection<Post> Posts { get; set; } = new ObservableCollection<Post>();
+        public ObservableCollection<PostCardViewModel> Posts { get; set; } = new ObservableCollection<PostCardViewModel>();
 
         //services
         private INavigationService _navigationService;
 
         private IPostsService _postsService;
 
+        private IAnswersService _answersService;
 
-        
+        private IFollowingService _followingService;
+
+
 
         public HomeViewModel()
         {
 
         }
 
-        public HomeViewModel(INavigationService navigationService, IPostsService postsService)
+        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService)
         {
             _navigationService = navigationService;
 
             _postsService = postsService;
 
-            LoadPostsAsync(Page,Limit);
+            _answersService = answersService;
+
+            _followingService = followingService;
+
+            LoadPostsAsync(Page, Limit);
         }
 
         private async Task LoadPostsAsync(int pageNumber, int limit)
@@ -49,7 +56,9 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (posts, page, message) = await _postsService.GetPostsByCategoryAsync(pageNumber, limit);
+                string id = App.MainViewModel.User?.Id;
+
+                var (posts, page, message) = await _postsService.GetPostsAsync(pageNumber, limit, id);
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -62,7 +71,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var post in posts)
                     {
-                        Posts.Add(post);
+                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService));
                     }
                 }
                 else
@@ -99,13 +108,12 @@ namespace QuestHubClient.ViewModels
 
         [RelayCommand]
 
-        public void SeeDetails()
+        public void SeeDetails(Post post)
         {
-            if (App.MainViewModel.IsRegistered)
-            {
-                _navigationService.NavigateTo<PostViewModel>();
-            }
-           
+
+
+            _navigationService.NavigateTo<PostViewModel>(post);
+
         }
 
         [RelayCommand]
@@ -113,5 +121,7 @@ namespace QuestHubClient.ViewModels
         {
             await LoadPostsAsync(Page, Limit);
         }
+
+       
     }
 }

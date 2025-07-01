@@ -44,48 +44,48 @@ namespace QuestHubClient.ViewModels
 
             _categoriesService = categoriesService;
 
-            //LoadCategoriesAsync(1, 1);
+            LoadCategoriesAsync();
             _postsService = postsService;
         }
 
 
-        //private async Task LoadCategoriesAsync(int pageNumber, int limit)
-        //{
-        //    try
-        //    {
-        //        ErrorMessage = string.Empty;
+        private async Task LoadCategoriesAsync()
+        {
+            try
+            {
+                ErrorMessage = string.Empty;
 
-        //        var (categories, page, message) = await _categoriesService.GetCategoriesAsync(pageNumber, limit);
+                var (categories, message) = await _categoriesService.GetCategoriesAsync();
 
-        //        if (!string.IsNullOrEmpty(message))
-        //        {
-        //            new NotificationWindow(message, 3).Show();
-        //        }
+                if (!string.IsNullOrEmpty(message))
+                {
+                    new NotificationWindow(message, 3).Show();
+                }
 
-        //        if (categories != null && categories.Any())
-        //        {
-        //            Page = Page + 1;
+                if (categories != null && categories.Any())
+                {
+                    Page = Page + 1;
 
-        //            foreach (var category in categories)
-        //            {
-        //                Categories.Add(category);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            new NotificationWindow("No se encontraron más categorias", 3).Show();
-        //        }
-        //    }
+                    foreach (var category in categories)
+                    {
+                        Categories.Add(category);
+                    }
+                }
+                else
+                {
+                    new NotificationWindow("No se encontraron más categorias", 3).Show();
+                }
+            }
 
-        //    catch (HttpRequestException ex)
-        //    {
-        //        ErrorMessage = $"Error de conexión: {ex.Message}";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ErrorMessage = $"Error inesperado: {ex.Message}";
-        //    }
-        //}
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+        }
 
         [RelayCommand]
         private void Cancel()

@@ -28,7 +28,13 @@ namespace QuestHubClient
 
         public IPostsService PostsService { get; set; }
 
+        public IAnswersService AnswersService { get; set; }
+
+        public IRatingsService RatingsService { get; set; }
+
         public ICategoriesService CategoriesService { get; set; }
+
+        public IFollowingService FollowingService { get; set; }
 
         public MainWindow()
         {
@@ -39,8 +45,14 @@ namespace QuestHubClient
 
             AuthService = new AuthService(HttpClient);
             UserService = new UserService(HttpClient);
+            FollowingService = new FollowingService(HttpClient);
+
 
             PostsService = new PostsService(new HttpClient());
+
+            AnswersService = new AnswersService(new HttpClient());
+
+            RatingsService = new RatingsService(new HttpClient());
 
             CategoriesService = new CategoriesService(new HttpClient());
 
@@ -49,7 +61,7 @@ namespace QuestHubClient
              (viewModelType, parameter) =>
              {
                  if (viewModelType == typeof(LoginViewModel))
-                 {                     
+                 {
                      var viewModel = new LoginViewModel(
                         NavigationService, AuthService, new LoginUser()
                      );
@@ -67,14 +79,14 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService, PostsService);
+                         NavigationService, PostsService, AnswersService, FollowingService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))
                  {
-
+                     var post = parameter as Post;
                      var viewModel = new PostViewModel(
-                         NavigationService);
+                         NavigationService, post, AnswersService, RatingsService, PostsService, FollowingService);
                      return new Views.PostView(viewModel);
                  }
                  else if (viewModelType == typeof(NewPostViewModel))
@@ -134,7 +146,7 @@ namespace QuestHubClient
 
             NavigationService.NavigateTo<HomeViewModel>();
 
-           
+
         }
     }
 }

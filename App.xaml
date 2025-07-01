@@ -22,6 +22,8 @@
         <!-- Estilos para botones -->
         <Style x:Key="PrimaryButtonStyle"
                TargetType="Button">
+            <Setter Property="ToolTipService.ShowOnDisabled"
+                    Value="True" />
             <Setter Property="Background"
                     Value="{StaticResource PrimaryDarkBrush}" />
             <Setter Property="Foreground"
@@ -65,6 +67,8 @@
 
         <Style x:Key="SecondaryButtonStyle"
                TargetType="Button">
+            <Setter Property="ToolTipService.ShowOnDisabled"
+                    Value="True" />
             <Setter Property="Background"
                     Value="Transparent" />
             <Setter Property="Foreground"
@@ -375,6 +379,68 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <!-- Estilo para botones de enlace -->
+
+        <Style x:Key="HyperlinkButtonStyle"
+               TargetType="Button">
+            <Setter Property="Foreground"
+                    Value="Blue" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderBrush"
+                    Value="Transparent" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="FontWeight"
+                    Value="Normal" />
+            <Setter Property="TextBlock.TextDecorations"
+                    Value="Underline" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver"
+                         Value="True">
+                    <Setter Property="TextBlock.TextDecorations"
+                            Value="Underline" />
+                    <Setter Property="Foreground"
+                            Value="DarkBlue" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!--estilo para boton de estrllas-->
+
+        <Style x:Key="StarButtonStyle"
+               TargetType="Button">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="0" />
+            <Setter Property="FocusVisualStyle"
+                    Value="{x:Null}" />
+            <Setter Property="OverridesDefaultStyle"
+                    Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
 
         <Style x:Key="DataGridCenterTextStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Center"/>
