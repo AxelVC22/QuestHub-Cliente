@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using QuestHubClient.Models;
 using QuestHubClient.Services;
-using QuestHubClient.Views.Controls;
 using QuestHubClient.Views;
 using System;
 using System.Collections.Generic;
@@ -10,11 +9,20 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace QuestHubClient.ViewModels
 {
     public partial class PostCardViewModel : BaseViewModel
     {
+        public bool IsOwner => App.MainViewModel.User?.Id == Post.Author.Id;
+
+        public bool CanReport => !IsOwner;
+
+
+
+        public bool CanEdit => IsOwner;
+        public bool CanDelete => IsOwner || IsAdmin || IsModerator;
 
         private IPostsService _postsService;
 
@@ -69,6 +77,9 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        public Action<PostCardViewModel> OnDeleted { get; set; }
+
+
         public PostCardViewModel()
         {
 
@@ -84,7 +95,7 @@ namespace QuestHubClient.ViewModels
             _followingService = followingService;
         }
 
-       
+
 
 
         [RelayCommand]
@@ -165,7 +176,7 @@ namespace QuestHubClient.ViewModels
                 }
 
 
-                new NotificationWindow(message , 3).Show();
+                new NotificationWindow(message, 3).Show();
 
 
             }
@@ -190,6 +201,51 @@ namespace QuestHubClient.ViewModels
                 if (success)
                 {
                     Post.Author.IsFollowed = false;
+
+                }
+
+                new NotificationWindow(message, 3).Show();
+
+
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+
+        }
+
+        [RelayCommand(CanExecute = nameof(CanEdit))]
+        public void Edit()
+        {
+            _navigationService.NavigateTo<NewPostViewModel>(Post);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDelete))]
+        public async void Delete()
+        {
+
+            var result = MessageBox.Show("¿Estás seguro que desea eliminar la publicación?",
+                                      "Cerrar Sesión",
+                                      MessageBoxButton.YesNo,
+                                      MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                var (message, success) = await _postsService.DeletePostAsync(Post.Id);
+
+                if (success)
+                {
+                    Post.Author.IsFollowed = false;
+                    OnDeleted?.Invoke(this);
 
                 }
 

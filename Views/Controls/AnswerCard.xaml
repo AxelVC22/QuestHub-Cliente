@@ -69,10 +69,61 @@
                                    Foreground="Gray" />
                         </TextBlock>
 
-                        <Button Content="Seguir"
-                                Style="{StaticResource SecondaryButtonStyle}"
-                                FontSize="12"
-                                VerticalAlignment="Center" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Button Content="Seguir ☺"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Command="{Binding FollowCommand}"
+                                        FontSize="12"
+                                        Width="70"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding Answer.Author.IsFollowed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"
+                                        ToolTip="{Binding CommandActionReason}" />
+                                <Button Content="Dejar de seguir ☹"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Command="{Binding UnfollowCommand}"
+                                        Width="110"
+                                        FontSize="12"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding Answer.Author.IsFollowed, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        ToolTip="{Binding CommandActionReason}" />
+                            </Grid>
+
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal">
+                                <Button Content="Editar ✎"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Command="{Binding EditCommand}"
+                                        FontSize="12"
+                                        Width="65"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        ToolTip="{Binding CommandActionReason}" />
+                                <Button Content="Eliminar ✖"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Command="{Binding DeleteCommand}"
+                                        Width="80"
+                                        FontSize="12"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        ToolTip="{Binding CommandActionReason}" />
+
+                                <Button Content="Reportar ⚠︎"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        Command="{Binding FollowCommand}"
+                                        FontSize="12"
+                                        Width="80"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding CanReport, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        ToolTip="{Binding CommandActionReason}" />
+
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
 
 

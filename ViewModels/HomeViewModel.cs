@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using QuestHubClient.Messaging;
 using QuestHubClient.Models;
 using QuestHubClient.Services;
 using QuestHubClient.Views;
@@ -48,6 +50,36 @@ namespace QuestHubClient.ViewModels
             _followingService = followingService;
 
             LoadPostsAsync(Page, Limit);
+
+            WeakReferenceMessenger.Default.Register<PostMessage>(this, (r, message) =>
+            {
+                switch (message.Type)
+                {
+                    case PostMessageType.Deleted:
+                        var toRemove = Posts.FirstOrDefault(p => p.Post.Id == message.PostId);
+                        if (toRemove != null)
+                            Posts.Remove(toRemove);
+                        break;
+
+                    case PostMessageType.Updated:
+                        var updated = message.Payload as Post;
+                        var toUpdate = Posts.FirstOrDefault(p => p.Post.Id == updated?.Id);
+                        if (toUpdate != null)
+                        {
+                            toUpdate = new PostCardViewModel(updated, _navigationService, _postsService, _answersService, _followingService)
+                            {
+                                OnDeleted = OnAnswerDeleted,
+                            };
+                            // etc.
+                        }
+                        break;
+                }
+            });
+        }
+
+        private void OnAnswerDeleted(PostCardViewModel postCardViewModel)
+        {
+            Posts.Remove(postCardViewModel);
         }
 
         private async Task LoadPostsAsync(int pageNumber, int limit)
@@ -71,7 +103,10 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var post in posts)
                     {
-                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService));
+                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService)
+                        {
+                            OnDeleted = OnAnswerDeleted,
+                        });
                     }
                 }
                 else
@@ -121,6 +156,9 @@ namespace QuestHubClient.ViewModels
         {
             await LoadPostsAsync(Page, Limit);
         }
+
+
+       
 
        
     }
