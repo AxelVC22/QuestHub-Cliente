@@ -66,6 +66,9 @@ namespace QuestHubClient.Dtos
 
         [JsonPropertyName("banEndDate")]
         public DateTime? BanEndDate { get; set; }
+
+        [JsonPropertyName("isFollowed")]
+        public bool IsFollowed { get; set; }
     }
 
     public class ErrorResponseDto

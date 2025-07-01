@@ -134,7 +134,7 @@ namespace QuestHubClient.ViewModels
             _ratingService = ratingsService;
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
         public void StartRating()
         {
             IsRatingVisible = !IsRatingVisible;
@@ -154,13 +154,13 @@ namespace QuestHubClient.ViewModels
             LoadAnswersAsync(Page, Limit);
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
         public void StartChildAnswer()
         {
             IsChildAnswerVisible = !IsChildAnswerVisible;
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
         public async Task RateAnswer(int selectedRating)
         {
             EditableRating = selectedRating;

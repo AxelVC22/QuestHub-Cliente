@@ -98,7 +98,7 @@ namespace QuestHubClient.Dtos
 
     public class PostDto
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("_id")]
         public string Id { get; set; }
 
         [JsonPropertyName("title")]

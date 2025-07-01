@@ -56,7 +56,9 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (posts, page, message) = await _postsService.GetPostsAsync(pageNumber, limit);
+                string id = App.MainViewModel.User?.Id;
+
+                var (posts, page, message) = await _postsService.GetPostsAsync(pageNumber, limit, id);
 
                 if (!string.IsNullOrEmpty(message))
                 {
