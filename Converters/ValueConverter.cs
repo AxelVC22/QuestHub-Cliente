@@ -1,5 +1,6 @@
 ﻿using QuestHubClient.Models;
 using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
@@ -173,6 +174,60 @@ namespace QuestHubClient.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class CollectionToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ICollection collection)
+            {
+                return collection.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class BooleanToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue && parameter is string parameterString)
+            {
+                // El parámetro debe tener el formato: "TextoTrue|TextoFalse"
+                var parts = parameterString.Split('|');
+                if (parts.Length == 2)
+                {
+                    return boolValue ? parts[0] : parts[1];
+                }
+            }
+
+            // Valores por defecto si no se proporciona parámetro
+            if (value is bool boolVal)
+            {
+                return boolVal ? "Sí" : "No";
+            }
+
+            return "No";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string stringValue && parameter is string parameterString)
+            {
+                var parts = parameterString.Split('|');
+                if (parts.Length == 2)
+                {
+                    return stringValue.Equals(parts[0], StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            return false;
         }
     }
 }

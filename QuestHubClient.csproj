@@ -14,11 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Protos\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+    <PackageReference Include="Grpc" Version="2.46.6" />
   </ItemGroup>
 
   <ItemGroup>

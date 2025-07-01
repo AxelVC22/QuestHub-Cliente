@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+package multimedia;
+
+option csharp_namespace = "Multimedia";
+
+message UploadRequest {
+  string post_id = 1;
+  string filename = 2;
+  bytes data = 3;
+  string content_type = 4;
+}
+
+message UploadResponse {
+  string url = 1;
+}
+
+service MultimediaService {
+  rpc Upload(stream UploadRequest) returns (UploadResponse);
+}
