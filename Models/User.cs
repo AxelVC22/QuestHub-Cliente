@@ -1,9 +1,10 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace QuestHubClient.Models
 {
-    public class User
+    public class User : ObservableObject
     {
         public string Id { get; set; }
 
@@ -33,5 +34,21 @@ namespace QuestHubClient.Models
         {
             Role = UserRole.Guest;
         }
+
+        private bool _isFollowed;
+
+        public bool IsFollowed
+        {
+            get => _isFollowed;
+            set
+            {
+                if (_isFollowed != value)
+                {
+                    _isFollowed = value;
+                    OnPropertyChanged(nameof(IsFollowed));
+                }
+            }
+        }
+
     }
 }

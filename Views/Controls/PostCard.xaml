@@ -25,7 +25,7 @@
             CornerRadius="2">
         <StackPanel>
 
-            <StackPanel Orientation="Horizontal" >
+            <StackPanel Orientation="Horizontal">
                 <!--imagen de perfil-->
                 <Grid Width="20"
                       Height="20"
@@ -44,10 +44,12 @@
                         Foreground="Gray"
                         FontWeight="Bold"
                         Style="{StaticResource HyperlinkButtonStyle}"
-                        Margin="4,0" 
-                        VerticalAlignment="Center"/>
-                
-                <TextBlock Margin="4,0" VerticalAlignment="Center">
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        ToolTip="{Binding CommandActionReason}" />
+
+                <TextBlock Margin="4,0"
+                           VerticalAlignment="Center">
                      <Run Text="●"
                           Foreground="Gray" />
                      <Run Text="{Binding Post.CreatedAt}"
@@ -58,8 +60,19 @@
                 <Button Content="Seguir"
                         Style="{StaticResource SecondaryButtonStyle}"
                         Command="{Binding FollowCommand}"
-                        FontSize="12" 
-                        VerticalAlignment="Center"/>
+                        FontSize="12"
+                        Width="50"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding Post.Author.IsFollowed, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}"
+                        ToolTip="{Binding CommandActionReason}" />
+                <Button Content="Dejar de seguir"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Command="{Binding UnfollowCommand}"
+                        Width="90"
+                        FontSize="12"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding Post.Author.IsFollowed, Converter={StaticResource BoolToVisibilityConverter}}"
+                        ToolTip="{Binding CommandActionReason}" />
 
             </StackPanel>
 
@@ -115,7 +128,8 @@
                     Width="80"
                     Height="24"
                     Margin="-2,6"
-                    HorizontalAlignment="Left" />
+                    HorizontalAlignment="Left"
+                    ToolTip="{Binding CommandActionReason}" />
 
 
             <Border Margin="0,5"

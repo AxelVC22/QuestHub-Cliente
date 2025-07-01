@@ -69,7 +69,6 @@ namespace QuestHubClient.ViewModels
             }
         }
 
-
         public PostCardViewModel()
         {
 
@@ -85,10 +84,7 @@ namespace QuestHubClient.ViewModels
             _followingService = followingService;
         }
 
-        private bool CanSendAnswer()
-        {
-            return App.MainViewModel.IsRegistered;
-        }
+       
 
 
         [RelayCommand]
@@ -103,7 +99,7 @@ namespace QuestHubClient.ViewModels
             _navigationService.NavigateTo<PostViewModel>(Post);
         }
 
-        [RelayCommand(CanExecute = nameof(CanSendAnswer))]
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
         public async void SendAnswer()
         {
             this.Answer.Author = App.MainViewModel.User;
@@ -148,19 +144,57 @@ namespace QuestHubClient.ViewModels
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
 
         public void StartAnswer()
         {
             IsAnswerVisible = !IsAnswerVisible;
         }
 
-        [RelayCommand]
-        public void Follow()
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
+        public async void Follow()
         {
             try
             {
-                _followingService.FollowUserAsync(Post.Author.Id, App.MainViewModel.User.Id);
+                var (message, success) = await _followingService.FollowUserAsync(Post.Author.Id, App.MainViewModel.User.Id);
+
+                if (success)
+                {
+                    Post.Author.IsFollowed = true;
+
+                }
+
+
+                new NotificationWindow(message , 3).Show();
+
+
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
+        public async void Unfollow()
+        {
+            try
+            {
+                var (message, success) = await _followingService.UnfollowUserAsync(Post.Author.Id, App.MainViewModel.User.Id);
+
+                if (success)
+                {
+                    Post.Author.IsFollowed = false;
+
+                }
+
+                new NotificationWindow(message, 3).Show();
+
 
             }
             catch (HttpRequestException ex)

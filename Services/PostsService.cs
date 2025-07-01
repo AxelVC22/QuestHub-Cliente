@@ -12,7 +12,7 @@ namespace QuestHubClient.Services
 {
     public interface IPostsService
     {
-        Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit);
+        Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId);
 
         Task<(Post post, string message)> CreatePostAsync(Post post);
     }
@@ -28,9 +28,9 @@ namespace QuestHubClient.Services
             _httpClient = httpClient;
         }
 
-        public async Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit)
+        public async Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}");
+            var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}&user={userId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -73,7 +73,8 @@ namespace QuestHubClient.Services
                 Author = new User
                 {
                     Id = postDto.Author?.Id,
-                   Name = postDto.Author?.Name
+                   Name = postDto.Author?.Name,
+                   IsFollowed = postDto.Author?.IsFollowed ?? false
                 },
                 Categories = postDto.Categories.Select(category => new Category
                 {
