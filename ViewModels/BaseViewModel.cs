@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using QuestHubClient.Models;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -10,6 +11,9 @@ namespace QuestHubClient.ViewModels
     {
         private string _title = string.Empty;
 
+        public static bool IsAdmin => App.MainViewModel.User?.Role == UserRole.Admin;
+
+        public static bool IsModerator => App.MainViewModel.User?.Role == UserRole.Moderator;
         public string Title
         {
             get => _title;

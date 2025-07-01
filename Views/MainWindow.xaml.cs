@@ -91,8 +91,9 @@ namespace QuestHubClient
                  }
                  else if (viewModelType == typeof(NewPostViewModel))
                  {
+                     var post = parameter as Post;
 
-                     var viewModel = new NewPostViewModel(
+                     var viewModel = new NewPostViewModel(post,
                          NavigationService, CategoriesService, PostsService);
                      return new Views.NewPostView(viewModel);
                  }
