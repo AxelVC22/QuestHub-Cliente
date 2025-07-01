@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using QuestHubClient.Messaging;
 using QuestHubClient.Models;
 using QuestHubClient.Services;
 using QuestHubClient.Views;
@@ -88,7 +90,7 @@ namespace QuestHubClient.ViewModels
         public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService, IPostsService postsService, IFollowingService followingService)
         {
             _navigationService = navigationService;
-            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService);
+            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService) { OnDeleted = OnPostDeleted};
             _answersService = answersService;
             _ratingService = ratingsService;
             _followingService = followingService;
@@ -96,7 +98,15 @@ namespace QuestHubClient.ViewModels
 
         }
 
-      
+        private void OnPostDeleted(PostCardViewModel postCardViewModel)
+        {
+
+            WeakReferenceMessenger.Default.Send(new PostMessage(PostMessageType.Deleted, postCardViewModel.Post.Id));
+
+            _navigationService.GoBack();
+        }
+
+
 
         [RelayCommand]
         public void SeeUserDetails()
@@ -110,7 +120,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (answers, page, message) = await _answersService.GetAnswersByPostAsync(PostCard.Post.Id, pageNumber, limit);
+                var (answers, page, message) = await _answersService.GetAnswersByPostAsync(PostCard.Post.Id, pageNumber, limit, App.MainViewModel.User?.Id);
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -139,7 +149,7 @@ namespace QuestHubClient.ViewModels
 
                         foreach (var ans in answers)
                         {
-                            var cardVM = new AnswerCardViewModel(ans, _navigationService, _answersService, _ratingService)
+                            var cardVM = new AnswerCardViewModel(ans, _navigationService, _answersService, _ratingService, _followingService)
                             {
                                 OnRated = OnAnswerRated,
                                 OnDeleted = OnAnswerDeleted,
@@ -194,7 +204,7 @@ namespace QuestHubClient.ViewModels
         }
 
 
-        private async void OnAnswerDeleted(Answer a)
+        private async void OnAnswerDeleted(AnswerCardViewModel answerCardViewModel)
         {
             await LoadAnswersAsync(1, Page * Limit, refreshVisible: true);
         }

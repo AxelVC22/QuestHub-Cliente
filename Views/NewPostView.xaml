@@ -14,6 +14,8 @@
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <conv:CategoryToBrushConverter x:Key="CategoryToBrushConverter" />
+        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
     </Page.Resources>
 
 
@@ -133,7 +135,7 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="0,20,0,0"
-                        Width="237">
+                        Width="290">
                 <Button Command="{Binding CancelCommand}"
                         Style="{StaticResource SecondaryButtonStyle}"
                         Content="Cancelar"
@@ -150,7 +152,17 @@
                         Width="100"
                         Margin="15,0,0,0"
                         Padding="25,12"
-                        Cursor="" />
+                        Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <Button Content="Guardar cambios"
+                        Command="{Binding SaveCommand}"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        FontSize="14"
+                        Height="40"
+                        Width="120"
+                        Margin="15,0,0,0"
+                        Padding="25,12"
+                        Visibility="{Binding IsUpdating, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
         </StackPanel>
     </StackPanel>

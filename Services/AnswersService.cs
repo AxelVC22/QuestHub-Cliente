@@ -12,13 +12,13 @@ namespace QuestHubClient.Services
 {
     public interface IAnswersService
     {
-        Task<(List<Answer>, Page page, string message)> GetAnswersByPostAsync(string postId, int page, int limit);
+        Task<(List<Answer>, Page page, string message)> GetAnswersByPostAsync(string postId, int page, int limit, string userId);
 
-        Task<(List<Answer>, Page page, string message)> GetAnswersByAnswerAsync(string answerId, int page, int limit);
+        Task<(List<Answer>, Page page, string message)> GetAnswersByAnswerAsync(string answerId, int page, int limit, string userId);
 
         Task<(Answer answer, string message)> CreateAnswerAsync(Answer answer);
     }
-    public  class AnswersService : IAnswersService
+    public class AnswersService : IAnswersService
     {
         private readonly HttpClient _httpClient;
 
@@ -29,9 +29,9 @@ namespace QuestHubClient.Services
             _httpClient = httpClient;
         }
 
-        public async Task<(List<Answer>, Page page, string message)> GetAnswersByPostAsync(string postId, int page, int limit)
+        public async Task<(List<Answer>, Page page, string message)> GetAnswersByPostAsync(string postId, int page, int limit, string userId)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/post/{postId}?page={page}&limit={limit}");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/post/{postId}?page={page}&limit={limit}&user={userId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -59,9 +59,9 @@ namespace QuestHubClient.Services
             }
         }
 
-        public async Task<(List<Answer>, Page page, string message)> GetAnswersByAnswerAsync(string answerId, int page, int limit)
+        public async Task<(List<Answer>, Page page, string message)> GetAnswersByAnswerAsync(string answerId, int page, int limit, string userId)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/answer/{answerId}?page={page}&limit={limit}");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/answer/{answerId}?page={page}&limit={limit}&user={userId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -96,14 +96,15 @@ namespace QuestHubClient.Services
                 Author = new User
                 {
                     Id = a.Author.Id,
-                    Name = a.Author.Name
+                    Name = a.Author.Name,
+                    IsFollowed = a.Author?.IsFollowed??false,
                 },
                 Id = a.Id,
                 Content = a.Content,
                 Qualification = a.Qualification,
                 TotalRatings = a.TotalRatings,
                 Post = new Post { Id = a.PostId },
-                CreatedAt = a.CreatedAt,
+                CreatedAt = DateTime.SpecifyKind(a.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
                 ParentAnswerId = a.ParentAnswerId
             }).ToList();
         }
@@ -115,7 +116,7 @@ namespace QuestHubClient.Services
                 var registerRequest = AnswerToAnswerRequestDto(answer);
                 var jsonContent = JsonSerializer.Serialize(registerRequest);
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response =  _httpClient.PostAsync(_baseUrl, httpContent).Result;
+                var response = _httpClient.PostAsync(_baseUrl, httpContent).Result;
                 var responseContent = response.Content.ReadAsStringAsync().Result;
 
                 if (response.IsSuccessStatusCode)
@@ -166,19 +167,19 @@ namespace QuestHubClient.Services
             };
         }
 
-       private static Answer ResponseToAnswer(AnswerResponseDto answerResponseDto)
+        private static Answer ResponseToAnswer(AnswerResponseDto answerResponseDto)
         {
             return new Answer
             {
-                Author = new User { Id = answerResponseDto.Author},
+                Author = new User { Id = answerResponseDto.Author },
                 Content = answerResponseDto.Content,
-                CreatedAt = answerResponseDto.CreatedAt,
+                CreatedAt = DateTime.SpecifyKind(answerResponseDto.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
                 Id = answerResponseDto.Id,
-                Post = new Post { Id = answerResponseDto.Post},
+                Post = new Post { Id = answerResponseDto.Post },
                 Qualification = answerResponseDto.Qualification,
                 TotalRatings = answerResponseDto.TotalRatings
             };
         }
     }
-   
+
 }

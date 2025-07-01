@@ -11,11 +11,20 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace QuestHubClient.ViewModels
 {
     public partial class AnswerCardViewModel : BaseViewModel
     {
+
+        public bool IsOwner => App.MainViewModel.User?.Id == Answer.Author.Id;
+
+        public bool CanReport => !IsOwner;
+
+        public bool CanEdit => IsOwner;
+        public bool CanDelete => IsOwner || IsAdmin || IsModerator;
+
         public int Page { get; set; } = 1;
 
         public int Limit { get; set; } = 2;
@@ -35,6 +44,7 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        public Action<AnswerCardViewModel> OnDeleted { get; set; }
 
 
         [ObservableProperty]
@@ -114,8 +124,9 @@ namespace QuestHubClient.ViewModels
         private IAnswersService _answersService;
 
         private IRatingsService _ratingService;
+
+        private IFollowingService _followingService;
         public Action<AnswerCardViewModel> OnRated { get; set; }
-        public Action<Answer> OnDeleted { get; set; }
         public Action<Answer> OnReplied { get; set; }
 
         public AnswerCardViewModel()
@@ -123,7 +134,7 @@ namespace QuestHubClient.ViewModels
 
         }
 
-        public AnswerCardViewModel(Answer answer, INavigationService navigationService, IAnswersService answersService, IRatingsService ratingsService)
+        public AnswerCardViewModel(Answer answer, INavigationService navigationService, IAnswersService answersService, IRatingsService ratingsService, IFollowingService followingService)
         {
             _answer = answer;
             _isRatingVisible = false;
@@ -132,6 +143,7 @@ namespace QuestHubClient.ViewModels
             _navigationService = navigationService;
             _answersService = answersService;
             _ratingService = ratingsService;
+            _followingService = followingService; 
         }
 
         [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
@@ -240,7 +252,7 @@ namespace QuestHubClient.ViewModels
                 {
                     new NotificationWindow("Respuesta enviado con éxito", 3).Show();
                     await LoadAnswersAsync(1, Page * Limit, refreshVisible: true);
-                    ChildAnswer.Content = string.Empty; // Limpiar el contenido del ChildAnswer
+                    ChildAnswer.Content = string.Empty; 
                     OnRated?.Invoke(this);
 
                 }
@@ -266,7 +278,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (answers, page, message) = await _answersService.GetAnswersByAnswerAsync(Answer.Id, pageNumber, limit);
+                var (answers, page, message) = await _answersService.GetAnswersByAnswerAsync(Answer.Id, pageNumber, limit, App.MainViewModel.User?.Id);
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -295,10 +307,10 @@ namespace QuestHubClient.ViewModels
 
                         foreach (var ans in answers)
                         {
-                            var cardVM = new AnswerCardViewModel(ans, _navigationService, _answersService, _ratingService)
+                            var cardVM = new AnswerCardViewModel(ans, _navigationService, _answersService, _ratingService, _followingService)
                             {
                                 OnRated = OnChildAnswerRated,
-                                OnDeleted = OnAnswerDeleted,
+                                OnDeleted = OnChildAnswerDeleted,
                             };
 
                             AnswerCards.Add(cardVM);
@@ -327,13 +339,113 @@ namespace QuestHubClient.ViewModels
             await LoadAnswersAsync(1, Page * Limit, refreshVisible: true);
         }
 
-        private void OnAnswerDeleted(Answer a)
+        private void OnChildAnswerDeleted(AnswerCardViewModel answerCardViewModel)
         {
             // Otra lógica
         }
 
 
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
+        public async void Follow()
+        {
+            try
+            {
+                var (message, success) = await _followingService.FollowUserAsync(Answer.Author.Id, App.MainViewModel.User.Id);
 
+                if (success)
+                {
+                    Answer.Author.IsFollowed = true;
+
+                }
+
+
+                new NotificationWindow(message, 3).Show();
+
+
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
+        public async void Unfollow()
+        {
+            try
+            {
+                var (message, success) = await _followingService.UnfollowUserAsync(Answer.Author.Id, App.MainViewModel.User.Id);
+
+                if (success)
+                {
+                    Answer.Author.IsFollowed = false;
+
+                }
+
+                new NotificationWindow(message, 3).Show();
+
+
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+
+        }
+
+        [RelayCommand(CanExecute = nameof(CanEdit))]
+        public void Edit()
+        {
+           // _navigationService.NavigateTo<NewPostViewModel>(Post);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanDelete))]
+        public async void Delete()
+        {
+
+            var result = MessageBox.Show("¿Estás seguro que desea eliminar la publicación?",
+                                      "Cerrar Sesión",
+                                      MessageBoxButton.YesNo,
+                                      MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                //var (message, success) = await _postsService.DeletePostAsync(Post.Id);
+
+                //if (success)
+                //{
+                //    Post.Author.IsFollowed = false;
+                //    OnDeleted?.Invoke(this);
+
+                //}
+
+             //   new NotificationWindow(message, 3).Show();
+
+
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+
+        }
 
 
     }
