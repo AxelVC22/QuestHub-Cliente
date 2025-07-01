@@ -152,7 +152,15 @@ namespace QuestHubClient.ViewModels
 
         public void StartAnswer()
         {
-            IsAnswerVisible = !IsAnswerVisible;
+            if (App.MainViewModel.User == null)
+            {
+                new NotificationWindow("Inicia sesión para responder un post", 3).Show();
+                return;
+            }
+            else
+            {
+                IsAnswerVisible = !IsAnswerVisible;
+            }                
         }
 
         [RelayCommand]
@@ -160,7 +168,14 @@ namespace QuestHubClient.ViewModels
         {
             try
             {
-                _followingService.FollowUserAsync(Post.Author.Id, App.MainViewModel.User.Id);
+                if (App.MainViewModel.User == null)
+                {
+                    new NotificationWindow("Inicia sesión para seguir a un usuario", 3).Show();
+                    return;
+                } else
+                {
+                    _followingService.FollowUserAsync(Post.Author.Id, App.MainViewModel.User.Id);
+                }                    
 
             }
             catch (HttpRequestException ex)
