@@ -36,6 +36,8 @@ namespace QuestHubClient
 
         public IFollowingService FollowingService { get; set; }
 
+        public IReportsService ReportsService { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -55,6 +57,8 @@ namespace QuestHubClient
             RatingsService = new RatingsService(new HttpClient());
 
             CategoriesService = new CategoriesService(new HttpClient());
+
+            ReportsService = new ReportsService(HttpClient);
 
             NavigationService = new FrameNavigationService(
              PageFrame,
@@ -114,6 +118,15 @@ namespace QuestHubClient
                      var viewModel = new UsersViewModel(
                          NavigationService, UserService);
                      return new Views.UsersView(viewModel);
+
+                 }
+                 else if (viewModelType == typeof(NewReportViewModel))
+                 {
+                     var report = parameter as Report;
+
+                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService,ReportsService
+                         );
+                     return new Views.NewReportView(viewModel);
 
                  }
 
