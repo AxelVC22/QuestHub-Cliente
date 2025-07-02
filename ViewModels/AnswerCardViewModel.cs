@@ -44,6 +44,20 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        private Answer _answerForUpdate = new();
+
+        public Answer AnswerForUpdate
+        {
+            get => _answerForUpdate;
+            set
+            {
+                if (_answerForUpdate != value)
+                {
+                    _answerForUpdate = value;
+                    OnPropertyChanged(nameof(AnswerForUpdate));
+                }
+            }
+        }
         public Action<AnswerCardViewModel> OnDeleted { get; set; }
 
 
@@ -79,6 +93,21 @@ namespace QuestHubClient.ViewModels
                 {
                     _isRatingVisible = value;
                     OnPropertyChanged(nameof(IsRatingVisible));
+                }
+            }
+        }
+
+        private bool _isUpdatingVisible;
+
+        public bool IsUpdatingVisible
+        {
+            get => _isUpdatingVisible;
+            set
+            {
+                if (_isUpdatingVisible != value)
+                {
+                    _isUpdatingVisible = value;
+                    OnPropertyChanged(nameof(IsUpdatingVisible));
                 }
             }
         }
@@ -140,10 +169,16 @@ namespace QuestHubClient.ViewModels
             _isRatingVisible = false;
             _isChildAnswerVisible = false;
             _areAnswersVisible = false;
+            _isUpdatingVisible = false;
             _navigationService = navigationService;
             _answersService = answersService;
             _ratingService = ratingsService;
-            _followingService = followingService; 
+            _followingService = followingService;
+
+            AnswerForUpdate.Author = Answer.Author;
+            AnswerForUpdate.Id = Answer.Id;
+            AnswerForUpdate.ParentAnswer = new Answer { Id = Answer.ParentAnswer?.Id };
+            AnswerForUpdate.Post = new Post { Id = Answer.Post?.Id };
         }
 
         [RelayCommand(CanExecute = nameof(CanDoOnlyLoggedAction))]
@@ -341,7 +376,7 @@ namespace QuestHubClient.ViewModels
 
         private void OnChildAnswerDeleted(AnswerCardViewModel answerCardViewModel)
         {
-            // Otra lógica
+            AnswerCards.Remove(answerCardViewModel);
         }
 
 
@@ -405,15 +440,66 @@ namespace QuestHubClient.ViewModels
         [RelayCommand(CanExecute = nameof(CanEdit))]
         public void Edit()
         {
-           // _navigationService.NavigateTo<NewPostViewModel>(Post);
+          
+            AnswerForUpdate.Content = Answer.Content;
+            IsUpdatingVisible = !IsUpdatingVisible;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanEdit))]
+        public void Save()
+        {
+            if (string.Equals(Answer.Content, AnswerForUpdate.Content))
+            {
+                new NotificationWindow("No se han realizado cambios en la respuesta", 3).Show();
+                return;
+            }
+
+
+            try
+            {
+                ErrorMessage = string.Empty;
+
+                var context = new ValidationContext(AnswerForUpdate);
+                var results = new List<ValidationResult>();
+                bool isValid = Validator.TryValidateObject(AnswerForUpdate, context, results, true);
+
+                if (!isValid)
+                {
+                    ErrorMessage = results.First().ErrorMessage;
+                    return;
+                }
+
+                var (answer, message) = _answersService.UpdateAnswerAsync(AnswerForUpdate).Result;
+
+                if (answer != null)
+                {
+                    new NotificationWindow("Respuesta enviado con éxito", 3).Show();
+                    Answer = answer;
+                    Answer.Author = App.MainViewModel.User;
+                    IsUpdatingVisible = false;
+                   // OnRated?.Invoke(this);
+                }
+                else
+                {
+                    new NotificationWindow(message ?? "Error al enviar la respuesta", 3).Show();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
         public async void Delete()
         {
 
-            var result = MessageBox.Show("¿Estás seguro que desea eliminar la publicación?",
-                                      "Cerrar Sesión",
+            var result = MessageBox.Show("¿Estás seguro que desea eliminar la respuesta?",
+                                      "Eliminar",
                                       MessageBoxButton.YesNo,
                                       MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes)
@@ -423,16 +509,15 @@ namespace QuestHubClient.ViewModels
 
             try
             {
-                //var (message, success) = await _postsService.DeletePostAsync(Post.Id);
+                var (message, success) = await _answersService.DeleteAnswerAsync(Answer.Id);
 
-                //if (success)
-                //{
-                //    Post.Author.IsFollowed = false;
-                //    OnDeleted?.Invoke(this);
+                if (success)
+                {
+                    OnDeleted?.Invoke(this);
 
-                //}
+                }
 
-             //   new NotificationWindow(message, 3).Show();
+                new NotificationWindow(message, 3).Show();
 
 
             }

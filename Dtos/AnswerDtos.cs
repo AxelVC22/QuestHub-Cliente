@@ -98,6 +98,9 @@ namespace QuestHubClient.Dtos
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("parentAnswerId")]
         public string ParentAnswerId { get; set; }
+
+        [JsonPropertyName("post")]
+        public PostDto Post { get; set; }
     }
 
 
