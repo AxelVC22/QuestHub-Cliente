@@ -102,7 +102,7 @@
 
                         <Button Content="Reportar ⚠︎"
                                 Style="{StaticResource SecondaryButtonStyle}"
-                                Command="{Binding FollowCommand}"
+                                Command="{Binding ReportCommand}"
                                 FontSize="12"
                                 Width="80"
                                 VerticalAlignment="Center"

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using QuestHubClient.Views.Controls;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,9 +9,22 @@ namespace QuestHubClient.Models
     {
         public string Id { get; set; }
 
+        private string _name;
+
         [Required(ErrorMessage = "El nombre es obligatorio")]
         [StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre no puede tener más de 50 caracteres ni menos de 3")]
-        public string Name { get; set; }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
 
         [Required(ErrorMessage = "El correo electrónico es obligatorio")]
         [EmailAddress(ErrorMessage = "El correo no tiene un formato válido")]

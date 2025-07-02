@@ -233,12 +233,34 @@ namespace QuestHubClient.ViewModels
             _navigationService.NavigateTo<NewPostViewModel>(Post);
         }
 
+        [RelayCommand(CanExecute = nameof(CanReport))]
+        public void Report()
+        {
+
+            var result = MessageBox.Show("¿Estás seguro que desea reportar la publicación?",
+                                      "Reportar",
+                                      MessageBoxButton.YesNo,
+                                      MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            Report report = new Report
+            {
+                Post = Post,
+                Reporter = App.MainViewModel.User,
+            };
+
+            _navigationService.NavigateTo<NewReportViewModel>(report);
+        }
+
         [RelayCommand(CanExecute = nameof(CanDelete))]
         public async void Delete()
         {
 
             var result = MessageBox.Show("¿Estás seguro que desea eliminar la publicación?",
-                                      "Cerrar Sesión",
+                                      "Eliminar",
                                       MessageBoxButton.YesNo,
                                       MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes)
@@ -252,7 +274,6 @@ namespace QuestHubClient.ViewModels
 
                 if (success)
                 {
-                    Post.Author.IsFollowed = false;
                     OnDeleted?.Invoke(this);
 
                 }

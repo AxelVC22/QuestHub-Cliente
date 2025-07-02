@@ -30,9 +30,23 @@ namespace QuestHubClient.Models
             }
         }
         public Post Post { get; set; }
+
+        private User _author;
+
         [Required(ErrorMessage = "Solo usuarios registrados pueden hacer comentarios")]
 
-        public User Author { get; set; }
+        public User Author
+        {
+            get => _author;
+            set
+            {
+                if (_author != value)
+                {
+                    _author = value;
+                    OnPropertyChanged(nameof(Author));
+                }
+            }
+        }
         public DateTime CreatedAt { get; set; }
         public bool IsAccepted { get; set; }
 

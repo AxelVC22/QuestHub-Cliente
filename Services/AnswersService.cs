@@ -17,6 +17,10 @@ namespace QuestHubClient.Services
         Task<(List<Answer>, Page page, string message)> GetAnswersByAnswerAsync(string answerId, int page, int limit, string userId);
 
         Task<(Answer answer, string message)> CreateAnswerAsync(Answer answer);
+
+        Task<(Answer answer, string message)> UpdateAnswerAsync(Answer answer);
+
+        Task<(string message, bool success)> DeleteAnswerAsync(string answerId);
     }
     public class AnswersService : IAnswersService
     {
@@ -179,6 +183,95 @@ namespace QuestHubClient.Services
                 Qualification = answerResponseDto.Qualification,
                 TotalRatings = answerResponseDto.TotalRatings
             };
+        }
+
+        public async Task<(Answer answer, string message)> UpdateAnswerAsync(Answer answer)
+        {
+            try
+            {
+                var registerRequest = AnswerToAnswerRequestDto(answer);
+                var jsonContent = JsonSerializer.Serialize(registerRequest);
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var response = _httpClient.PutAsync($"{_baseUrl}/{answer.Id}", httpContent).Result;
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var answerReponse = JsonSerializer.Deserialize<AnswerResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
+
+                    var createdAnswer = ResponseToAnswer(answerReponse);
+
+                    return (createdAnswer, answerReponse.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (null, errorResponse?.Message ?? "Error al crear la respuesta");
+                }
+
+
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
+        }
+
+        public async Task<(string message, bool success)> DeleteAnswerAsync(string answerId)
+        {
+            try
+            {
+                var response = _httpClient.DeleteAsync($"{_baseUrl}/{answerId}").Result;
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var answerResponse = JsonSerializer.Deserialize<PostResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+
+                    return (answerResponse.Message, true);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (errorResponse?.Message ?? "Error desconocido", false);
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return ($"Error de conexión: {ex.Message}", false);
+            }
+            catch (JsonException ex)
+            {
+                return ($"Error al procesar la respuesta: {ex.Message}", false);
+            }
+            catch (Exception ex)
+            {
+                return ($"Error inesperado: {ex.Message}", false);
+            }
         }
     }
 

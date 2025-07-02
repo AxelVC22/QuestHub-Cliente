@@ -206,7 +206,7 @@ namespace QuestHubClient.ViewModels
 
         private async void OnAnswerDeleted(AnswerCardViewModel answerCardViewModel)
         {
-            await LoadAnswersAsync(1, Page * Limit, refreshVisible: true);
+            AnswerCards.Remove(answerCardViewModel);
         }
 
     

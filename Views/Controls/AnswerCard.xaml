@@ -145,10 +145,32 @@
                 </Grid>
 
 
-                <TextBlock Text="{Binding Answer.Content}"
-                           TextWrapping="Wrap"
-                           MaxHeight="100"
-                           Margin="0,0,0,10" />
+                <Grid>
+                    <TextBlock Text="{Binding Answer.Content}"
+                               TextWrapping="Wrap"
+                               MaxHeight="100"
+                               Margin="0,0,0,10"
+                               Visibility="{Binding IsUpdatingVisible, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=true}" />
+
+                    <StackPanel Visibility="{Binding IsUpdatingVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Actualiza la respuesta"
+                                   Foreground="Gray" />
+
+                        <TextBox Text="{Binding AnswerForUpdate.Content}"
+                                 Margin="0,4" 
+                                 Style="{StaticResource ModernTextBoxStyle}"/>
+                        <Button Content="Guardar cambios"
+                                Command="{Binding SaveCommand}"
+                                CommandParameter="{Binding}"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Width="120"
+                                Height="24"
+                                Margin="0,10"
+                                Visibility="{Binding IsUpdatingVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                                HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Grid>
+
 
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Calificar"
@@ -175,6 +197,7 @@
                             Height="24"
                             Margin="-2,0"
                             HorizontalAlignment="Left" />
+                   
 
                 </StackPanel>
 

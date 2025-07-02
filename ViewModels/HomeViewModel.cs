@@ -70,7 +70,6 @@ namespace QuestHubClient.ViewModels
                             {
                                 OnDeleted = OnAnswerDeleted,
                             };
-                            // etc.
                         }
                         break;
                 }
