@@ -124,7 +124,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var category in categories)
                     {
-                        if (post == null || !post.Categories.Any(c => c.Id == category.Id))
+                        if (Post?.Categories == null || !Post.Categories.Any(c => c.Id == category.Id))
                         {
                             Categories.Add(category);
 

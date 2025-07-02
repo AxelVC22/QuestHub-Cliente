@@ -16,6 +16,7 @@
         <conv:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
         <conv:BooleanToStringConverter x:Key="BooleanToStringConverter" />
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <Style x:Key="FileItemStyle" TargetType="Border">
             <Setter Property="Background" Value="#F8F9FA"/>
@@ -34,12 +35,11 @@
             <Setter Property="Padding" Value="20"/>
             <Setter Property="MinHeight" Value="120"/>
         </Style>
-        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-
     </Page.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Grid.Column="1" Margin="10">
+
             <StackPanel Margin="10">
                 <!-- Encabezado -->
                 <StackPanel Margin="0,0,0,40">
@@ -79,7 +79,6 @@
                     <TextBlock Text="Archivos multimedia (opcional)"
                                Style="{StaticResource LabelStyle}" />
 
-                    <!-- Área de arrastrar y soltar -->
                     <Border Style="{StaticResource DropAreaStyle}"
                             AllowDrop="True"
                             Drop="Border_Drop"
@@ -106,7 +105,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Lista de archivos seleccionados -->
                     <StackPanel Margin="0,10,0,0"
                                 Visibility="{Binding SelectedFiles, Converter={StaticResource CollectionToVisibilityConverter}}">
                         <TextBlock Text="Archivos seleccionados:"
@@ -126,14 +124,12 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!-- Icono de archivo -->
                                             <TextBlock Grid.Column="0"
                                                        Text="{Binding FileIcon}"
                                                        FontSize="20"
                                                        VerticalAlignment="Center"
                                                        Margin="0,0,12,0" />
 
-                                            <!-- Información del archivo -->
                                             <StackPanel Grid.Column="1"
                                                         VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding FileName}"
@@ -144,7 +140,6 @@
                                                            Foreground="Gray" />
                                             </StackPanel>
 
-                                            <!-- Botón eliminar -->
                                             <Button Grid.Column="3"
                                                     Content="✕"
                                                     Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
@@ -164,7 +159,6 @@
                         </ItemsControl>
                     </StackPanel>
 
-                    <!-- Información sobre tipos de archivo permitidos -->
                     <TextBlock Text="Tipos permitidos: Imágenes (JPG, PNG, GIF), Videos (MP4, AVI, MOV), Documentos (PDF, TXT). Tamaño máximo: 20MB por archivo"
                                FontSize="11"
                                Foreground="Gray"
@@ -177,7 +171,6 @@
                     <TextBlock Text="Categorías *"
                                Style="{StaticResource LabelStyle}" />
 
-                    <!-- Categorias seleccionadas-->
                     <ItemsControl ItemsSource="{Binding SelectedCategories}"
                                   Margin="2">
                         <ItemsControl.ItemsPanel>
@@ -185,7 +178,6 @@
                                 <WrapPanel />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button Content="{Binding Name}"
@@ -204,10 +196,9 @@
 
                     <TextBlock Text="Selecciona algunas categorías para que sea fácil de consultar"
                                FontSize="13"
-                               Margin="0, 10"
+                               Margin="0,10"
                                Foreground="Gray" />
 
-                    <!--Categorias general -->
                     <ItemsControl ItemsSource="{Binding Categories}"
                                   Margin="2">
                         <ItemsControl.ItemsPanel>
@@ -215,7 +206,6 @@
                                 <WrapPanel />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button Content="{Binding Name}"
@@ -233,7 +223,6 @@
                     </ItemsControl>
                 </StackPanel>
 
-                <!-- Mensaje de error -->
                 <TextBlock Text="{Binding ErrorMessage}"
                            Foreground="Red"
                            FontSize="12"
@@ -241,39 +230,40 @@
                            Margin="5,10,0,0"
                            Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
 
-            <!-- Botones -->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0,20,0,0"
-                        Width="290">
-                <Button Command="{Binding CancelCommand}"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Content="Cancelar"
-                        FontSize="16"
-                        Margin="20,0,0,0"
-                        Width="100"
-                        Height="40" />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,20,0,0"
+                            Width="290">
+                    <Button Command="{Binding CancelCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Content="Cancelar"
+                            FontSize="16"
+                            Margin="20,0,0,0"
+                            Width="100"
+                            Height="40" />
 
-                <Button Content="Subir"
-                        Command="{Binding SubmitCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}"
-                        FontSize="14"
-                        Height="40"
-                        Width="100"
-                        Margin="15,0,0,0"
-                        Padding="25,12"
-                        Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                    <Button Content="Subir"
+                            Command="{Binding SubmitCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            FontSize="14"
+                            Height="40"
+                            Width="100"
+                            Margin="15,0,0,0"
+                            Padding="25,12"
+                            Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}" />
 
-                <Button Content="Guardar cambios"
-                        Command="{Binding SaveCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}"
-                        FontSize="14"
-                        Height="40"
-                        Width="120"
-                        Margin="15,0,0,0"
-                        Padding="25,12"
-                        Visibility="{Binding IsUpdating, Converter={StaticResource BoolToVisibilityConverter}}" />
+                    <Button Content="Guardar cambios"
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            FontSize="14"
+                            Height="40"
+                            Width="120"
+                            Margin="15,0,0,0"
+                            Padding="25,12"
+                            Visibility="{Binding IsUpdating, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
             </StackPanel>
+
         </StackPanel>
     </ScrollViewer>
 </Page>
