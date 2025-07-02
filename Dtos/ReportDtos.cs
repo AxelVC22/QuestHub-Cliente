@@ -7,6 +7,23 @@ using System.Threading.Tasks;
 
 namespace QuestHubClient.Dtos
 {
+
+    public class ReportsResponseDto
+    {
+        [JsonPropertyName("message")]
+
+        public string Message { get; set; }
+        [JsonPropertyName("currentPage")]
+
+        public int CurrentPage { get; set; }
+        [JsonPropertyName("totalPages")]
+
+        public int TotalPages { get; set; }
+        [JsonPropertyName("totalReports")]
+
+        public int TotalReports { get; set; }
+        public List<ReportDto> Reports { get; set; }
+    }
     public class ReportRequestDto
     {
         [JsonPropertyName("id")]
@@ -24,6 +41,34 @@ namespace QuestHubClient.Dtos
 
         [JsonPropertyName("answer")]
         public string Answer { get; set; }
+
+
+    }
+
+    public class FullReportResponseDto
+    {
+        [JsonPropertyName("_id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("reason")]
+        public string Reason { get; set; }
+
+        [JsonPropertyName("reporter")]
+        public UserDto Reporter { get; set; }
+
+        [JsonPropertyName("post")]
+
+        public PostDto Post { get; set; }
+
+        [JsonPropertyName("answer")]
+        public AnswerDto Answer { get; set; }
+
+
+        [JsonPropertyName("createdAt")]
+        public DateTime CreatedAt { get; set; }
+
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
 
 
     }
@@ -70,13 +115,16 @@ namespace QuestHubClient.Dtos
 
         [JsonPropertyName("post")]
 
-        public PostDto Post { get; set; }
+        public PostDto? Post { get; set; }
 
         [JsonPropertyName("answer")]
-        public AnswerDto Answer { get; set; }
+        public AnswerDto? Answer { get; set; }
 
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
     }
 }

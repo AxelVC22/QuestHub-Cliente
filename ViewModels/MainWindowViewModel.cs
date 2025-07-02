@@ -146,6 +146,7 @@ namespace QuestHubClient.ViewModels
                     AddMenuOption("📝 Categorias", () => _navigationService.NavigateTo<CategoriesViewModel>());
                     AddMenuOption("📊 Dashboard", () => _navigationService.NavigateTo<HomeViewModel>());
                     AddMenuOption("👥 Usuarios", () => _navigationService.NavigateTo<UsersViewModel>());
+                    AddMenuOption("🚩 Reportes", () => _navigationService.NavigateTo<ReportsViewModel>());
                     break;
 
                 case UserRole.Moderator:

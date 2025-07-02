@@ -5,10 +5,14 @@ using System.Windows.Input;
 
 namespace QuestHubClient.ViewModels
 {
-
-   
     public abstract class BaseViewModel : ObservableObject, INotifyPropertyChanged
     {
+
+        public int Page { get; set; } = 1;
+
+        public int Limit { get; set; } = 2;
+
+
         private string _title = string.Empty;
 
         public static bool IsAdmin => App.MainViewModel.User?.Role == UserRole.Admin;

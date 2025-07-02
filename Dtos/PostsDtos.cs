@@ -42,7 +42,7 @@ namespace QuestHubClient.Dtos
 
     public class PostsResponseDto
     {
-
+        [JsonPropertyName("message")]
       
         public string Message { get; set; }
         [JsonPropertyName("currentPage")]

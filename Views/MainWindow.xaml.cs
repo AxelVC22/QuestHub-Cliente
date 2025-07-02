@@ -124,9 +124,17 @@ namespace QuestHubClient
                  {
                      var report = parameter as Report;
 
-                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService,ReportsService
+                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService, ReportsService
                          );
                      return new Views.NewReportView(viewModel);
+
+                 }
+                 else if (viewModelType == typeof(ReportsViewModel))
+                 {
+
+                     var viewModel = new ReportsViewModel(ReportsService
+                         );
+                     return new Views.ReportsView(viewModel);
 
                  }
 
