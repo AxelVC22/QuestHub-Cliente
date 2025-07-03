@@ -18,6 +18,8 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
     <PackageReference Include="Google.Protobuf" Version="3.25.1" />
     <PackageReference Include="Grpc.Tools" Version="2.57.0" PrivateAssets="All" />
+    <PackageReference Include="LiveChartsCore" Version="2.0.0-rc5.4" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-rc5.4" />
   </ItemGroup>
 
   <ItemGroup>

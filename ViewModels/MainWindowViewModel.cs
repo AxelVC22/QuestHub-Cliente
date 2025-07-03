@@ -147,6 +147,8 @@ namespace QuestHubClient.ViewModels
                     AddMenuOption("📊 Dashboard", () => _navigationService.NavigateTo<HomeViewModel>());
                     AddMenuOption("👥 Usuarios", () => _navigationService.NavigateTo<UsersViewModel>());
                     AddMenuOption("🚩 Reportes", () => _navigationService.NavigateTo<ReportsViewModel>());
+                    AddMenuOption("📝 Estadisticas", () => _navigationService.NavigateTo<StatisticsViewModel>());
+
                     break;
 
                 case UserRole.Moderator:
@@ -158,6 +160,7 @@ namespace QuestHubClient.ViewModels
 
                 case UserRole.User:
                     AddMenuOption("🏠 Inicio", () => _navigationService.NavigateTo<HomeViewModel>());
+                    AddMenuOption("📝 Estadisticas", () => _navigationService.NavigateTo<StatisticsViewModel>());
                     break;
             }
         }

@@ -26,6 +26,8 @@ namespace QuestHubClient.Services
         Task<(string[] followers, string message)> GetFollowersByUserIdAsync(string userId);
         Task<(byte[] imageData, string contentType, string message)> GetProfilePictureAsync(string userId);
         Task<(User user, string message)> RegisterUserAsync(User user);
+
+        Task<(Statistics statistics, string message)> GetStatisticsAsync(string userId);
     }
 
     public class UserService : IUserService
@@ -594,6 +596,50 @@ namespace QuestHubClient.Services
             {
                 Converters = { new JsonStringEnumConverter() },
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+        }
+
+        public async Task<(Statistics statistics, string message)> GetStatisticsAsync(string userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{BaseUrl}/statistics/{userId}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var statisticsDto = JsonSerializer.Deserialize<StatisticsDto>(responseContent, GetJsonSerializerOptions());
+
+                    var statics = StatisticsDtotoStatistics(statisticsDto);
+                    return (statics, "Estadísticas cargadas correctamente");
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, GetJsonSerializerOptions());
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
+        }
+
+        private Statistics StatisticsDtotoStatistics(StatisticsDto statisticsDto)
+        {
+            return new Statistics
+            {
+                TotalPosts = statisticsDto.TotalPosts,
+                TotalAnswers = statisticsDto.TotalAnswers,
+                Ratings = statisticsDto.RatingDistribution.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
             };
         }
     }
