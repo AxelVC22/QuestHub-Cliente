@@ -8,12 +8,13 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace QuestHubClient.Services
 {
     public interface ICategoriesService
     {
-        Task<(List<Category> categories, string message)> GetCategoriesAsync();
+        Task<(List<Category> categories, string message)> GetCategoriesAsync(string status = null);
         Task<(Category category, string message)> GetCategoryByIdAsync(string categoryId);
         Task<(Category category, string message)> CreateCategoryAsync(CreateCategoryDto categoryDto);
         Task<(Category category, string message)> UpdateCategoryAsync(string categoryId, UpdateCategoryDto categoryDto);
@@ -40,11 +41,11 @@ namespace QuestHubClient.Services
             }
         }
 
-        public async Task<(List<Category> categories, string message)> GetCategoriesAsync()
+        public async Task<(List<Category> categories, string message)> GetCategoriesAsync(string status = null)
         {
             try
             {
-                var response = await _httpClient.GetAsync(BaseUrl);
+                var response = await _httpClient.GetAsync($"{BaseUrl}?status={status}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)

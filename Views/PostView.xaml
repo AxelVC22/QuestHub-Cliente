@@ -16,6 +16,8 @@
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <ctrl:AnswerCard x:Key="AnswerCard" />
+        <ctrl:PostCard x:Key="PostCard" />
+
     </Page.Resources>
 
 
