@@ -4,6 +4,18 @@ using System.Text.Json.Serialization;
 
 namespace QuestHubClient.Dtos
 {
+
+    public class StatisticsDto
+    {
+        [JsonPropertyName("totalPosts")]
+        public int TotalPosts { get; set; }
+
+        [JsonPropertyName("totalAnswers")]
+        public int TotalAnswers { get; set; }
+
+        [JsonPropertyName("ratingDistribution")]
+        public Dictionary<string, int> RatingDistribution { get; set; }
+    }
     public class UpdateUserRequestDto
     {
         [JsonPropertyName("name")]

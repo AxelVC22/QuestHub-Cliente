@@ -144,6 +144,14 @@ namespace QuestHubClient
                      return new Views.ReportsView(viewModel);
 
                  }
+                 else if (viewModelType == typeof(StatisticsViewModel))
+                 {
+
+                     var viewModel = new StatisticsViewModel(UserService
+                         );
+                     return new Views.StatisticsView(viewModel);
+
+                 }
 
                  //else if (viewModelType == typeof(HomeViewModel))
                  //{
