@@ -119,7 +119,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = string.Empty;
 
-                var (categories, message) = await _categoriesService.GetCategoriesAsync();
+                var (categories, message) = await _categoriesService.GetCategoriesAsync("Active");
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -162,7 +162,7 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        private void Submit()
+        private async void Submit()
         {
             Post.Categories = SelectedCategories.ToList();
             Post.Author = App.MainViewModel.User;
@@ -187,7 +187,7 @@ namespace QuestHubClient.ViewModels
                     return;
                 }
 
-                var (createdPost, message) = _postsService.CreatePostAsync(Post).Result;
+                var (createdPost, message) = await _postsService.CreatePostAsync(Post);
 
                 if (createdPost != null)
                 {
@@ -214,7 +214,7 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        private void Save()
+        private async void Save()
         {
             Post.Categories = SelectedCategories.ToList();
             Post.Author = App.MainViewModel.User;
@@ -248,7 +248,7 @@ namespace QuestHubClient.ViewModels
                     return;
                 }
 
-                var (createdPost, message) = _postsService.UpdatePostAsync(Post).Result;
+                var (createdPost, message) = await _postsService.UpdatePostAsync(Post);
 
                 if (createdPost != null)
                 {

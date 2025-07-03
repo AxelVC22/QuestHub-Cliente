@@ -132,7 +132,7 @@ namespace QuestHubClient
                  else if (viewModelType == typeof(ReportsViewModel))
                  {
 
-                     var viewModel = new ReportsViewModel(ReportsService
+                     var viewModel = new ReportsViewModel(ReportsService, NavigationService, AnswersService, PostsService, RatingsService, FollowingService
                          );
                      return new Views.ReportsView(viewModel);
 

@@ -20,5 +20,7 @@ namespace QuestHubClient.Models
         public User Reporter { get; set; }
 
         public string Status;
+
+        public DateTime? EndBanDate { get; set; }
     }
 }

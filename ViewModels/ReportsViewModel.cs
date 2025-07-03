@@ -1,4 +1,5 @@
-﻿using QuestHubClient.Services;
+﻿using CommunityToolkit.Mvvm.Input;
+using QuestHubClient.Services;
 using QuestHubClient.Views;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,37 @@ namespace QuestHubClient.ViewModels
     public partial class ReportsViewModel : BaseViewModel
     {
 
+
+
         public ObservableCollection<ReportCardViewModel> Reports { get; set; } = new ObservableCollection<ReportCardViewModel>();
 
 
         private readonly IReportsService _reportsService;
+
+        private readonly INavigationService _navigationService;
+
+        private readonly IAnswersService _answersService;
+
+        private readonly IPostsService _postsService;
+
+        private readonly IRatingsService _ratingsService;
+
+        private readonly IFollowingService _followingService;
 
         public ReportsViewModel()
         {
 
         }
 
-        public ReportsViewModel(IReportsService reportsService)
+        public ReportsViewModel(IReportsService reportsService, INavigationService navigationService, IAnswersService answersService, IPostsService postsService, IRatingsService ratingsService, IFollowingService followingService)
         {
             _reportsService = reportsService;
+            _navigationService = navigationService;
+            _answersService = answersService;
+            _postsService = postsService;
+            _ratingsService = ratingsService;
+            _followingService = followingService;
+
 
             LoadReportsAsync(Page, Limit);
 
@@ -53,7 +72,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var report in reports)
                     {
-                        Reports.Add(new ReportCardViewModel(report));
+                        Reports.Add(new ReportCardViewModel(report, _navigationService, _postsService, _answersService, _followingService, _ratingsService, _reportsService));
 
                     }
                 }
@@ -61,7 +80,7 @@ namespace QuestHubClient.ViewModels
                 {
                     new NotificationWindow("No se encontraron más publicaciones", 3).Show();
                 }
-                }
+            }
 
             catch (HttpRequestException ex)
             {
@@ -71,6 +90,12 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = $"Error inesperado: {ex.Message}";
             }
+        }
+
+        [RelayCommand]
+        private void SeeMore()
+        {
+
         }
 
     }

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace QuestHubClient.Services
@@ -15,6 +16,9 @@ namespace QuestHubClient.Services
     {
         Task<(List<Report>, Page page, string message)> GetReportsAsync(int page, int limit, string status);
         Task<(Report report, string message)> CreateReportAsync(Report report);
+
+
+        Task<(Report report, string message)> UpdateReportAsync(Report report);
     }
     public class ReportsService : IReportsService
     {
@@ -176,23 +180,23 @@ namespace QuestHubClient.Services
                 .Select(report => new Report
                 {
                     Id = report.Id,
-                    Post = new Post
+                    Post = report.Post != null ? new Post
                     {
                         Id = report.Post.Id,
                         Title = report.Post.Title,
                         Content = report.Post.Content,
-                        CreatedAt = report.Post.CreatedAt,
+                        CreatedAt = DateTime.SpecifyKind(report.Post.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
                         Author = new User
                         {
                             Id = report.Post.Author.Id,
                             Name = report.Post.Author.Name,
                         }
-                    },
+                    } : null,
                     Answer = report.Answer != null ? new Answer
                     {
                         Id = report.Answer.Id,
                         Content = report.Answer.Content,
-                        CreatedAt = report.Answer.CreatedAt,
+                        CreatedAt = DateTime.SpecifyKind(report.Answer.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
                         Author = new User
                         {
                             Id = report.Answer.Author.Id,
@@ -207,6 +211,69 @@ namespace QuestHubClient.Services
                     Reason = report.Reason,
                     Status = report.Status
                 }).ToList();
+        }
+
+        private VerdictRequestDto ReportToVerdictRequestDto(Report report)
+        {
+            string userId = report.Post == null ?
+                report.Answer?.Author.Id :
+                report.Post.Author.Id;
+
+            return new VerdictRequestDto
+            {
+                Status = report.Status,
+                User = userId,
+                EndBanDate = report.EndBanDate
+            };
+        }
+
+        public async Task<(Report report, string message)> UpdateReportAsync(Report report)
+        {
+            try
+            {
+                var registerRequest = ReportToVerdictRequestDto(report);
+
+                var jsonContent = JsonSerializer.Serialize(registerRequest);
+
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                var response =  _httpClient.PutAsync($"{_baseUrl}/{report.Id}", httpContent).Result;
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var reportResponse = JsonSerializer.Deserialize<ReportResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
+
+                    var createdPost = ResponseToPost(reportResponse);
+
+                    return (createdPost, reportResponse.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
         }
     }
 }

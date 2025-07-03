@@ -24,12 +24,25 @@ namespace QuestHubClient.Dtos
         public int TotalReports { get; set; }
         public List<ReportDto> Reports { get; set; }
     }
+
+    public class VerdictRequestDto
+    {
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+
+        [JsonPropertyName("user")]
+        public string User { get; set; }
+
+        [JsonPropertyName("endBanDate")]
+
+        public DateTime? EndBanDate { get; set; }
+    }
     public class ReportRequestDto
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonPropertyName ("reason")]
+        [JsonPropertyName("reason")]
         public string Reason { get; set; }
 
         [JsonPropertyName("reporter")]
