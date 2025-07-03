@@ -87,10 +87,11 @@ namespace QuestHubClient.ViewModels
         }
 
 
-        public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService, IPostsService postsService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
+        public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService, 
+            IPostsService postsService, IFollowingService followingService, MultimediaUploadService multimediaUploadService, IUserService userService)
         {
             _navigationService = navigationService;
-            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService, multimediaUploadService) { OnDeleted = OnPostDeleted};
+            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService, multimediaUploadService, userService) { OnDeleted = OnPostDeleted};
             _answersService = answersService;
             _ratingService = ratingsService;
             _followingService = followingService;

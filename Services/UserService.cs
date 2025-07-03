@@ -454,34 +454,27 @@ namespace QuestHubClient.Services
         {
             try
             {
-                AddAuthHeader();
                 var response = await _httpClient.GetAsync($"{BaseUrl}/{userId}/profile-picture");
 
                 if (response.IsSuccessStatusCode)
                 {
                     var imageBytes = await response.Content.ReadAsByteArrayAsync();
                     var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
-
                     return (imageBytes, contentType, "Imagen obtenida exitosamente");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return (null, null, "Imagen no encontrada");
                 }
                 else
                 {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                    return (null, null, errorResponse?.Message ?? "Error desconocido al obtener la imagen");
+                    var textResponse = await response.Content.ReadAsStringAsync();
+                    return (null, null, $"Error: {textResponse}");
                 }
             }
             catch (HttpRequestException ex)
             {
                 return (null, null, $"Error de conexión: {ex.Message}");
-            }
-            catch (JsonException ex)
-            {
-                return (null, null, $"Error al procesar la respuesta: {ex.Message}");
             }
             catch (Exception ex)
             {

@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace QuestHubClient.ViewModels
 {
@@ -26,6 +27,7 @@ namespace QuestHubClient.ViewModels
         private IAnswersService _answersService;
         private IFollowingService _followingService;
         private MultimediaUploadService _multimediaService;
+        private IUserService _userService;
 
         private Models.Post _post;
         public Models.Post Post
@@ -42,10 +44,7 @@ namespace QuestHubClient.ViewModels
                     OnPropertyChanged(nameof(CanEdit));
                     OnPropertyChanged(nameof(CanDelete));
 
-                    if (Post?.Id != null)
-                    {
-                        _ = LoadMultimediaAsync();
-                    }
+                    _ = LoadPostDataAsync();
                 }
             }
         }
@@ -97,6 +96,14 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        private ImageSource _authorProfileImage;
+        public ImageSource AuthorProfileImage
+        {
+            get => _authorProfileImage;
+            set => SetProperty(ref _authorProfileImage, value);
+        }
+
+
         public bool HasMultimedia => MultimediaFiles?.Any() ?? false;
         public bool HasImages => MultimediaFiles?.Any(m => m?.IsImage == true) ?? false;
         public bool HasVideos => MultimediaFiles?.Any(m => m?.IsVideo == true) ?? false;
@@ -112,9 +119,10 @@ namespace QuestHubClient.ViewModels
         }
 
         public PostCardViewModel(Models.Post post, INavigationService navigationService, IPostsService postsService,
-            IAnswersService answersService, IFollowingService followingService, MultimediaUploadService multimediaService)
+            IAnswersService answersService, IFollowingService followingService, MultimediaUploadService multimediaService, IUserService userService)
         {
             _multimediaService = multimediaService;
+            _userService = userService;
             Post = post;
             _navigationService = navigationService;
             _postsService = postsService;
@@ -132,14 +140,11 @@ namespace QuestHubClient.ViewModels
             {
                 var multimediaFiles = await _multimediaService.GetMultimediaAsync(Post.Id.ToString());
 
-                // Verificar que la aplicación actual y el dispatcher estén disponibles
                 if (Application.Current?.Dispatcher == null)
                 {
-                    System.Diagnostics.Debug.WriteLine("Application.Current.Dispatcher is null");
                     return;
                 }
 
-                // Usar Invoke en lugar de BeginInvoke para manejar excepciones mejor
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     try
@@ -150,7 +155,6 @@ namespace QuestHubClient.ViewModels
                         {
                             foreach (var file in multimediaFiles)
                             {
-                                // Validar que el archivo no sea nulo antes de agregarlo
                                 if (file != null)
                                 {
                                     MultimediaFiles.Add(file);
@@ -158,7 +162,6 @@ namespace QuestHubClient.ViewModels
                             }
                         }
 
-                        // Notificar cambios explícitamente
                         OnPropertyChanged(nameof(HasMultimedia));
                         OnPropertyChanged(nameof(HasImages));
                         OnPropertyChanged(nameof(HasVideos));
@@ -167,15 +170,12 @@ namespace QuestHubClient.ViewModels
                     }
                     catch (Exception dispatcherEx)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Error updating UI: {dispatcherEx.Message}");
-                        System.Diagnostics.Debug.WriteLine($"StackTrace: {dispatcherEx.StackTrace}");
                         ErrorMessage = "Error al actualizar la interfaz de multimedia";
                     }
                 });
             }
             catch (ArgumentException argEx)
             {
-                System.Diagnostics.Debug.WriteLine($"Argument error loading multimedia: {argEx.Message}");
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     ErrorMessage = "ID de post inválido para cargar multimedia";
@@ -183,9 +183,6 @@ namespace QuestHubClient.ViewModels
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error loading multimedia: {ex.Message}");
-                System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
-
                 if (Application.Current?.Dispatcher != null)
                 {
                     await Application.Current.Dispatcher.InvokeAsync(() =>
@@ -194,32 +191,6 @@ namespace QuestHubClient.ViewModels
                     });
                 }
             }
-        }
-
-        private void UpdateMultimediaFiles(IEnumerable<MultimediaFile> files)
-        {
-            if (MultimediaFiles == null)
-                return;
-
-            MultimediaFiles.Clear();
-
-            if (files != null)
-            {
-                foreach (var file in files)
-                {
-                    if (file != null) // Validación adicional
-                    {
-                        MultimediaFiles.Add(file);
-                    }
-                }
-            }
-
-            // Notificar cambios en las propiedades calculadas
-            OnPropertyChanged(nameof(HasMultimedia));
-            OnPropertyChanged(nameof(HasImages));
-            OnPropertyChanged(nameof(HasVideos));
-            OnPropertyChanged(nameof(Images));
-            OnPropertyChanged(nameof(Videos));
         }
 
         [RelayCommand]
@@ -240,7 +211,6 @@ namespace QuestHubClient.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Error opening image: {ex.Message}");
                     ErrorMessage = "Error al abrir la imagen";
                 }
             }
@@ -251,7 +221,7 @@ namespace QuestHubClient.ViewModels
         {
             if (Post?.Author != null)
             {
-                // Implementar navegación a detalles del usuario
+                _navigationService.NavigateTo<ProfileViewModel>(Post.Author);
             }
         }
 
@@ -306,7 +276,6 @@ namespace QuestHubClient.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = $"Error inesperado: {ex.Message}";
-                System.Diagnostics.Debug.WriteLine($"SendAnswer error: {ex.StackTrace}");
             }
         }
 
@@ -444,5 +413,73 @@ namespace QuestHubClient.ViewModels
                 ErrorMessage = $"Error inesperado: {ex.Message}";
             }
         }
+
+        private async Task LoadAuthorProfilePictureAsync(string authorId)
+        {
+            try
+            {
+                var (imageData, contentType, message) = await _userService.GetProfilePictureAsync(authorId);
+                if (imageData != null && imageData.Length > 0)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        AuthorProfileImage = LoadImage(imageData);
+                    });
+                }
+                else
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        AuthorProfileImage = null;
+                    });
+                }
+            }
+            catch
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    AuthorProfileImage = null;
+                });
+            }
+        }
+
+        private ImageSource LoadImage(byte[] imageData)
+        {
+            if (imageData == null || imageData.Length == 0)
+                return null;
+
+            using var ms = new System.IO.MemoryStream(imageData);
+            var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = ms;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+        }
+
+        private async Task LoadPostDataAsync()
+        {
+            try
+            {
+                if (Post?.Id != null)
+                {
+                    await LoadMultimediaAsync();
+                }
+
+                if (Post?.Author?.Id != null)
+                {
+                    await LoadAuthorProfilePictureAsync(Post.Author.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    ErrorMessage = "Error al cargar algunos datos del post";
+                });
+            }
+        }
+
     }
 }

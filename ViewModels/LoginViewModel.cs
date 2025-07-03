@@ -71,15 +71,9 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        private void Register()
-        {
-            App.MainViewModel.LoginCheck = false;
-            _navigationService.NavigateTo<CreateUserViewModel>();
-        }
-
-        [RelayCommand]
         private void Back()
         {
+            App.MainViewModel.LoginCheck = true;
             App.MainViewModel.IsRegistered = false;
             _navigationService.GoBack();
         }

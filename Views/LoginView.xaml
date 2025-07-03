@@ -143,19 +143,6 @@
                           Margin="0,0,0,25"
                           Height="45"
                           Padding="20,10"/>
-
-                    <!-- Enlaces adicionales -->
-                    <StackPanel Grid.Row="5"
-                              HorizontalAlignment="Center">
-                        <Button Command="{Binding RegisterCommand}"
-                              Content="¿No tienes cuenta? Registrarse"
-                              Background="Transparent"
-                              BorderThickness="0"
-                              Foreground="{StaticResource AccentBrush}"
-                              FontSize="15"
-                              Cursor="Hand"
-                              Padding="10,8"/>
-                    </StackPanel>
                 </Grid>
             </StackPanel>
         </ScrollViewer>

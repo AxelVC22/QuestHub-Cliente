@@ -1,11 +1,16 @@
 ﻿<Page x:Class="QuestHubClient.Views.CreateUserView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
-        xmlns:conv="clr-namespace:QuestHubClient.Converters"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        Title="{Binding Title}" 
-        Background="{StaticResource BackgroundBrush}">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:QuestHubClient.Views"
+      xmlns:conv="clr-namespace:QuestHubClient.Converters"
+      xmlns:vm="clr-namespace:QuestHubClient.ViewModels"
+      d:DataContext="{d:DesignInstance Type=vm:CreateUserViewModel}"
+      mc:Ignorable="d"
+      Title="{Binding Title}"
+      Background="{StaticResource BackgroundBrush}">
+
 
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
@@ -81,7 +86,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- Nombre -->
@@ -121,22 +125,8 @@
                                    PasswordChanged="PasswordBox_PasswordChanged"/>
                     </StackPanel>
 
-                    <!-- Rol (oculto) -->
-                    <StackPanel Grid.Row="3" Margin="0,0,0,25" IsEnabled="False" Visibility="Collapsed">
-                        <TextBlock Text="Rol *" 
-                                 Style="{StaticResource LabelStyle}"
-                                 Foreground="{StaticResource TextSecondaryBrush}"
-                                 Margin="0,0,0,8"/>
-                        <ComboBox ItemsSource="{Binding Roles}"
-                                SelectedItem="{Binding SelectedRole}"
-                                Height="50"
-                                FontSize="16"
-                                Padding="15,12"
-                                Style="{DynamicResource {x:Type ComboBox}}"/>
-                    </StackPanel>
-
                     <!-- Mensaje de error -->
-                    <TextBlock Grid.Row="4"
+                    <TextBlock Grid.Row="3"
                              Text="{Binding ErrorMessage}" 
                              Foreground="Red"
                              FontSize="14"
@@ -145,7 +135,7 @@
                              Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
 
                     <!-- Botones -->
-                    <StackPanel Grid.Row="5" 
+                    <StackPanel Grid.Row="4" 
                               Orientation="Horizontal" 
                               HorizontalAlignment="Right"
                               Margin="0,30,0,0">
