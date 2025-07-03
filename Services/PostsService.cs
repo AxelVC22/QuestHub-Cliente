@@ -13,18 +13,14 @@ namespace QuestHubClient.Services
     public interface IPostsService
     {
         Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId);
-
         Task<(Post post, string message)> CreatePostAsync(Post post);
-
         Task<(Post post, string message)> UpdatePostAsync(Post post);
-
         Task<(string message, bool success)> DeletePostAsync(string postId);
     }
 
     public class PostsService : IPostsService
     {
         private readonly HttpClient _httpClient;
-
         private const string _baseUrl = "http://localhost:3033/api/posts";
 
         public PostsService(HttpClient httpClient)
@@ -37,15 +33,11 @@ namespace QuestHubClient.Services
             try
             {
                 var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}&user={userId}");
-
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-
+                var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-
-                    var result = JsonSerializer.Deserialize<PostsResponseDto>(content, new JsonSerializerOptions
+                    var result = JsonSerializer.Deserialize<PostsResponseDto>(responseContent, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -58,7 +50,6 @@ namespace QuestHubClient.Services
                         TotalPages = result.TotalPages,
                         TotalItems = result.TotalPosts
                     };
-
 
                     return (posts, pageResponse, result.Message);
                 }
@@ -84,32 +75,29 @@ namespace QuestHubClient.Services
             {
                 return (null, null, $"Error inesperado: {ex.Message}");
             }
-           
         }
 
         private List<Post> ResponseToPosts(PostsResponseDto responseDto)
         {
-
             return responseDto.Posts.Select(postDto => new Post
             {
                 Id = postDto.Id,
                 Title = postDto.Title,
                 Content = postDto.Content,
                 CreatedAt = DateTime.SpecifyKind(postDto.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
-
                 TotalAnswers = postDto.TotalAnswers,
                 AverageRating = postDto.AverageRating,
                 Author = new User
                 {
-                   Id = postDto.Author?.Id,
-                   Name = postDto.Author?.Name,
-                   IsFollowed = postDto.Author?.IsFollowed ?? false
+                    Id = postDto.Author?.Id,
+                    Name = postDto.Author?.Name,
+                    IsFollowed = postDto.Author?.IsFollowed ?? false
                 },
-                Categories = postDto.Categories.Select(category => new Category
+                Category = new Category
                 {
-                    Id = category?.Id,
-                    Name = category?.Name
-                }).ToList(),
+                    Id = postDto.Category?.Id,
+                    Name = postDto.Category?.Name
+                }
             }).ToList();
         }
 
@@ -125,10 +113,14 @@ namespace QuestHubClient.Services
                 CreatedAt = DateTime.SpecifyKind(postResponse.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
                 TotalAnswers = postResponse.TotalAnswers,
                 AverageRating = postResponse.AverageRating,
-                Categories = postResponse.Categories.Select(c => new Category
+                Category = new Category
                 {
-                    Id = c.ToString(),
-                }).ToList(),
+                    Id = postResponse.Category
+                },
+                //Category = postResponse.Categories.Select(c => new Category
+                //{
+                //    Id = c.ToString(),
+                //}).ToList(),
             };
         }
 
@@ -137,14 +129,11 @@ namespace QuestHubClient.Services
             try
             {
                 var registerRequest = PostToPostRequestDto(post);
-
                 var jsonContent = JsonSerializer.Serialize(registerRequest);
-
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                var response = _httpClient.PostAsync(_baseUrl, httpContent).Result;
-
-                var responseContent = response.Content.ReadAsStringAsync().Result;
+                var response = await _httpClient.PostAsync(_baseUrl, httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -154,7 +143,6 @@ namespace QuestHubClient.Services
                     });
 
                     var createdPost = ResponseToPost(postResponse);
-
                     return (createdPost, postResponse.Message);
                 }
                 else
@@ -181,22 +169,14 @@ namespace QuestHubClient.Services
             }
         }
 
-
         private PostRequestDto PostToPostRequestDto(Post post)
         {
             return new PostRequestDto
             {
-                
                 Title = post.Title,
                 Content = post.Content,
-               
-                Categories = post.Categories.Select(c =>
-
-                      c.Id
-                ).ToList(),
-                Author
-                    = post.Author.Id,
-
+                Category = post.Category?.Id,
+                Author = post.Author.Id
             };
         }
 
@@ -205,14 +185,11 @@ namespace QuestHubClient.Services
             try
             {
                 var registerRequest = PostToPostRequestDto(post);
-
                 var jsonContent = JsonSerializer.Serialize(registerRequest);
-
                 var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                var response = _httpClient.PutAsync($"{ _baseUrl}/{post.Id}", httpContent).Result;
-
-                var responseContent =  response.Content.ReadAsStringAsync().Result;
+                var response = await _httpClient.PutAsync($"{_baseUrl}/{post.Id}", httpContent);
+                var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -221,9 +198,8 @@ namespace QuestHubClient.Services
                         PropertyNameCaseInsensitive = true
                     });
 
-                    var createdPost = ResponseToPost(postResponse);
-
-                    return (createdPost, postResponse.Message);
+                    var updatedPost = ResponseToPost(postResponse);
+                    return (updatedPost, postResponse.Message);
                 }
                 else
                 {
@@ -253,9 +229,8 @@ namespace QuestHubClient.Services
         {
             try
             {
-                var response = _httpClient.DeleteAsync($"{_baseUrl}/{postId}").Result;
-
-                var responseContent = response.Content.ReadAsStringAsync().Result;
+                var response = await _httpClient.DeleteAsync($"{_baseUrl}/{postId}");
+                var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -263,7 +238,6 @@ namespace QuestHubClient.Services
                     {
                         PropertyNameCaseInsensitive = true
                     });
-
 
                     return (postResponse.Message, true);
                 }
@@ -283,11 +257,11 @@ namespace QuestHubClient.Services
             }
             catch (JsonException ex)
             {
-                return ( $"Error al procesar la respuesta: {ex.Message}", false);
+                return ($"Error al procesar la respuesta: {ex.Message}", false);
             }
             catch (Exception ex)
             {
-                return ( $"Error inesperado: {ex.Message}", false);
+                return ($"Error inesperado: {ex.Message}", false);
             }
         }
     }

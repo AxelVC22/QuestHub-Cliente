@@ -32,6 +32,7 @@ namespace QuestHubClient.ViewModels
 
         private IFollowingService _followingService;
 
+        private MultimediaUploadService _multimediaUploadService;
 
 
         public HomeViewModel()
@@ -39,7 +40,7 @@ namespace QuestHubClient.ViewModels
 
         }
 
-        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService)
+        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
         {
             _navigationService = navigationService;
 
@@ -48,6 +49,8 @@ namespace QuestHubClient.ViewModels
             _answersService = answersService;
 
             _followingService = followingService;
+
+            _multimediaUploadService = multimediaUploadService;
 
             LoadPostsAsync(Page, Limit);
 
@@ -66,7 +69,7 @@ namespace QuestHubClient.ViewModels
                         var toUpdate = Posts.FirstOrDefault(p => p.Post.Id == updated?.Id);
                         if (toUpdate != null)
                         {
-                            toUpdate = new PostCardViewModel(updated, _navigationService, _postsService, _answersService, _followingService)
+                            toUpdate = new PostCardViewModel(updated, _navigationService, _postsService, _answersService, _followingService, _multimediaUploadService)
                             {
                                 OnDeleted = OnAnswerDeleted,
                             };
@@ -102,7 +105,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var post in posts)
                     {
-                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService)
+                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService, _multimediaUploadService)
                         {
                             OnDeleted = OnAnswerDeleted,
                         });

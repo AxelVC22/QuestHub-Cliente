@@ -35,6 +35,15 @@
             <Setter Property="Padding" Value="20"/>
             <Setter Property="MinHeight" Value="120"/>
         </Style>
+
+        <Style x:Key="SelectedCategoryStyle" TargetType="Border">
+            <Setter Property="Background" Value="#E3F2FD"/>
+            <Setter Property="BorderBrush" Value="#2196F3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
     </Page.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -53,7 +62,7 @@
                                Foreground="Gray" />
                 </StackPanel>
 
-                <!-- Título -->
+                <!-- Titulo -->
                 <StackPanel Margin="0,0,0,20">
                     <TextBlock Text="Título *"
                                Style="{StaticResource LabelStyle}" />
@@ -74,43 +83,44 @@
                              VerticalScrollBarVisibility="Auto" />
                 </StackPanel>
 
-                <!-- Sección de Archivos Multimedia -->
-                <StackPanel Margin="0,0,0,20">
+                <!-- Multimedia -->
+                <StackPanel Margin="0,0,0,20"
+                    Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="Archivos multimedia (opcional)"
-                               Style="{StaticResource LabelStyle}" />
+                        Style="{StaticResource LabelStyle}" />
 
                     <Border Style="{StaticResource DropAreaStyle}"
-                            AllowDrop="True"
-                            Drop="Border_Drop"
-                            DragEnter="Border_DragEnter"
-                            DragLeave="Border_DragLeave"
-                            DragOver="Border_DragOver">
+                        AllowDrop="True"
+                        Drop="Border_Drop"
+                        DragEnter="Border_DragEnter"
+                        DragLeave="Border_DragLeave"
+                        DragOver="Border_DragOver">
                         <StackPanel HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
+                            VerticalAlignment="Center">
                             <TextBlock Text="📁"
-                                       FontSize="32"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,8" />
+                               FontSize="32"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8" />
                             <TextBlock Text="Arrastra archivos aquí o haz clic para seleccionar"
-                                       FontSize="14"
-                                       Foreground="Gray"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,8" />
+                               FontSize="14"
+                               Foreground="Gray"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8" />
                             <Button Content="Seleccionar archivos"
-                                    Command="{Binding SelectFilesCommand}"
-                                    Style="{StaticResource SecondaryButtonStyle}"
-                                    Height="35"
-                                    Width="140"
-                                    FontSize="12" />
+                                Command="{Binding SelectFilesCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Height="35"
+                                Width="140"
+                                FontSize="12" />
                         </StackPanel>
                     </Border>
 
                     <StackPanel Margin="0,10,0,0"
-                                Visibility="{Binding SelectedFiles, Converter={StaticResource CollectionToVisibilityConverter}}">
+                        Visibility="{Binding SelectedFiles, Converter={StaticResource CollectionToVisibilityConverter}}">
                         <TextBlock Text="Archivos seleccionados:"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,8" />
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
 
                         <ItemsControl ItemsSource="{Binding SelectedFiles}">
                             <ItemsControl.ItemTemplate>
@@ -125,33 +135,33 @@
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0"
-                                                       Text="{Binding FileIcon}"
-                                                       FontSize="20"
-                                                       VerticalAlignment="Center"
-                                                       Margin="0,0,12,0" />
+                                                Text="{Binding FileIcon}"
+                                                FontSize="20"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,12,0" />
 
                                             <StackPanel Grid.Column="1"
-                                                        VerticalAlignment="Center">
+                                               VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding FileName}"
-                                                           FontWeight="SemiBold"
-                                                           FontSize="13" />
+                                                   FontWeight="SemiBold"
+                                                   FontSize="13" />
                                                 <TextBlock Text="{Binding FileSizeFormatted}"
-                                                           FontSize="11"
-                                                           Foreground="Gray" />
+                                                   FontSize="11"
+                                                   Foreground="Gray" />
                                             </StackPanel>
 
                                             <Button Grid.Column="3"
-                                                    Content="✕"
-                                                    Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                    CommandParameter="{Binding}"
-                                                    Width="24"
-                                                    Height="24"
-                                                    FontSize="10"
-                                                    Foreground="Red"
-                                                    Background="Transparent"
-                                                    BorderThickness="0"
-                                                    Cursor="Hand"
-                                                    ToolTip="Eliminar archivo" />
+                                                Content="✕"
+                                                Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding}"
+                                                Width="24"
+                                                Height="24"
+                                                FontSize="10"
+                                                Foreground="Red"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                ToolTip="Eliminar archivo" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -159,48 +169,54 @@
                         </ItemsControl>
                     </StackPanel>
 
-                    <TextBlock Text="Tipos permitidos: Imágenes (JPG, PNG, GIF), Videos (MP4, AVI, MOV), Documentos (PDF, TXT). Tamaño máximo: 20MB por archivo"
-                               FontSize="11"
-                               Foreground="Gray"
-                               TextWrapping="Wrap"
-                               Margin="0,8,0,0" />
+                    <TextBlock Text="Tipos permitidos: Imágenes (JPG, PNG, GIF, WEBP), Videos (MP4, AVI). Tamaño máximo: 20MB por archivo"
+                       FontSize="11"
+                       Foreground="Gray"
+                       TextWrapping="Wrap"
+                       Margin="0,8,0,0" />
                 </StackPanel>
 
-                <!-- Categorías -->
+                <!-- Categorias -->
                 <StackPanel Margin="0,0,0,20">
-                    <TextBlock Text="Categorías *"
-                               Style="{StaticResource LabelStyle}" />
+                    <TextBlock Text="Categoría *"
+                        Style="{StaticResource LabelStyle}" />
 
-                    <ItemsControl ItemsSource="{Binding SelectedCategories}"
-                                  Margin="2">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Content="{Binding Name}"
-                                        Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding}"
-                                        Margin="2, 0"
-                                        Padding="4"
-                                        FontSize="14"
-                                        Height="24"
-                                        MinWidth="90"
-                                        Style="{StaticResource CategoryButtonStyle}" 
-                                        ToolTip="{Binding Id}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <!-- Categoría seleccionada -->
+                    <Border Style="{StaticResource SelectedCategoryStyle}"
+                            Visibility="{Binding SelectedCategory, Converter={StaticResource StringToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Selecciona algunas categorías para que sea fácil de consultar"
-                               FontSize="13"
-                               Margin="0,10"
-                               Foreground="Gray" />
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding SelectedCategory.Name}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
 
+                            <Button Grid.Column="1"
+                                    Content="✕"
+                                    Command="{Binding ClearSelectedCategoryCommand}"
+                                    Width="20"
+                                    Height="20"
+                                    FontSize="10"
+                                    Foreground="Red"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    ToolTip="Deseleccionar categoría" />
+                        </Grid>
+                    </Border>
+
+                    <TextBlock Text="Selecciona una categoría para clasificar tu publicación"
+                       FontSize="13"
+                       Margin="0,10"
+                       Foreground="Gray" />
+
+                    <!-- Categorías disponibles -->
                     <ItemsControl ItemsSource="{Binding Categories}"
-                                  Margin="2">
+                        Margin="2">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <WrapPanel />
@@ -209,15 +225,15 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button Content="{Binding Name}"
-                                        Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                        CommandParameter="{Binding}"
-                                        Margin="2,0"
-                                        BorderThickness="1"
-                                        FontSize="14"
-                                        Height="24"
-                                        MinWidth="90"
-                                        Style="{StaticResource CategoryButtonStyle}"
-                                        ToolTip="{Binding Id}" />
+                                    Command="{Binding DataContext.SelectCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="2,0"
+                                    BorderThickness="1"
+                                    FontSize="14"
+                                    Height="24"
+                                    MinWidth="90"
+                                    Style="{StaticResource CategoryButtonStyle}"
+                                    ToolTip="{Binding Id}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

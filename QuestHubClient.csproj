@@ -14,13 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
-    <PackageReference Include="Grpc" Version="2.46.6" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.25.1" />
+    <PackageReference Include="Grpc.Tools" Version="2.57.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +38,10 @@
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Protobuf Include="Protos\multimedia.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
