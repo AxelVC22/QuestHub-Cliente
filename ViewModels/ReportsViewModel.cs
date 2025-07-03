@@ -32,12 +32,13 @@ namespace QuestHubClient.ViewModels
 
         private readonly IFollowingService _followingService;
 
+        private readonly MultimediaUploadService _multimediaUploadService;
         public ReportsViewModel()
         {
 
         }
 
-        public ReportsViewModel(IReportsService reportsService, INavigationService navigationService, IAnswersService answersService, IPostsService postsService, IRatingsService ratingsService, IFollowingService followingService)
+        public ReportsViewModel(IReportsService reportsService, INavigationService navigationService, IAnswersService answersService, IPostsService postsService, IRatingsService ratingsService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
         {
             _reportsService = reportsService;
             _navigationService = navigationService;
@@ -45,6 +46,8 @@ namespace QuestHubClient.ViewModels
             _postsService = postsService;
             _ratingsService = ratingsService;
             _followingService = followingService;
+            _multimediaUploadService = multimediaUploadService;
+
 
 
             LoadReportsAsync(Page, Limit);
@@ -72,7 +75,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var report in reports)
                     {
-                        Reports.Add(new ReportCardViewModel(report, _navigationService, _postsService, _answersService, _followingService, _ratingsService, _reportsService));
+                        Reports.Add(new ReportCardViewModel(report, _navigationService, _postsService, _answersService, _followingService, _ratingsService, _reportsService, _multimediaUploadService));
 
                     }
                 }

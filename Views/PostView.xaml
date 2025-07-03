@@ -16,6 +16,8 @@
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <ctrl:AnswerCard x:Key="AnswerCard" />
+        <ctrl:PostCard x:Key="PostCard" />
+
     </Page.Resources>
 
 
@@ -28,8 +30,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
 
-                <ctrl:PostCard DataContext="{Binding PostCard}"
-                           VerticalAlignment="Top" />
+                <ctrl:PostCard DataContext="{Binding PostCard}"/>
 
                 <TextBlock Text="Respuestas"
                            FontSize="16"

@@ -19,9 +19,6 @@ namespace QuestHubClient.Dtos
         [JsonPropertyName("content")]
         public string Content { get; set; }
 
-      
-
-
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
 
@@ -34,8 +31,8 @@ namespace QuestHubClient.Dtos
         public List<string> Multimedia { get; set; }
         [JsonPropertyName("author")]
         public string Author { get; set; }
-        [JsonPropertyName("categories")]
-        public List<string> Categories { get; set; }
+        [JsonPropertyName("category")]
+        public string Category { get; set; }
         [JsonPropertyName("isResolved")]
         public bool IsResolved { get; set; }
     }
@@ -55,12 +52,10 @@ namespace QuestHubClient.Dtos
 
         public int TotalPosts { get; set; }
         public List<PostDto> Posts { get; set; }
-
     }
 
     public class PostResponseDto
     {
-
         [JsonPropertyName("_id")]
         public string Id { get; set; }
 
@@ -69,9 +64,6 @@ namespace QuestHubClient.Dtos
 
         [JsonPropertyName("content")]
         public string Content { get; set; }
-
-      
-       
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
@@ -85,14 +77,12 @@ namespace QuestHubClient.Dtos
         public List<string> Multimedia { get; set; }
         [JsonPropertyName("author")]
         public string Author { get; set; }
-        [JsonPropertyName("categories")]
-        public List<string> Categories { get; set; }
+        [JsonPropertyName("category")]
+        public string Category { get; set; }
         [JsonPropertyName("isResolved")]
         public bool IsResolved { get; set; }
         [JsonPropertyName("message")]
         public string Message { get; set; }
-       
-
     }
 
 
@@ -105,7 +95,7 @@ namespace QuestHubClient.Dtos
         public string Title { get; set; }
 
         [JsonPropertyName("content")]
-        public string Content { get; set; }      
+        public string Content { get; set; }
 
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
@@ -119,13 +109,9 @@ namespace QuestHubClient.Dtos
         public List<string> Multimedia { get; set; }
         [JsonPropertyName("author")]
         public UserDto Author { get; set; }
-        [JsonPropertyName("categories")]
-        public List<CategoryDto> Categories { get; set; }
+        [JsonPropertyName("category")]
+        public CategoryDto Category { get; set; }
         [JsonPropertyName("isResolved")]
         public bool IsResolved { get; set; }
-
     }
-
-
-
 }

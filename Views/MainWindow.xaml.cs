@@ -1,4 +1,5 @@
-﻿using QuestHubClient.Models;
+﻿using Multimedia;
+using QuestHubClient.Models;
 using QuestHubClient.Services;
 using QuestHubClient.ViewModels;
 using QuestHubClient.Views;
@@ -38,6 +39,8 @@ namespace QuestHubClient
 
         public IReportsService ReportsService { get; set; }
 
+        public MultimediaUploadService MultimediaService;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -59,6 +62,7 @@ namespace QuestHubClient
             CategoriesService = new CategoriesService(new HttpClient());
 
             ReportsService = new ReportsService(HttpClient);
+            InitializeMultimediaService();
 
             NavigationService = new FrameNavigationService(
              PageFrame,
@@ -83,22 +87,22 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService, PostsService, AnswersService, FollowingService);
+                         NavigationService, PostsService, AnswersService, FollowingService, MultimediaService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))
                  {
                      var post = parameter as Post;
                      var viewModel = new PostViewModel(
-                         NavigationService, post, AnswersService, RatingsService, PostsService, FollowingService);
+                         NavigationService, post, AnswersService, RatingsService, PostsService, FollowingService, MultimediaService);
                      return new Views.PostView(viewModel);
                  }
                  else if (viewModelType == typeof(NewPostViewModel))
                  {
-                     var post = parameter as Post;
+                     var post = parameter as Post ?? new Post();
 
                      var viewModel = new NewPostViewModel(post,
-                         NavigationService, CategoriesService, PostsService);
+                         NavigationService, CategoriesService, PostsService, MultimediaService);
                      return new Views.NewPostView(viewModel);
                  }
                  else if (viewModelType == typeof(ProfileViewModel))
@@ -124,7 +128,7 @@ namespace QuestHubClient
                  {
                      var report = parameter as Report;
 
-                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService, ReportsService
+                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService,ReportsService, MultimediaService
                          );
                      return new Views.NewReportView(viewModel);
 
@@ -132,7 +136,7 @@ namespace QuestHubClient
                  else if (viewModelType == typeof(ReportsViewModel))
                  {
 
-                     var viewModel = new ReportsViewModel(ReportsService, NavigationService, AnswersService, PostsService, RatingsService, FollowingService
+                     var viewModel = new ReportsViewModel(ReportsService, NavigationService, AnswersService, PostsService, RatingsService, FollowingService, MultimediaService
                          );
                      return new Views.ReportsView(viewModel);
 
@@ -169,6 +173,18 @@ namespace QuestHubClient
             NavigationService.NavigateTo<HomeViewModel>();
 
 
+        }
+        private void InitializeMultimediaService()
+        {
+            try
+            {
+                var grpcServerUrl = "http://localhost:50051";
+                MultimediaService = new MultimediaUploadService(grpcServerUrl);
+            }
+            catch (Exception ex)
+            {
+                new NotificationWindow(ex.Message, 3).Show();
+            }
         }
     }
 }

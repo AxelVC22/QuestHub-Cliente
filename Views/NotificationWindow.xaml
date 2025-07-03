@@ -7,7 +7,7 @@
         ShowInTaskbar="False"
         Topmost="True"
         Width="300"
-        Height="80"
+        Height="100"
         ResizeMode="NoResize">
     <Border CornerRadius="8"
         Background="#FF2C394B"

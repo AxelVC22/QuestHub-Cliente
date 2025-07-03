@@ -13,7 +13,6 @@ namespace QuestHubClient.Models
         public string Id { get; set; }
 
         private string _title;
-
         [Required(ErrorMessage = "El titulo de la publicación es obligatorio")]
         [StringLength(255, MinimumLength = 5, ErrorMessage = "El titulo no puede tener más de 255 caracteres ni menos de 5")]
         public string Title
@@ -29,11 +28,9 @@ namespace QuestHubClient.Models
             }
         }
 
-
         private string _content;
-
         [Required(ErrorMessage = "El contenido de la publicación es obligatorio")]
-        [StringLength(255, MinimumLength = 3, ErrorMessage = "El nombre no puede tener más de 255 caracteres ni menos de 3")]
+        [StringLength(255, MinimumLength = 3, ErrorMessage = "El contenido no puede tener más de 255 caracteres ni menos de 3")]
         public string Content
         {
             get => _content;
@@ -46,34 +43,28 @@ namespace QuestHubClient.Models
                 }
             }
         }
+
         public string CategoryId { get; set; }
         public string UserId { get; set; }
         public DateTime CreatedAt { get; set; }
         public int TotalAnswers { get; set; }
         public double AverageRating { get; set; }
 
-        // Navigation properties para UI
         public User Author { get; set; }
 
-
-        private List<Category> _categories;
-
-        [Required(ErrorMessage = "Las categorias son obligatorias")]
-
-        
-
-        public List<Category> Categories
+        private Category _category;
+        [Required(ErrorMessage = "La categoría es obligatoria")]
+        public Category Category
         {
-            get => _categories;
+            get => _category;
             set
             {
-                if (_categories != value)
+                if (_category != value)
                 {
-                    _categories = value;
-                    OnPropertyChanged(nameof(Categories));
+                    _category = value;
+                    OnPropertyChanged(nameof(Category));
                 }
             }
-
         }
     }
 }

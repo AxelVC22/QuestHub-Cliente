@@ -10,99 +10,222 @@
       mc:Ignorable="d"
       Title="NewPostView">
 
-
     <Page.Resources>
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <conv:CategoryToBrushConverter x:Key="CategoryToBrushConverter" />
+        <conv:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
+        <conv:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
+        <Style x:Key="FileItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="DropAreaStyle" TargetType="Border">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="MinHeight" Value="120"/>
+        </Style>
+
+        <Style x:Key="SelectedCategoryStyle" TargetType="Border">
+            <Setter Property="Background" Value="#E3F2FD"/>
+            <Setter Property="BorderBrush" Value="#2196F3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
     </Page.Resources>
 
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Grid.Column="1" Margin="10">
 
-    <StackPanel Grid.Column="1"
-                Margin="10">
-        <StackPanel Margin="10">
-            <!-- Encabezado -->
-            <StackPanel Margin="0,0,0,40">
-                <TextBlock Text="Nueva publicación"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="{StaticResource TextSecondaryBrush}"
-                           Margin="0,0,0,10" />
-                <TextBlock Text="Publica tus dudas para que sean resueltas por la comunidad :)"
+            <StackPanel Margin="10">
+                <!-- Encabezado -->
+                <StackPanel Margin="0,0,0,40">
+                    <TextBlock Text="Nueva publicación"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,0,0,10" />
+                    <TextBlock Text="Publica tus dudas para que sean resueltas por la comunidad :)"
+                               FontSize="14"
+                               Foreground="Gray" />
+                </StackPanel>
+
+                <!-- Titulo -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="Título *"
+                               Style="{StaticResource LabelStyle}" />
+                    <TextBox Text="{Binding Post.Title, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Height="45" />
+                </StackPanel>
+
+                <!-- Contenido -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="Contenido *"
+                               Style="{StaticResource LabelStyle}" />
+                    <TextBox Text="{Binding Post.Content, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Height="80"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto" />
+                </StackPanel>
+
+                <!-- Multimedia -->
+                <StackPanel Margin="0,0,0,20"
+                    Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Archivos multimedia (opcional)"
+                        Style="{StaticResource LabelStyle}" />
+
+                    <Border Style="{StaticResource DropAreaStyle}"
+                        AllowDrop="True"
+                        Drop="Border_Drop"
+                        DragEnter="Border_DragEnter"
+                        DragLeave="Border_DragLeave"
+                        DragOver="Border_DragOver">
+                        <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <TextBlock Text="📁"
+                               FontSize="32"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8" />
+                            <TextBlock Text="Arrastra archivos aquí o haz clic para seleccionar"
+                               FontSize="14"
+                               Foreground="Gray"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,8" />
+                            <Button Content="Seleccionar archivos"
+                                Command="{Binding SelectFilesCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Height="35"
+                                Width="140"
+                                FontSize="12" />
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Margin="0,10,0,0"
+                        Visibility="{Binding SelectedFiles, Converter={StaticResource CollectionToVisibilityConverter}}">
+                        <TextBlock Text="Archivos seleccionados:"
                            FontSize="14"
-                           Foreground="Gray" />
-            </StackPanel>
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
 
+                        <ItemsControl ItemsSource="{Binding SelectedFiles}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource FileItemStyle}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
 
+                                            <TextBlock Grid.Column="0"
+                                                Text="{Binding FileIcon}"
+                                                FontSize="20"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,12,0" />
 
-            <!-- Título -->
-            <StackPanel Margin="0,0,0,20">
-                <TextBlock Text="Título *"
-                           Style="{StaticResource LabelStyle}" />
-                <TextBox Text="{Binding Post.Title, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ModernTextBoxStyle}"
-                         Height="45" />
-            </StackPanel>
+                                            <StackPanel Grid.Column="1"
+                                               VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding FileName}"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="13" />
+                                                <TextBlock Text="{Binding FileSizeFormatted}"
+                                                   FontSize="11"
+                                                   Foreground="Gray" />
+                                            </StackPanel>
 
-            <!-- Contenido -->
-            <StackPanel Margin="0,0,0,20">
-                <TextBlock Text="Contenido *"
-                           Style="{StaticResource LabelStyle}" />
-                <TextBox Text="{Binding Post.Content, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ModernTextBoxStyle}"
-                         Height="80" />
-            </StackPanel>
+                                            <Button Grid.Column="3"
+                                                Content="✕"
+                                                Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding}"
+                                                Width="24"
+                                                Height="24"
+                                                FontSize="10"
+                                                Foreground="Red"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                ToolTip="Eliminar archivo" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
 
+                    <TextBlock Text="Tipos permitidos: Imágenes (JPG, PNG, GIF, WEBP), Videos (MP4, AVI). Tamaño máximo: 20MB por archivo"
+                       FontSize="11"
+                       Foreground="Gray"
+                       TextWrapping="Wrap"
+                       Margin="0,8,0,0" />
+                </StackPanel>
 
-            <!--Categorias-->
-            <StackPanel>
-                <TextBlock Text="Categorías *"
-                           Style="{StaticResource LabelStyle}" />
+                <!-- Categorias -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="Categoría *"
+                        Style="{StaticResource LabelStyle}" />
 
-                <!-- Categorias seleccionadas-->
-                <ItemsControl ItemsSource="{Binding SelectedCategories}"
-                              Margin="2">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                    <!-- Categoría seleccionada -->
+                    <Border Style="{StaticResource SelectedCategoryStyle}"
+                            Visibility="{Binding SelectedCategory, Converter={StaticResource StringToVisibilityConverter}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Content="{Binding Name}"
-                                    Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                    CommandParameter="{Binding}"
-                                    Margin="2, 0"
-                                    Padding="4"
-                                    FontSize="14"
-                                    Height="24"
-                                    MinWidth="90"
-                                    Style="{StaticResource CategoryButtonStyle}" 
-                                    ToolTip="{Binding Id}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding SelectedCategory.Name}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
 
-                <TextBlock Text="Selecciona algunas categorías para que sea fácil de consultar"
-                           FontSize="13"
-                           Margin="0, 10"
-                           Foreground="Gray" />
+                            <Button Grid.Column="1"
+                                    Content="✕"
+                                    Command="{Binding ClearSelectedCategoryCommand}"
+                                    Width="20"
+                                    Height="20"
+                                    FontSize="10"
+                                    Foreground="Red"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    ToolTip="Deseleccionar categoría" />
+                        </Grid>
+                    </Border>
 
-                <!--Categorias general -->
-                <ItemsControl ItemsSource="{Binding Categories}"
-                              Margin="2">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                    <TextBlock Text="Selecciona una categoría para clasificar tu publicación"
+                       FontSize="13"
+                       Margin="0,10"
+                       Foreground="Gray" />
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Content="{Binding Name}"
-                                    Command="{Binding DataContext.ToggleCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                    <!-- Categorías disponibles -->
+                    <ItemsControl ItemsSource="{Binding Categories}"
+                        Margin="2">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}"
+                                    Command="{Binding DataContext.SelectCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                     CommandParameter="{Binding}"
                                     Margin="2,0"
                                     BorderThickness="1"
@@ -111,59 +234,52 @@
                                     MinWidth="90"
                                     Style="{StaticResource CategoryButtonStyle}"
                                     ToolTip="{Binding Id}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
 
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="Red"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Margin="5,10,0,0"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
 
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            Margin="0,20,0,0"
+                            Width="290">
+                    <Button Command="{Binding CancelCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Content="Cancelar"
+                            FontSize="16"
+                            Margin="20,0,0,0"
+                            Width="100"
+                            Height="40" />
 
+                    <Button Content="Subir"
+                            Command="{Binding SubmitCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            FontSize="14"
+                            Height="40"
+                            Width="100"
+                            Margin="15,0,0,0"
+                            Padding="25,12"
+                            Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}" />
 
+                    <Button Content="Guardar cambios"
+                            Command="{Binding SaveCommand}"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            FontSize="14"
+                            Height="40"
+                            Width="120"
+                            Margin="15,0,0,0"
+                            Padding="25,12"
+                            Visibility="{Binding IsUpdating, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
             </StackPanel>
 
-
-
-
-            <!-- Mensaje de error -->
-            <TextBlock Text="{Binding ErrorMessage}"
-                       Foreground="Red"
-                       FontSize="12"
-                       TextWrapping="Wrap"
-                       Margin="5,10,0,0"
-                       Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}" />
-
-            <!-- Botones -->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0,20,0,0"
-                        Width="290">
-                <Button Command="{Binding CancelCommand}"
-                        Style="{StaticResource SecondaryButtonStyle}"
-                        Content="Cancelar"
-                        FontSize="16"
-                        Margin="20,0,0,0"
-                        Width="100"
-                        Height="40" />
-
-                <Button Content="Subir"
-                        Command="{Binding SubmitCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}"
-                        FontSize="14"
-                        Height="40"
-                        Width="100"
-                        Margin="15,0,0,0"
-                        Padding="25,12"
-                        Visibility="{Binding IsRegistering, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                <Button Content="Guardar cambios"
-                        Command="{Binding SaveCommand}"
-                        Style="{StaticResource PrimaryButtonStyle}"
-                        FontSize="14"
-                        Height="40"
-                        Width="120"
-                        Margin="15,0,0,0"
-                        Padding="25,12"
-                        Visibility="{Binding IsUpdating, Converter={StaticResource BoolToVisibilityConverter}}" />
-            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </Page>
