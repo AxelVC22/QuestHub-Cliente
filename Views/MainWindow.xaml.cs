@@ -80,21 +80,21 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new CreateUserViewModel(
-                         NavigationService, AuthService);
+                         NavigationService, AuthService, new User());
                      return new Views.CreateUserView(viewModel);
                  }
                  else if (viewModelType == typeof(HomeViewModel))
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService, PostsService, AnswersService, FollowingService, MultimediaService);
+                         NavigationService, PostsService, AnswersService, FollowingService, MultimediaService, UserService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))
                  {
                      var post = parameter as Post;
                      var viewModel = new PostViewModel(
-                         NavigationService, post, AnswersService, RatingsService, PostsService, FollowingService, MultimediaService);
+                         NavigationService, post, AnswersService, RatingsService, PostsService, FollowingService, MultimediaService, UserService);
                      return new Views.PostView(viewModel);
                  }
                  else if (viewModelType == typeof(NewPostViewModel))
@@ -107,7 +107,10 @@ namespace QuestHubClient
                  }
                  else if (viewModelType == typeof(ProfileViewModel))
                  {
-                     var viewModel = new ProfileViewModel(NavigationService, UserService);
+
+                     var user = parameter as User ?? App.MainViewModel.User;
+
+                     var viewModel = new ProfileViewModel(NavigationService, UserService, user);
                      return new Views.ProfileView(viewModel);
                  }
                  else if (viewModelType == typeof(CategoriesViewModel))
@@ -128,7 +131,7 @@ namespace QuestHubClient
                  {
                      var report = parameter as Report;
 
-                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService,ReportsService, MultimediaService
+                     var viewModel = new NewReportViewModel(report, NavigationService, PostsService, AnswersService, FollowingService,ReportsService, MultimediaService, UserService
                          );
                      return new Views.NewReportView(viewModel);
 

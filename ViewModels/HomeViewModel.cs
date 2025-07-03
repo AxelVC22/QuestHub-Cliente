@@ -32,13 +32,14 @@ namespace QuestHubClient.ViewModels
 
         private MultimediaUploadService _multimediaUploadService;
 
-
+        private IUserService _userService;
         public HomeViewModel()
         {
 
         }
 
-        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
+        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, 
+            IFollowingService followingService, MultimediaUploadService multimediaUploadService, IUserService userService)
         {
             _navigationService = navigationService;
 
@@ -49,6 +50,8 @@ namespace QuestHubClient.ViewModels
             _followingService = followingService;
 
             _multimediaUploadService = multimediaUploadService;
+
+            _userService = userService;
 
             LoadPostsAsync(Page, Limit);
 
@@ -67,7 +70,7 @@ namespace QuestHubClient.ViewModels
                         var toUpdate = Posts.FirstOrDefault(p => p.Post.Id == updated?.Id);
                         if (toUpdate != null)
                         {
-                            toUpdate = new PostCardViewModel(updated, _navigationService, _postsService, _answersService, _followingService, _multimediaUploadService)
+                            toUpdate = new PostCardViewModel(updated, _navigationService, _postsService, _answersService, _followingService, _multimediaUploadService, _userService)
                             {
                                 OnDeleted = OnAnswerDeleted,
                             };
@@ -75,6 +78,7 @@ namespace QuestHubClient.ViewModels
                         break;
                 }
             });
+            _userService = userService;
         }
 
         private void OnAnswerDeleted(PostCardViewModel postCardViewModel)
@@ -103,7 +107,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var post in posts)
                     {
-                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService, _multimediaUploadService)
+                        Posts.Add(new PostCardViewModel(post, _navigationService, _postsService, _answersService, _followingService, _multimediaUploadService, _userService)
                         {
                             OnDeleted = OnAnswerDeleted,
                         });
@@ -136,7 +140,9 @@ namespace QuestHubClient.ViewModels
             }
             else
             {
+                App.MainViewModel.LoginCheck = false;
                 _navigationService.NavigateTo<LoginViewModel>();
+                new NotificationWindow("Necesitas iniciar sesión para crear una publicación", 3).Show();
             }
 
         }
@@ -145,10 +151,7 @@ namespace QuestHubClient.ViewModels
 
         public void SeeDetails(Post post)
         {
-
-
             _navigationService.NavigateTo<PostViewModel>(post);
-
         }
 
         [RelayCommand]

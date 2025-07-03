@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Panel izquierdo - Información básica -->
+        <!-- Panel izquierdo -->
         <Border Grid.Column="0" 
                 Background="{StaticResource PrimaryDarkBrush}">
             <StackPanel Margin="30,40">
@@ -36,8 +36,7 @@
                     </Ellipse>
 
                     <!-- Botones para cambiar avatar -->
-                    <StackPanel>
-                        <!-- Botón Cambiar Foto (cuando no está cambiando avatar) -->
+                    <StackPanel Visibility="{Binding IsOwnProfile, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Button Content="Cambiar Foto"
                                 Command="{Binding ChangeAvatarCommand}"
                                 Style="{StaticResource SecondaryButtonStyle}"
@@ -75,6 +74,14 @@
                     </StackPanel>
                 </StackPanel>
 
+                <!-- Nombre de usuario -->
+                <TextBlock Text="{Binding User.Name}" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
+
                 <StackPanel>
                     <!-- Estadísticas -->
                     <Border Background="#334155" 
@@ -109,10 +116,11 @@
             </StackPanel>
         </Border>
 
-        <!-- Panel derecho -->
+        <!-- Perfil propio -->
         <ScrollViewer Grid.Column="1" 
                       VerticalScrollBarVisibility="Auto"
-                      Padding="40,40,40,20">
+                      Padding="40,40,40,20"
+                      Visibility="{Binding IsOwnProfile, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel MaxWidth="450">
 
                 <!-- Encabezado -->
@@ -196,5 +204,23 @@
 
             </StackPanel>
         </ScrollViewer>
+
+        <!-- Perfil ajeno -->
+        <StackPanel Grid.Column="1" 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Visibility="{Binding IsNotOwnProfile, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="Perfil de Usuario" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
+            <TextBlock Text="Información pública del perfil" 
+                       FontSize="16" 
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       HorizontalAlignment="Center"
+                       Opacity="0.7"/>
+        </StackPanel>
     </Grid>
 </Page>

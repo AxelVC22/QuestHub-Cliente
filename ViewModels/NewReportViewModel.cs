@@ -58,10 +58,11 @@ namespace QuestHubClient.ViewModels
         private IReportsService _reportsService;
 
 
-        public NewReportViewModel(Report report, INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, IReportsService reportsService, MultimediaUploadService multimediaUploadService)
+        public NewReportViewModel(Report report, INavigationService navigationService, IPostsService postsService, IAnswersService answersService, 
+            IFollowingService followingService, IReportsService reportsService, MultimediaUploadService multimediaUploadService, IUserService userService)
         {
             Report = report;
-            _postCard = new PostCardViewModel(report.Post, navigationService, postsService, answersService, followingService, multimediaUploadService) { OnDeleted = OnPostDeleted };
+            _postCard = new PostCardViewModel(report.Post, navigationService, postsService, answersService, followingService, multimediaUploadService, userService) { OnDeleted = OnPostDeleted };
 
             _navigationService = navigationService;
             _postsService = postsService;

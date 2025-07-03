@@ -30,7 +30,7 @@
                       Height="20"
                       Background="LightBlue">
                     <Image Stretch="Fill"
-                           Source="{x:Null}" />
+                           Source="{Binding AuthorProfileImage}" />
                     <Grid.Clip>
                         <EllipseGeometry Center="10,10"
                                          RadiusX="10"
@@ -44,7 +44,8 @@
                         Style="{StaticResource HyperlinkButtonStyle}"
                         Margin="4,0"
                         VerticalAlignment="Center"
-                        ToolTip="{Binding CommandActionReason}" />
+                        ToolTip="{Binding CommandActionReason}" 
+                        Command="{Binding SeeUserDetailsCommand}"/>
 
                 <TextBlock Margin="4,0"
                            VerticalAlignment="Center">
