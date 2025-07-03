@@ -7,14 +7,18 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace QuestHubClient.Services
 {
     public interface IReportsService
     {
+        Task<(List<Report>, Page page, string message)> GetReportsAsync(int page, int limit, string status);
         Task<(Report report, string message)> CreateReportAsync(Report report);
+
+
+        Task<(Report report, string message)> UpdateReportAsync(Report report);
     }
     public class ReportsService : IReportsService
     {
@@ -112,6 +116,164 @@ namespace QuestHubClient.Services
                 }
             };
           
+        }
+
+        public async Task<(List<Report>, Page page, string message)> GetReportsAsync(int page, int limit, string status)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}&status={status}");
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+
+                    var result = JsonSerializer.Deserialize<ReportsResponseDto>(content, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    var reports = ResponseToReports(result);
+
+                    var pageResponse = new Page
+                    {
+                        CurrentPage = result.CurrentPage,
+                        TotalPages = result.TotalPages,
+                        TotalItems = result.TotalReports
+                    };
+
+
+                    return (reports, pageResponse, result.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (null, null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, null, $"Error inesperado: {ex.Message}");
+            }
+
+        }
+
+        private List<Report> ResponseToReports(ReportsResponseDto reportsResponseDto)
+        {
+            return reportsResponseDto
+                .Reports
+                .Select(report => new Report
+                {
+                    Id = report.Id,
+                    Post = report.Post != null ? new Post
+                    {
+                        Id = report.Post.Id,
+                        Title = report.Post.Title,
+                        Content = report.Post.Content,
+                        CreatedAt = DateTime.SpecifyKind(report.Post.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
+                        Author = new User
+                        {
+                            Id = report.Post.Author.Id,
+                            Name = report.Post.Author.Name,
+                        }
+                    } : null,
+                    Answer = report.Answer != null ? new Answer
+                    {
+                        Id = report.Answer.Id,
+                        Content = report.Answer.Content,
+                        CreatedAt = DateTime.SpecifyKind(report.Answer.CreatedAt, DateTimeKind.Utc).ToLocalTime(),
+                        Author = new User
+                        {
+                            Id = report.Answer.Author.Id,
+                            Name = report.Answer.Author.Name,
+                        }
+                    } : null,
+                    Reporter = new User
+                    {
+                        Id = report.Reporter.Id,
+                        Name = report.Reporter.Name,
+                    },
+                    Reason = report.Reason,
+                    Status = report.Status
+                }).ToList();
+        }
+
+        private VerdictRequestDto ReportToVerdictRequestDto(Report report)
+        {
+            string userId = report.Post == null ?
+                report.Answer?.Author.Id :
+                report.Post.Author.Id;
+
+            return new VerdictRequestDto
+            {
+                Status = report.Status,
+                User = userId,
+                EndBanDate = report.EndBanDate
+            };
+        }
+
+        public async Task<(Report report, string message)> UpdateReportAsync(Report report)
+        {
+            try
+            {
+                var registerRequest = ReportToVerdictRequestDto(report);
+
+                var jsonContent = JsonSerializer.Serialize(registerRequest);
+
+                var httpContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                var response =  _httpClient.PutAsync($"{_baseUrl}/{report.Id}", httpContent).Result;
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var reportResponse = JsonSerializer.Deserialize<ReportResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                    });
+
+                    var createdPost = ResponseToPost(reportResponse);
+
+                    return (createdPost, reportResponse.Message);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Deserialize<ErrorResponseDto>(responseContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return (null, errorResponse?.Message ?? "Error desconocido");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                return (null, $"Error de conexión: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                return (null, $"Error al procesar la respuesta: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return (null, $"Error inesperado: {ex.Message}");
+            }
         }
     }
 }

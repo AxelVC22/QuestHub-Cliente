@@ -118,7 +118,6 @@ namespace QuestHubClient.ViewModels
             Categories = new ObservableCollection<Category>();
 
             LoadCategoriesAsync();
-
             if (post.Id != null)
             {
                 Post = post;
@@ -366,7 +365,7 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        private async Task Submit()
+        private async void Submit()
         {
             Post.Category = SelectedCategory;
             Post.Author = App.MainViewModel.User;
@@ -426,7 +425,7 @@ namespace QuestHubClient.ViewModels
         }
 
         [RelayCommand]
-        private async Task Save()
+        private async void Save()
         {
             Post.Category = SelectedCategory;
             Post.Author = App.MainViewModel.User;
