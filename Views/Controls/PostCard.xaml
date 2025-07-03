@@ -14,7 +14,6 @@
     <UserControl.Resources>
         <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-
     </UserControl.Resources>
 
     <Border Margin="10,4"
@@ -37,7 +36,6 @@
                                          RadiusX="10"
                                          RadiusY="10" />
                     </Grid.Clip>
-
                 </Grid>
                 <Button Content="{Binding Post.Author.Name}"
                         FontSize="12"
@@ -108,14 +106,9 @@
                                 VerticalAlignment="Center"
                                 Visibility="{Binding CanReport, Converter={StaticResource BoolToVisibilityConverter}}"
                                 ToolTip="{Binding CommandActionReason}" />
-
                     </StackPanel>
                 </Grid>
-
-
-
             </StackPanel>
-
 
             <Button Content="{Binding Post.Title}"
                     FontSize="16"
@@ -123,20 +116,131 @@
                     Foreground="#333"
                     Style="{StaticResource HyperlinkButtonStyle}"
                     Command="{Binding SeeDetailsCommand}"
-                    CommandParameter="{Binding }" />
-
-
-
-
+                    CommandParameter="{Binding}" />
 
             <TextBlock Text="{Binding Post.Content}"
                        TextWrapping="Wrap"
                        MaxHeight="100"
                        Margin="0,0,0,10" />
 
+            <!-- Sección de Multimedia -->
+            <StackPanel Visibility="{Binding HasMultimedia, Converter={StaticResource BoolToVisibilityConverter}}"
+                       Margin="0,5">
+
+                <!-- Galería de Imágenes -->
+                <StackPanel Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="Imágenes:"
+                              FontSize="12"
+                              FontWeight="Bold"
+                              Margin="0,5,0,2"
+                              Foreground="#555" />
+
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                 VerticalScrollBarVisibility="Hidden">
+                        <ItemsControl ItemsSource="{Binding Images}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="2"
+                                           BorderBrush="LightGray"
+                                           BorderThickness="1"
+                                           CornerRadius="4">
+                                        <Button Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               CommandParameter="{Binding}"
+                                               Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                               Padding="0">
+                                            <Image Source="{Binding FilePath}"
+                                                  Width="80"
+                                                  Height="80"
+                                                  Stretch="UniformToFill"
+                                                  ToolTip="{Binding FileName}" />
+                                        </Button>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </StackPanel>
+
+                <!-- Galería de Videos -->
+                <StackPanel Visibility="{Binding HasVideos, Converter={StaticResource BoolToVisibilityConverter}}"
+                           Margin="0,5,0,0">
+                    <TextBlock Text="Videos:"
+                              FontSize="12"
+                              FontWeight="Bold"
+                              Margin="0,5,0,2"
+                              Foreground="#555" />
+
+                    <ItemsControl ItemsSource="{Binding Videos}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,2"
+                                       BorderBrush="LightGray"
+                                       BorderThickness="1"
+                                       CornerRadius="4"
+                                       Background="#F8F8F8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Miniatura del video -->
+                                        <Border Grid.Column="0"
+                                               Width="60"
+                                               Height="45"
+                                               Background="Black"
+                                               Margin="5">
+                                            <Grid>
+                                                <!-- Placeholder para thumbnail -->
+                                                <Rectangle Fill="DarkGray" />
+                                                <TextBlock Text="▶"
+                                                          FontSize="20"
+                                                          Foreground="White"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Información del video -->
+                                        <StackPanel Grid.Column="1"
+                                                   Margin="10,5"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding FileName}"
+                                                      FontWeight="Bold"
+                                                      FontSize="12"
+                                                      TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding FileSizeFormatted}"
+                                                      FontSize="10"
+                                                      Foreground="Gray" />
+                                        </StackPanel>
+
+                                        <!-- Controles del video -->
+                                        <StackPanel Grid.Column="2"
+                                                   Orientation="Horizontal"
+                                                   Margin="5">
+                                            <Button Content="▶ Reproducir"
+                                                   Style="{StaticResource SecondaryButtonStyle}"
+                                                   FontSize="10"
+                                                   Padding="5,2"
+                                                   Tag="{Binding}"
+                                                   Click="PlayVideo_Click" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
 
             <WrapPanel>
-                <ItemsControl ItemsSource="{Binding Post.Categories}">
+                <ItemsControl ItemsSource="{Binding Post.Category}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="#DDD"
@@ -157,8 +261,6 @@
                     <Run Text="{Binding Post.TotalAnswers}" />
                     <Run Text="Respuestas" />
                 </TextBlock>
-
-
             </DockPanel>
 
             <Button Content="Responder"
@@ -170,7 +272,6 @@
                     Margin="-2,6"
                     HorizontalAlignment="Left"
                     ToolTip="{Binding CommandActionReason}" />
-
 
             <Border Margin="0,5"
                     BorderThickness="1"
@@ -199,7 +300,6 @@
                             HorizontalAlignment="Right"
                             Style="{StaticResource PrimaryButtonStyle}"
                             Command="{Binding SendAnswerCommand}" />
-
                 </StackPanel>
             </Border>
 

@@ -87,10 +87,10 @@ namespace QuestHubClient.ViewModels
         }
 
 
-        public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService, IPostsService postsService, IFollowingService followingService)
+        public PostViewModel(INavigationService navigationService, Post post, IAnswersService answersService, IRatingsService ratingsService, IPostsService postsService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
         {
             _navigationService = navigationService;
-            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService) { OnDeleted = OnPostDeleted};
+            _postCard = new PostCardViewModel(post, navigationService, postsService, answersService, followingService, multimediaUploadService) { OnDeleted = OnPostDeleted};
             _answersService = answersService;
             _ratingService = ratingsService;
             _followingService = followingService;
@@ -173,13 +173,7 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = $"Error inesperado: {ex.Message}";
             }
-        }
-
-
-      
-
-
-
+        } 
 
         [RelayCommand]
 

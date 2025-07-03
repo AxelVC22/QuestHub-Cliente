@@ -28,8 +28,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0">
 
-                <ctrl:PostCard DataContext="{Binding PostCard}"
-                           VerticalAlignment="Top" />
+                <ctrl:PostCard DataContext="{Binding PostCard}"/>
 
                 <TextBlock Text="Respuestas"
                            FontSize="16"
