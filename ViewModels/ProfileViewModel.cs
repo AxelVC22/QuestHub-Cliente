@@ -114,18 +114,10 @@ namespace QuestHubClient.ViewModels
             IsChangingAvatar = false;
             _selectedImageData = null;
             _selectedImageFileName = null;
-
-            User = new User
+            if (App.MainViewModel?.User != null)
             {
-                Id = App.MainViewModel?.User?.Id,
-                Name = App.MainViewModel?.User?.Name,
-                Email = App.MainViewModel?.User?.Email,
-                ProfilePicture = App.MainViewModel?.User?.ProfilePicture,
-                Role = (UserRole)(App.MainViewModel?.User?.Role),
-                Status = App.MainViewModel?.User?.Status,
-                BanEndDate = App.MainViewModel?.User?.BanEndDate,
-                FollowersCount = (int)App.MainViewModel?.User?.FollowersCount
-            };
+                User = CloneUser(App.MainViewModel.User);
+            }
 
             OnPropertyChanged(nameof(ProfileImageSource));
         }
@@ -156,6 +148,8 @@ namespace QuestHubClient.ViewModels
 
             try
             {
+                var originalPassword = User.Password;
+
                 if (!string.IsNullOrWhiteSpace(User.Password))
                 {
                     var (userWithNewPassword, passwordMessage) = await _userService.UpdateUserPasswordAsync(User.Id, User.Password);
@@ -171,14 +165,16 @@ namespace QuestHubClient.ViewModels
                 if (updatedUser != null)
                 {
                     App.MainViewModel.User = updatedUser;
-                    User = updatedUser;
-                    User.Password = string.Empty;
+                    User = CloneUser(updatedUser);
+                    User.Password = string.Empty; 
+
                     IsEditing = false;
                     new NotificationWindow(message, 3).Show();
                     ErrorMessage = string.Empty;
                 }
                 else
                 {
+                    User.Password = originalPassword;
                     ErrorMessage = message ?? "Error al actualizar el perfil. Por favor, inténtalo de nuevo.";
                 }
             }
@@ -190,6 +186,24 @@ namespace QuestHubClient.ViewModels
             {
                 ErrorMessage = $"Error inesperado: {ex.Message}";
             }
+        }
+
+        private User CloneUser(User originalUser)
+        {
+            if (originalUser == null) return new User();
+
+            return new User
+            {
+                Id = originalUser.Id,
+                Name = originalUser.Name,
+                Email = originalUser.Email,
+                ProfilePicture = originalUser.ProfilePicture,
+                Role = originalUser.Role,
+                Status = originalUser.Status,
+                BanEndDate = originalUser.BanEndDate,
+                FollowersCount = originalUser.FollowersCount,
+                Password = string.Empty 
+            };
         }
 
         [RelayCommand]

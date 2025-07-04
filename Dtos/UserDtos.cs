@@ -125,7 +125,7 @@ namespace QuestHubClient.Dtos
 
     public class UserDetailDto
     {
-        [JsonPropertyName("id")]
+        [JsonPropertyName("_id")]
         public string Id { get; set; }
 
         [JsonPropertyName("name")]
@@ -145,6 +145,30 @@ namespace QuestHubClient.Dtos
 
         [JsonPropertyName("followers")]
         public int Followers { get; set; }
+
+        [JsonPropertyName("banEndDate")]
+        public DateTime? BanEndDate { get; set; }
+    }
+
+    public class UserUpdateResponseDto
+    {
+        [JsonPropertyName("_id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+
+        [JsonPropertyName("profilePicture")]
+        public string ProfilePicture { get; set; }
+
+        [JsonPropertyName("role")]
+        public UserRole Role { get; set; }
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
 
         [JsonPropertyName("banEndDate")]
         public DateTime? BanEndDate { get; set; }

@@ -139,7 +139,8 @@ namespace QuestHubClient
                  else if (viewModelType == typeof(ReportsViewModel))
                  {
 
-                     var viewModel = new ReportsViewModel(ReportsService, NavigationService, AnswersService, PostsService, RatingsService, FollowingService, MultimediaService
+                     var viewModel = new ReportsViewModel(ReportsService, NavigationService, 
+                         AnswersService, PostsService, RatingsService, FollowingService, MultimediaService, UserService
                          );
                      return new Views.ReportsView(viewModel);
 
@@ -189,7 +190,7 @@ namespace QuestHubClient
         {
             try
             {
-                var grpcServerUrl = "http://localhost:50051";
+                var grpcServerUrl = "http://localhost:50052";
                 MultimediaService = new MultimediaUploadService(grpcServerUrl);
             }
             catch (Exception ex)
