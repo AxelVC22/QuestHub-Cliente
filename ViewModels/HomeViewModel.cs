@@ -185,7 +185,7 @@ namespace QuestHubClient.ViewModels
 
                 Page = 1;
 
-                Posts.Clear(); // Limpiar las publicaciones actuales
+                Posts.Clear();
 
                 LoadPostsAsync(1, Limit, category.Id, SearchText);
             }

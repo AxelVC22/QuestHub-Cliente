@@ -49,6 +49,11 @@ namespace QuestHubClient.ViewModels
                     isValid = false;
                 }
             }
+            else
+            {
+                results.Add(new ValidationResult("La contraseña es obligatoria", new[] { "Password" }));
+                isValid = false;
+            }
 
             if (!isValid)
             {

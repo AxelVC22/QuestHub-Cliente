@@ -52,6 +52,7 @@ namespace QuestHubClient.ViewModels
                 {
                     Properties.Settings.Default.JwtToken = token;
                     Properties.Settings.Default.Save();
+                    App.MainViewModel.LoginCheck = false;
                     App.MainViewModel.UpdateUserInfo(userModel);
                     new NotificationWindow(message, 3).Show();
                 }

@@ -229,36 +229,6 @@
                                 Width="100"
                                 Margin="0,0,15,0"
                                 Cursor="" />
-
-                        <Button Command="{Binding ShowNotificationsCommand}"
-                                Visibility="{Binding IsRegistered, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                Margin="20,0,0,0">
-                            <Button.Content>
-                                <Grid>
-                                    <TextBlock Text="🔔"
-                                               FontSize="20"
-                                               Foreground="{StaticResource TextSecondaryBrush}" />
-                                    <Border Background="#E74C3C"
-                                            CornerRadius="8"
-                                            Width="16"
-                                            Height="16"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Top"
-                                            Margin="0,-5,-5,0"
-                                            Visibility="{Binding NotificationCount, Converter={StaticResource ZeroToVisibilityConverter}}">
-                                        <TextBlock Text="{Binding NotificationCount}"
-                                                   FontSize="9"
-                                                   FontWeight="Bold"
-                                                   Foreground="White"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center" />
-                                    </Border>
-                                </Grid>
-                            </Button.Content>
-                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>
