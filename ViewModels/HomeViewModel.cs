@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QuestHubClient.Messaging;
 using QuestHubClient.Models;
@@ -17,8 +18,42 @@ namespace QuestHubClient.ViewModels
 {
     public partial class HomeViewModel : BaseViewModel
     {
+        private string _searchText;
 
-       
+        public string? SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (_searchText != value)
+                {
+                    _searchText = value;
+                    OnPropertyChanged(nameof(SearchText));
+                }
+            }
+        }
+
+        [ObservableProperty]
+        private ObservableCollection<Category> categories = new();
+
+        private Category _selectedCategory;
+
+        public Category SelectedCategory
+        {
+            get => _selectedCategory;
+            set
+            {
+                if (_selectedCategory != value)
+                {
+                    _selectedCategory = value;
+                    OnPropertyChanged(nameof(SelectedCategory));
+                }
+            }
+        }
+
+
+
+
         public ObservableCollection<PostCardViewModel> Posts { get; set; } = new ObservableCollection<PostCardViewModel>();
 
         //services
@@ -32,13 +67,14 @@ namespace QuestHubClient.ViewModels
 
         private MultimediaUploadService _multimediaUploadService;
 
+        private ICategoriesService _categoriesService;
 
         public HomeViewModel()
         {
 
         }
 
-        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
+        public HomeViewModel(INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, MultimediaUploadService multimediaUploadService, ICategoriesService categoriesService)
         {
             _navigationService = navigationService;
 
@@ -49,8 +85,11 @@ namespace QuestHubClient.ViewModels
             _followingService = followingService;
 
             _multimediaUploadService = multimediaUploadService;
+            _categoriesService = categoriesService;
 
             LoadPostsAsync(Page, Limit);
+            LoadCategoriesAsync();
+
 
             WeakReferenceMessenger.Default.Register<PostMessage>(this, (r, message) =>
             {
@@ -82,7 +121,87 @@ namespace QuestHubClient.ViewModels
             Posts.Remove(postCardViewModel);
         }
 
-        private async Task LoadPostsAsync(int pageNumber, int limit)
+        private async Task LoadCategoriesAsync()
+        {
+            try
+            {
+                ErrorMessage = string.Empty;
+
+                var (categories, message) = await _categoriesService.GetCategoriesAsync();
+
+                if (categories != null && categories.Any())
+                {
+
+                    foreach (var category in categories)
+                    {
+                        if (SelectedCategory == null || SelectedCategory.Id != category.Id)
+                        {
+                            Categories.Add(category);
+                        }
+                    }
+                }
+                else
+                {
+                    new NotificationWindow("No se encontraron más categorias", 3).Show();
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                ErrorMessage = $"Error de conexión: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error inesperado: {ex.Message}";
+            }
+        }
+
+
+        [RelayCommand]
+        private async Task SelectCategory(Category category)
+        {
+            if (category != null)
+            {
+                if (SelectedCategory != null)
+                {
+                    SelectedCategory.IsSelected = false;
+                    if (!Categories.Contains(SelectedCategory))
+                    {
+                        Categories.Add(SelectedCategory);
+                    }
+                }
+
+                SelectedCategory = category;
+                category.IsSelected = true;
+
+                if (Categories.Contains(category))
+                {
+                    Categories.Remove(category);
+                }
+
+                Page = 1;
+
+                Posts.Clear(); // Limpiar las publicaciones actuales
+
+                LoadPostsAsync(1, Limit, category.Id, SearchText);
+            }
+        }
+
+        [RelayCommand]
+        private void ClearSelectedCategory()
+        {
+            if (SelectedCategory != null)
+            {
+                SelectedCategory.IsSelected = false;
+
+                if (!Categories.Contains(SelectedCategory))
+                {
+                    Categories.Add(SelectedCategory);
+                }
+
+                SelectedCategory = null;
+            }
+        }
+        private async Task LoadPostsAsync(int pageNumber, int limit, string category = null, string content = null)
         {
             try
             {
@@ -90,7 +209,7 @@ namespace QuestHubClient.ViewModels
 
                 string id = App.MainViewModel.User?.Id;
 
-                var (posts, page, message) = await _postsService.GetPostsAsync(pageNumber, limit, id);
+                var (posts, page, message) = await _postsService.GetPostsAsync(pageNumber, limit, id, category, false, content);
 
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -154,12 +273,21 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         public async Task SeeMoreAsync()
         {
-            await LoadPostsAsync(Page, Limit);
+            LoadPostsAsync(Page, Limit, SelectedCategory?.Id, SearchText);
         }
 
 
-       
+        [RelayCommand]
+        public async Task Search()
+        {
+            Page = 1;
 
-       
+            Posts.Clear(); // Limpiar las publicaciones actualess
+
+            LoadPostsAsync(Page, Limit, SelectedCategory.Id, SearchText);
+
+        }
+
+
     }
 }
