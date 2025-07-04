@@ -241,20 +241,15 @@
             </StackPanel>
 
             <WrapPanel>
-                <ItemsControl ItemsSource="{Binding Post.Category}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="#DDD"
-                                    Margin="2"
-                                    Padding="4"
-                                    CornerRadius="4">
-                                <TextBlock Text="{Binding Name}"
-                                           FontSize="11" />
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <Border Background="#DDD"
+                        Margin="2"
+                        Padding="4"
+                        CornerRadius="4">
+                    <TextBlock Text="{Binding Post.Category.Name}"
+                               FontSize="11" />
+                </Border>
             </WrapPanel>
+
 
             <DockPanel>
                 <TextBlock Foreground="Gray"

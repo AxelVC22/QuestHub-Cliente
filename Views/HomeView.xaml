@@ -6,27 +6,122 @@
       xmlns:local="clr-namespace:QuestHubClient.Views"
       xmlns:ctrl="clr-namespace:QuestHubClient.Views.Controls"
       xmlns:viewmodels="clr-namespace:QuestHubClient.ViewModels"
+      xmlns:conv="clr-namespace:QuestHubClient.Converters"
       d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="HomeView">
 
-    <Grid>
+    <Page.Resources>
+        <conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+        <conv:CategoryToBrushConverter x:Key="CategoryToBrushConverter" />
+        <conv:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
+        <conv:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <conv:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <Style x:Key="FileItemStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#F8F9FA" />
+            <Setter Property="BorderBrush"
+                    Value="#E9ECEF" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="CornerRadius"
+                    Value="8" />
+            <Setter Property="Padding"
+                    Value="12" />
+            <Setter Property="Margin"
+                    Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="DropAreaStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#F8F9FA" />
+            <Setter Property="BorderBrush"
+                    Value="#CED4DA" />
+            <Setter Property="BorderThickness"
+                    Value="2" />
+            <Setter Property="CornerRadius"
+                    Value="8" />
+            <Setter Property="Padding"
+                    Value="20" />
+            <Setter Property="MinHeight"
+                    Value="120" />
+        </Style>
+
+        <Style x:Key="SelectedCategoryStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#E3F2FD" />
+            <Setter Property="BorderBrush"
+                    Value="#2196F3" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="CornerRadius"
+                    Value="8" />
+            <Setter Property="Padding"
+                    Value="12,8" />
+            <Setter Property="Margin"
+                    Value="0,0,0,10" />
+        </Style>
+    </Page.Resources>
+
+    <StackPanel>
+        <!-- barra de busqueda y titulo -->
+        <StackPanel Grid.Column="0"
+                    Orientation="Horizontal">
+           
+
+            <Border Background="{StaticResource BackgroundBrush}"
+                    BorderBrush="{StaticResource PrimaryLightBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20"
+                    Padding="15,8"
+                    Width="300">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0"
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             BorderThickness="0"
+                             Style="{StaticResource SearchBoxWithPlaceholderStyle}"
+                             Background="Transparent"
+                             FontSize="14"
+                             VerticalAlignment="Center">
+                    </TextBox>
+
+                    <Button Grid.Column="1"
+                            Command="{Binding SearchCommand}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Content="🔍"
+                            FontSize="14"
+                            Cursor="Hand" />
+                </Grid>
+            </Border>
+        </StackPanel>
+
         <Border VerticalAlignment="Top"
-                Margin="10">
-            <Grid Margin="10">
+                Margin="10,0">
+            <Grid Margin="10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock x:Name="posts"
-                       Text="Publicaciones"
-                       FontSize="26"
-                       Height="50"
-                       VerticalAlignment="Center"
-                       Grid.Column="0"
+                           Text="Publicaciones"
+                           FontSize="26"
+                           Height="50"
+                           VerticalAlignment="Center"
+                           Grid.Column="0"
                            FontWeight="Bold"
                            Foreground="{StaticResource TextSecondaryBrush}" />
 
@@ -44,12 +139,73 @@
 
 
         </Border>
+        <!-- Categorias -->
+        <StackPanel Margin="0">
+            
+
+            <!-- Categoría seleccionada -->
+            <Border Style="{StaticResource SelectedCategoryStyle}"
+                    Visibility="{Binding SelectedCategory, Converter={StaticResource StringToVisibilityConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding SelectedCategory.Name}"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+
+                    <Button Grid.Column="1"
+                            Content="✕"
+                            Command="{Binding ClearSelectedCategoryCommand}"
+                            Width="20"
+                            Height="20"
+                            FontSize="10"
+                            Foreground="Red"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            ToolTip="Deseleccionar categoría" />
+                </Grid>
+            </Border>
+
+            <TextBlock Text="Selecciona una categoría para clasificar tu publicación"
+                       FontSize="13"
+                       Margin="10,0"
+                       Foreground="Gray" />
+
+            <!-- Categorías disponibles -->
+            <ItemsControl ItemsSource="{Binding Categories}"
+                          Margin="2">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}"
+                                Command="{Binding DataContext.SelectCategoryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                CommandParameter="{Binding}"
+                                Margin="2,0"
+                                BorderThickness="1"
+                                FontSize="14"
+                                Height="24"
+                                MinWidth="90"
+                                Style="{StaticResource CategoryButtonStyle}"
+                                ToolTip="{Binding Id}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      Margin="0,60">
+                      Margin="0,10">
             <ItemsControl ItemsSource="{Binding Posts}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ctrl:PostCard DataContext="{Binding}"/>
+                        <ctrl:PostCard DataContext="{Binding}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -57,11 +213,11 @@
 
         <Button Content="🡫"
                 Height="20"
-                Width="50" 
+                Width="50"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 Margin="20"
                 Style="{StaticResource PrimaryButtonStyle}"
-                Command="{Binding SeeMoreCommand}"/>
-    </Grid>
+                Command="{Binding SeeMoreCommand}" />
+    </StackPanel>
 </Page>

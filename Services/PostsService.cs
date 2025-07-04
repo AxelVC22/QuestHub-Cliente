@@ -12,7 +12,7 @@ namespace QuestHubClient.Services
 {
     public interface IPostsService
     {
-        Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId);
+        Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId, string category = null, bool following = false, string content = null);
         Task<(Post post, string message)> CreatePostAsync(Post post);
         Task<(Post post, string message)> UpdatePostAsync(Post post);
         Task<(string message, bool success)> DeletePostAsync(string postId);
@@ -28,11 +28,11 @@ namespace QuestHubClient.Services
             _httpClient = httpClient;
         }
 
-        public async Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId)
+        public async Task<(List<Post>, Page page, string message)> GetPostsAsync(int page, int limit, string userId, string category = null, bool following = false, string content = null )
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}&user={userId}");
+                var response = await _httpClient.GetAsync($"{_baseUrl}?page={page}&limit={limit}&user={userId}&category={category}&following={following}&content={content}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
