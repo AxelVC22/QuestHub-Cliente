@@ -87,7 +87,7 @@ namespace QuestHubClient
                  {
 
                      var viewModel = new HomeViewModel(
-                         NavigationService, PostsService, AnswersService, FollowingService, MultimediaService, UserService);
+                         NavigationService, PostsService, AnswersService, FollowingService, MultimediaService, UserService, CategoriesService);
                      return new Views.HomeView(viewModel);
                  }
                  else if (viewModelType == typeof(PostViewModel))

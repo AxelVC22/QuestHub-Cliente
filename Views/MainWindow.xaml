@@ -206,36 +206,7 @@
 
                         </Button>
 
-                        <Border Background="{StaticResource BackgroundBrush}"
-                                BorderBrush="{StaticResource PrimaryLightBrush}"
-                                BorderThickness="1"
-                                CornerRadius="20"
-                                Padding="15,8"
-                                Width="300">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBox Grid.Column="0"
-                                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                         BorderThickness="0"
-                                         Style="{StaticResource SearchBoxWithPlaceholderStyle}"
-                                         Background="Transparent"
-                                         FontSize="14"
-                                         VerticalAlignment="Center">
-                                </TextBox>
-
-                                <Button Grid.Column="1"
-                                        Command="{Binding SearchCommand}"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Content="🔍"
-                                        FontSize="14"
-                                        Cursor="Hand" />
-                            </Grid>
-                        </Border>
+                       
                     </StackPanel>
 
                     <!-- Botones header -->
