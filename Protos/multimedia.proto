@@ -2,6 +2,8 @@
 
 package multimedia;
 
+option java_package = "com.proto.multimedia";
+option java_multiple_files = true;
 option csharp_namespace = "Multimedia";
 
 message UploadRequest {

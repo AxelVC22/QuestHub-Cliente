@@ -139,9 +139,9 @@ namespace QuestHubClient.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var userDto = JsonSerializer.Deserialize<UserDetailDto>(responseContent, GetJsonSerializerOptions());
+                    var userDto = JsonSerializer.Deserialize<UserUpdateResponseDto>(responseContent, GetJsonSerializerOptions());
 
-                    var updatedUser = MapUserDetailDtoToUser(userDto);
+                    var updatedUser = MapUserUpdateDtoToUser(userDto);
                     return (updatedUser, "Usuario actualizado exitosamente");
                 }
                 else
@@ -560,6 +560,20 @@ namespace QuestHubClient.Services
                 Status = dto.Status,
                 BanEndDate = dto.BanEndDate,
                 FollowersCount = dto.Followers
+            };
+        }
+
+        private User MapUserUpdateDtoToUser(UserUpdateResponseDto dto)
+        {
+            return new User
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Email = dto.Email,
+                ProfilePicture = dto.ProfilePicture,
+                Role = dto.Role,
+                Status = dto.Status,
+                BanEndDate = dto.BanEndDate
             };
         }
 

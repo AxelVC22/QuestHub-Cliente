@@ -32,14 +32,18 @@ namespace QuestHubClient.ViewModels
 
         private readonly IFollowingService _followingService;
 
+        private readonly IUserService _userService;
+
         private readonly MultimediaUploadService _multimediaUploadService;
         public ReportsViewModel()
         {
 
         }
 
-        public ReportsViewModel(IReportsService reportsService, INavigationService navigationService, IAnswersService answersService, IPostsService postsService, IRatingsService ratingsService, IFollowingService followingService, MultimediaUploadService multimediaUploadService)
+        public ReportsViewModel(IReportsService reportsService, INavigationService navigationService, IAnswersService answersService, IPostsService postsService,
+            IRatingsService ratingsService, IFollowingService followingService, MultimediaUploadService multimediaUploadService, IUserService userService)
         {
+            _userService = userService;
             _reportsService = reportsService;
             _navigationService = navigationService;
             _answersService = answersService;
@@ -47,11 +51,7 @@ namespace QuestHubClient.ViewModels
             _ratingsService = ratingsService;
             _followingService = followingService;
             _multimediaUploadService = multimediaUploadService;
-
-
-
             LoadReportsAsync(Page, Limit);
-
         }
 
         private async Task LoadReportsAsync(int pageNumber, int limit)
@@ -75,7 +75,7 @@ namespace QuestHubClient.ViewModels
 
                     foreach (var report in reports)
                     {
-                        Reports.Add(new ReportCardViewModel(report, _navigationService, _postsService, _answersService, _followingService, _ratingsService, _reportsService, _multimediaUploadService));
+                        Reports.Add(new ReportCardViewModel(report, _navigationService, _postsService, _answersService, _followingService, _ratingsService, _reportsService, _multimediaUploadService, _userService));
 
                     }
                 }
