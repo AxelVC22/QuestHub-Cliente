@@ -87,7 +87,8 @@ namespace QuestHubClient.ViewModels
 
         public ReportCardViewModel() { }
 
-        public ReportCardViewModel(Report report, INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, IRatingsService ratingsService, IReportsService reportsService, MultimediaUploadService multimediaUploadService)
+        public ReportCardViewModel(Report report, INavigationService navigationService, IPostsService postsService, IAnswersService answersService, IFollowingService followingService, 
+            IRatingsService ratingsService, IReportsService reportsService, MultimediaUploadService multimediaUploadService, IUserService userService)
         {
             Report = report;
             IsSanctionVisible = false;
@@ -95,7 +96,7 @@ namespace QuestHubClient.ViewModels
 
             if (report.Post != null)
             {
-                PostCard = new PostCardViewModel(report.Post, navigationService, postsService, answersService, followingService, multimediaUploadService);
+                PostCard = new PostCardViewModel(report.Post, navigationService, postsService, answersService, followingService, multimediaUploadService, userService);
                 IsPostVisible = true;
             }
             else if (report.Answer != null)

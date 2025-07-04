@@ -13,7 +13,7 @@ namespace QuestHubClient.Services
         private readonly Multimedia.MultimediaService.MultimediaServiceClient _client;
         private readonly int _chunkSize;
 
-        public MultimediaUploadService(string serverAddress = "http://localhost:50051", int chunkSize = 64 * 1024) // 64KB chunks
+        public MultimediaUploadService(string serverAddress = "http://localhost:50052", int chunkSize = 64 * 1024) // 64KB chunks
         {
             _chunkSize = chunkSize;
             var httpHandler = new HttpClientHandler();

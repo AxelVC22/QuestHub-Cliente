@@ -31,6 +31,8 @@ namespace QuestHubClient.ViewModels
                 {
                     _user = value;
                     OnPropertyChanged(nameof(User));
+                    OnPropertyChanged(nameof(IsOwnProfile));
+                    OnPropertyChanged(nameof(IsNotOwnProfile));
                 }
             }
         }
@@ -40,6 +42,9 @@ namespace QuestHubClient.ViewModels
             get => _profileImageSource;
             set => SetProperty(ref _profileImageSource, value);
         }
+
+        public bool IsOwnProfile => User?.Id == App.MainViewModel?.User?.Id;
+        public bool IsNotOwnProfile => !IsOwnProfile;
 
         private bool _isEditing = false;
         public bool IsEditing
@@ -81,14 +86,14 @@ namespace QuestHubClient.ViewModels
 
         public ProfileViewModel()
         {
-            User = new User();
+            //User = new User();
         }
 
-        public ProfileViewModel(INavigationService navigationService, IUserService userService)
+        public ProfileViewModel(INavigationService navigationService, IUserService userService, User user)
         {
             _navigationService = navigationService;
             _userService = userService;
-            User = App.MainViewModel?.User ?? new User();
+            User = user;
 
             _ = LoadProfilePictureAsync();
         }
@@ -96,28 +101,23 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void Edit()
         {
+            if (!IsOwnProfile) return;
             IsEditing = true;
         }
 
         [RelayCommand]
         private void Cancel()
         {
+            if (!IsOwnProfile) return;
+
             IsEditing = false;
             IsChangingAvatar = false;
             _selectedImageData = null;
             _selectedImageFileName = null;
-
-            User = new User
+            if (App.MainViewModel?.User != null)
             {
-                Id = App.MainViewModel?.User?.Id,
-                Name = App.MainViewModel?.User?.Name,
-                Email = App.MainViewModel?.User?.Email,
-                ProfilePicture = App.MainViewModel?.User?.ProfilePicture,
-                Role = (UserRole)(App.MainViewModel?.User?.Role),
-                Status = App.MainViewModel?.User?.Status,
-                BanEndDate = App.MainViewModel?.User?.BanEndDate,
-                FollowersCount = (int)App.MainViewModel?.User?.FollowersCount
-            };
+                User = CloneUser(App.MainViewModel.User);
+            }
 
             OnPropertyChanged(nameof(ProfileImageSource));
         }
@@ -125,6 +125,8 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private async Task SaveChanges()
         {
+            if (!IsOwnProfile) return;
+
             var context = new ValidationContext(User);
             var results = new List<ValidationResult>();
             bool isValid = Validator.TryValidateObject(User, context, results, true);
@@ -146,6 +148,8 @@ namespace QuestHubClient.ViewModels
 
             try
             {
+                var originalPassword = User.Password;
+
                 if (!string.IsNullOrWhiteSpace(User.Password))
                 {
                     var (userWithNewPassword, passwordMessage) = await _userService.UpdateUserPasswordAsync(User.Id, User.Password);
@@ -161,14 +165,16 @@ namespace QuestHubClient.ViewModels
                 if (updatedUser != null)
                 {
                     App.MainViewModel.User = updatedUser;
-                    User = updatedUser;
-                    User.Password = string.Empty;
+                    User = CloneUser(updatedUser);
+                    User.Password = string.Empty; 
+
                     IsEditing = false;
                     new NotificationWindow(message, 3).Show();
                     ErrorMessage = string.Empty;
                 }
                 else
                 {
+                    User.Password = originalPassword;
                     ErrorMessage = message ?? "Error al actualizar el perfil. Por favor, inténtalo de nuevo.";
                 }
             }
@@ -182,9 +188,29 @@ namespace QuestHubClient.ViewModels
             }
         }
 
+        private User CloneUser(User originalUser)
+        {
+            if (originalUser == null) return new User();
+
+            return new User
+            {
+                Id = originalUser.Id,
+                Name = originalUser.Name,
+                Email = originalUser.Email,
+                ProfilePicture = originalUser.ProfilePicture,
+                Role = originalUser.Role,
+                Status = originalUser.Status,
+                BanEndDate = originalUser.BanEndDate,
+                FollowersCount = originalUser.FollowersCount,
+                Password = string.Empty 
+            };
+        }
+
         [RelayCommand]
         private void ChangeAvatar()
         {
+            if (!IsOwnProfile) return;
+
             var openFileDialog = new OpenFileDialog
             {
                 Title = "Seleccionar imagen de perfil",
@@ -225,6 +251,8 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private async Task SaveAvatar()
         {
+            if (!IsOwnProfile) return;
+
             if (_selectedImageData == null || string.IsNullOrEmpty(_selectedImageFileName))
             {
                 ErrorMessage = "No se ha seleccionado ninguna imagen";
@@ -270,11 +298,12 @@ namespace QuestHubClient.ViewModels
         [RelayCommand]
         private void CancelAvatarChange()
         {
+            if (!IsOwnProfile) return;
+
             IsChangingAvatar = false;
             _selectedImageData = null;
             _selectedImageFileName = null;
 
-            // Recarga la imagen original
             _ = LoadProfilePictureAsync();
         }
 
@@ -285,11 +314,10 @@ namespace QuestHubClient.ViewModels
                 var (imageData, contentType, message) = await _userService.GetProfilePictureAsync(User.Id);
                 if (imageData != null && imageData.Length > 0)
                 {
-                    // Crear la imagen en el hilo UI
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         ProfileImageSource = LoadImage(imageData);
-                        OnPropertyChanged(nameof(ProfileImageSource)); // Asegurar notificación
+                        OnPropertyChanged(nameof(ProfileImageSource));
                     });
                 }
                 else
@@ -324,12 +352,12 @@ namespace QuestHubClient.ViewModels
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.StreamSource = ms;
                 bitmap.EndInit();
-                bitmap.Freeze(); // Importante para usar en otro hilo
+                bitmap.Freeze();
                 return bitmap;
             }
             catch (Exception ex)
             {
-                // Log el error si tienes sistema de logging
+                ErrorMessage = $"Error al cargar la imagen: {ex.Message}";
                 return null;
             }
         }

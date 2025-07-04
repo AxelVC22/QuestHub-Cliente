@@ -153,14 +153,23 @@ namespace QuestHubClient.ViewModels
 
                 if (categories != null && categories.Any())
                 {
-                    Page = Page + 1;
+                    var activeCategories = categories.Where(c => c.Status == "Active").ToList();
 
-                    foreach (var category in categories)
+                    if (activeCategories.Any())
                     {
-                        if (SelectedCategory == null || SelectedCategory.Id != category.Id)
+                        Page = Page + 1;
+
+                        foreach (var category in activeCategories)
                         {
-                            Categories.Add(category);
+                            if (SelectedCategory == null || SelectedCategory.Id != category.Id)
+                            {
+                                Categories.Add(category);
+                            }
                         }
+                    }
+                    else
+                    {
+                        new NotificationWindow("No se encontraron categorías activas", 3).Show();
                     }
                 }
                 else

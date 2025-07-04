@@ -306,12 +306,28 @@ namespace QuestHubClient.ViewModels
             var results = new List<ValidationResult>();
             bool isValid = Validator.TryValidateObject(EditingUser, context, results, true);
 
-            if (!string.IsNullOrWhiteSpace(EditingUser.Password))
+            if (IsCreating)
             {
-                if (EditingUser.Password.Length < 8 || EditingUser.Password.Length > 32)
+                if (string.IsNullOrWhiteSpace(EditingUser.Password))
+                {
+                    results.Add(new ValidationResult("La contraseña es requerida", new[] { "Password" }));
+                    isValid = false;
+                }
+                else if (EditingUser.Password.Length < 8 || EditingUser.Password.Length > 32)
                 {
                     results.Add(new ValidationResult("La contraseña debe tener entre 8 y 32 caracteres", new[] { "Password" }));
                     isValid = false;
+                }
+            }
+            else if (IsEditing)
+            {
+                if (!string.IsNullOrWhiteSpace(EditingUser.Password))
+                {
+                    if (EditingUser.Password.Length < 8 || EditingUser.Password.Length > 32)
+                    {
+                        results.Add(new ValidationResult("La contraseña debe tener entre 8 y 32 caracteres", new[] { "Password" }));
+                        isValid = false;
+                    }
                 }
             }
 
@@ -329,7 +345,7 @@ namespace QuestHubClient.ViewModels
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(EditingUser.Password))
+                if (IsEditing && !string.IsNullOrWhiteSpace(EditingUser.Password))
                 {
                     var (userWithNewPassword, passwordMessage) = await _userService.UpdateUserPasswordAsync(EditingUser.Id, EditingUser.Password);
                     if (userWithNewPassword == null)
@@ -345,6 +361,7 @@ namespace QuestHubClient.ViewModels
                     var (createdUser, message) = await _userService.RegisterUserAsync(EditingUser);
                     if (createdUser != null)
                     {
+                        Users.Add(createdUser);
                         CancelEdit();
                         OnPropertyChanged(nameof(FilteredUsers));
                         new NotificationWindow("Usuario registrado exitosamente", 3).Show();
@@ -370,6 +387,11 @@ namespace QuestHubClient.ViewModels
                         if (savedUser.Id == App.MainViewModel.User.Id)
                         {
                             App.MainViewModel.User = savedUser;
+                        }
+
+                        if (SelectedUser?.Id == savedUser.Id)
+                        {
+                            SelectedUser = savedUser;
                         }
 
                         CancelEdit();
