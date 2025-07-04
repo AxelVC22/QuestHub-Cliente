@@ -86,6 +86,7 @@ namespace QuestHubClient
                  else if (viewModelType == typeof(HomeViewModel))
                  {
 
+
                      var viewModel = new HomeViewModel(
                          NavigationService, PostsService, AnswersService, FollowingService, MultimediaService, UserService, CategoriesService);
                      return new Views.HomeView(viewModel);
