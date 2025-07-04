@@ -37,7 +37,7 @@ namespace QuestHubClient.ViewModels
         public MainWindowViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            Title = "QuestHub - Menu Principal";
+            Title = "QuestHub";
         }
 
         [RelayCommand]
@@ -130,7 +130,7 @@ namespace QuestHubClient.ViewModels
         {
             User = loggedInUser;
             IsRegistered = true;
-            LoginCheck = true;
+            //LoginCheck = true;
             LoadMenuOptionsByRole();
             NavigateToStartPageByRole(); 
         }
@@ -143,8 +143,8 @@ namespace QuestHubClient.ViewModels
             switch (User.Role)
             {
                 case UserRole.Admin:
-                    AddMenuOption("📝 Categorias", () => _navigationService.NavigateTo<CategoriesViewModel>());
-                    AddMenuOption("📊 Dashboard", () => _navigationService.NavigateTo<HomeViewModel>());
+                    AddMenuOption("📊 Publicaciones", () => _navigationService.NavigateTo<HomeViewModel>());
+                    AddMenuOption("📝 Categorias", () => _navigationService.NavigateTo<CategoriesViewModel>());                    
                     AddMenuOption("👥 Usuarios", () => _navigationService.NavigateTo<UsersViewModel>());
                     AddMenuOption("🚩 Reportes", () => _navigationService.NavigateTo<ReportsViewModel>());
                     AddMenuOption("📝 Estadisticas", () => _navigationService.NavigateTo<StatisticsViewModel>());
@@ -152,14 +152,13 @@ namespace QuestHubClient.ViewModels
                     break;
 
                 case UserRole.Moderator:
-                    //AddMenuOption("📊 Dashboard", () => _navigationService.NavigateTo<DashboardViewModel>());
-                    //AddMenuOption("📝 Posts", () => _navigationService.NavigateTo<PostsViewModel>());
-                    //AddMenuOption("👥 Usuarios", () => _navigationService.NavigateTo<UsersViewModel>());
-                    //AddMenuOption("🚩 Reportes", () => _navigationService.NavigateTo<ReportsViewModel>());
+                    AddMenuOption("📊 Publicaciones", () => _navigationService.NavigateTo<HomeViewModel>());                    
+                    AddMenuOption("🚩 Reportes", () => _navigationService.NavigateTo<ReportsViewModel>());
+                    AddMenuOption("📝 Estadisticas", () => _navigationService.NavigateTo<StatisticsViewModel>());
                     break;
 
                 case UserRole.User:
-                    AddMenuOption("🏠 Inicio", () => _navigationService.NavigateTo<HomeViewModel>());
+                    AddMenuOption("📊 Publicaciones", () => _navigationService.NavigateTo<HomeViewModel>());
                     AddMenuOption("📝 Estadisticas", () => _navigationService.NavigateTo<StatisticsViewModel>());
                     break;
             }
@@ -172,7 +171,7 @@ namespace QuestHubClient.ViewModels
             switch (User.Role)
             {
                 case UserRole.Admin:
-                    _navigationService.NavigateTo<CategoriesViewModel>();
+                    _navigationService.NavigateTo<HomeViewModel>();
                     SelectedSection = "Dashboard";
                     break;
 
