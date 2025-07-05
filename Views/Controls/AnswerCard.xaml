@@ -113,15 +113,7 @@
                                         Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"
                                         ToolTip="{Binding CommandActionReason}" />
 
-                                <Button Content="Reportar ⚠︎"
-                                        Style="{StaticResource SecondaryButtonStyle}"
-                                        Command="{Binding FollowCommand}"
-                                        FontSize="12"
-                                        Width="80"
-                                        VerticalAlignment="Center"
-                                        Visibility="{Binding CanReport, Converter={StaticResource BoolToVisibilityConverter}}"
-                                        ToolTip="{Binding CommandActionReason}" />
-
+                                
                             </StackPanel>
                         </Grid>
                     </StackPanel>

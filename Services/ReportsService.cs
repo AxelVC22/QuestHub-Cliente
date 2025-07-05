@@ -24,7 +24,7 @@ namespace QuestHubClient.Services
     {
         private readonly HttpClient _httpClient;
 
-        private const string _baseUrl = "http://localhost:3033/api/reports";
+        private const string _baseUrl = "http://10.48.138.135:3033/api/reports";
 
         public ReportsService(HttpClient httpClient)
         {

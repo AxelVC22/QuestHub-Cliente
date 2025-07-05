@@ -44,8 +44,8 @@
                         Style="{StaticResource HyperlinkButtonStyle}"
                         Margin="4,0"
                         VerticalAlignment="Center"
-                        ToolTip="{Binding CommandActionReason}" 
-                        Command="{Binding SeeUserDetailsCommand}"/>
+                        ToolTip="{Binding CommandActionReason}"
+                        Command="{Binding SeeUserDetailsCommand}" />
 
                 <TextBlock Margin="4,0"
                            VerticalAlignment="Center">
@@ -81,7 +81,8 @@
                                 ToolTip="{Binding CommandActionReason}" />
                     </Grid>
 
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal">
                         <Button Content="Editar ✎"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 Command="{Binding EditCommand}"
@@ -126,18 +127,18 @@
 
             <!-- Sección de Multimedia -->
             <StackPanel Visibility="{Binding HasMultimedia, Converter={StaticResource BoolToVisibilityConverter}}"
-                       Margin="0,5">
+                        Margin="0,5">
 
                 <!-- Galería de Imágenes -->
                 <StackPanel Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Text="Imágenes:"
-                              FontSize="12"
-                              FontWeight="Bold"
-                              Margin="0,5,0,2"
-                              Foreground="#555" />
+                               FontSize="12"
+                               FontWeight="Bold"
+                               Margin="0,5,0,2"
+                               Foreground="#555" />
 
                     <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                 VerticalScrollBarVisibility="Hidden">
+                                  VerticalScrollBarVisibility="Hidden">
                         <ItemsControl ItemsSource="{Binding Images}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -147,18 +148,19 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Margin="2"
-                                           BorderBrush="LightGray"
-                                           BorderThickness="1"
-                                           CornerRadius="4">
+                                            BorderBrush="LightGray"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
                                         <Button Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                               CommandParameter="{Binding}"
-                                               Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                               Padding="0">
-                                            <Image Source="{Binding FilePath}"
-                                                  Width="80"
-                                                  Height="80"
-                                                  Stretch="UniformToFill"
-                                                  ToolTip="{Binding FileName}" />
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+                                                Padding="0">
+                                            <!-- CAMBIO AQUÍ: Usar ImageSource en lugar de FilePath -->
+                                            <Image Source="{Binding ImageSource}"
+                                                   Width="80"
+                                                   Height="80"
+                                                   Stretch="UniformToFill"
+                                                   ToolTip="{Binding FileName}" />
                                         </Button>
                                     </Border>
                                 </DataTemplate>
@@ -169,21 +171,21 @@
 
                 <!-- Galería de Videos -->
                 <StackPanel Visibility="{Binding HasVideos, Converter={StaticResource BoolToVisibilityConverter}}"
-                           Margin="0,5,0,0">
+                            Margin="0,5,0,0">
                     <TextBlock Text="Videos:"
-                              FontSize="12"
-                              FontWeight="Bold"
-                              Margin="0,5,0,2"
-                              Foreground="#555" />
+                               FontSize="12"
+                               FontWeight="Bold"
+                               Margin="0,5,0,2"
+                               Foreground="#555" />
 
                     <ItemsControl ItemsSource="{Binding Videos}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Margin="0,2"
-                                       BorderBrush="LightGray"
-                                       BorderThickness="1"
-                                       CornerRadius="4"
-                                       Background="#F8F8F8">
+                                        BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Background="#F8F8F8">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -193,44 +195,44 @@
 
                                         <!-- Miniatura del video -->
                                         <Border Grid.Column="0"
-                                               Width="60"
-                                               Height="45"
-                                               Background="Black"
-                                               Margin="5">
+                                                Width="60"
+                                                Height="45"
+                                                Background="Black"
+                                                Margin="5">
                                             <Grid>
                                                 <!-- Placeholder para thumbnail -->
                                                 <Rectangle Fill="DarkGray" />
                                                 <TextBlock Text="▶"
-                                                          FontSize="20"
-                                                          Foreground="White"
-                                                          HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center" />
+                                                           FontSize="20"
+                                                           Foreground="White"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
                                             </Grid>
                                         </Border>
 
                                         <!-- Información del video -->
                                         <StackPanel Grid.Column="1"
-                                                   Margin="10,5"
-                                                   VerticalAlignment="Center">
+                                                    Margin="10,5"
+                                                    VerticalAlignment="Center">
                                             <TextBlock Text="{Binding FileName}"
-                                                      FontWeight="Bold"
-                                                      FontSize="12"
-                                                      TextTrimming="CharacterEllipsis" />
+                                                       FontWeight="Bold"
+                                                       FontSize="12"
+                                                       TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{Binding FileSizeFormatted}"
-                                                      FontSize="10"
-                                                      Foreground="Gray" />
+                                                       FontSize="10"
+                                                       Foreground="Gray" />
                                         </StackPanel>
 
                                         <!-- Controles del video -->
                                         <StackPanel Grid.Column="2"
-                                                   Orientation="Horizontal"
-                                                   Margin="5">
+                                                    Orientation="Horizontal"
+                                                    Margin="5">
                                             <Button Content="▶ Reproducir"
-                                                   Style="{StaticResource SecondaryButtonStyle}"
-                                                   FontSize="10"
-                                                   Padding="5,2"
-                                                   Tag="{Binding}"
-                                                   Click="PlayVideo_Click" />
+                                                    Style="{StaticResource SecondaryButtonStyle}"
+                                                    FontSize="10"
+                                                    Padding="5,2"
+                                                    Tag="{Binding}"
+                                                    Click="PlayVideo_Click" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>

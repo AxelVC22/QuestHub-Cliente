@@ -24,7 +24,7 @@ namespace QuestHubClient.Services
     public class CategoriesService : ICategoriesService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://localhost:3033/api/categories";
+        private const string BaseUrl = "http://10.48.138.135:3033/api/categories";
 
         public CategoriesService(HttpClient httpClient)
         {
