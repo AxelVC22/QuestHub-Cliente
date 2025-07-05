@@ -26,7 +26,7 @@ namespace QuestHubClient.Services
     {
         private readonly HttpClient _httpClient;
 
-        private const string _baseUrl = "http://localhost:3033/api/answers";
+        private const string _baseUrl = "http://10.48.138.135:3033/api/answers";
 
         public AnswersService(HttpClient httpClient)
         {

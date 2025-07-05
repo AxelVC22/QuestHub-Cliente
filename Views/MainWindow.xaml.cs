@@ -191,7 +191,7 @@ namespace QuestHubClient
         {
             try
             {
-                var grpcServerUrl = "http://localhost:50052";
+                var grpcServerUrl = "http://10.48.138.135:50052";
                 MultimediaService = new MultimediaUploadService(grpcServerUrl);
             }
             catch (Exception ex)

@@ -20,7 +20,7 @@ namespace QuestHubClient.ViewModels
 
         public bool IsOwner => App.MainViewModel.User?.Id == Answer.Author.Id;
 
-        public bool CanReport => !IsOwner;
+        public bool CanReport => !IsOwner && App.MainViewModel.User?.Id != null;
 
         public bool CanEdit => IsOwner;
         public bool CanDelete => IsOwner || IsAdmin || IsModerator;

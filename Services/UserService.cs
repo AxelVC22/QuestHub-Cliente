@@ -33,7 +33,7 @@ namespace QuestHubClient.Services
     public class UserService : IUserService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://localhost:3033/api/users";
+        private const string BaseUrl = "http://10.48.138.135:3033/api/users";
 
         public UserService(HttpClient httpClient)
         {

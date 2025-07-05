@@ -21,7 +21,7 @@ namespace QuestHubClient.Services
     public class PostsService : IPostsService
     {
         private readonly HttpClient _httpClient;
-        private const string _baseUrl = "http://localhost:3033/api/posts";
+        private const string _baseUrl = "http://10.48.138.135:3033/api/posts";
 
         public PostsService(HttpClient httpClient)
         {

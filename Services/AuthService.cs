@@ -17,7 +17,7 @@ namespace QuestHubClient.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://localhost:3033/api/auth";
+        private const string BaseUrl = "http://10.48.138.135:3033/api/auth";
 
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {

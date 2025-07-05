@@ -18,7 +18,7 @@ namespace QuestHubClient.ViewModels
     public partial class PostCardViewModel : BaseViewModel
     {
         public bool IsOwner => App.MainViewModel.User?.Id == Post?.Author?.Id;
-        public bool CanReport => !IsOwner;
+        public bool CanReport => !IsOwner && App.MainViewModel.User?.Id != null;
         public bool CanEdit => IsOwner;
         public bool CanDelete => IsOwner || IsAdmin || IsModerator;
 
